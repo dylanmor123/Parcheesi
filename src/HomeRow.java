@@ -6,4 +6,15 @@ public class HomeRow extends Space {
 		
 		super(color, safe, pawnsList);
 	}
+	
+	@Override
+	public boolean equals(Object s){
+		if(s == null){
+			return false;
+		}
+		if (!HomeRow.class.isAssignableFrom(s.getClass())) {
+		    return false;
+		}
+		return super.equals(s);
+	}
 }
