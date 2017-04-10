@@ -14,11 +14,13 @@ class Tester {
 	Pawn.createExamples();
 	Space.createExamples();
 	Board.createExamples();
+	Game.createExamples();
 
 	System.out.println("testing ...");
 	Pawn.main(argv);
 	Space.main(argv);
 	Board.main(argv);
+	Game.main(argv);
 
 	System.out.println("faulty tests: " + faults); 
 	System.exit(0);

@@ -9,7 +9,6 @@ class Board {
 	
 	//constructor based on list of players. Called in game.start()
 	public Board(ArrayList<Player> players, int num_pawns){
-		ArrayList<Pawn> empty_pawn_list = new ArrayList<Pawn>();
 		ArrayList<String> color_list = new ArrayList<String>();
 		for(Player p : players){
 			color_list.add(p.get_color());
@@ -27,11 +26,11 @@ class Board {
 			// 7 spaces in each home row
 			ArrayList<HomeRow> home_row = new ArrayList<HomeRow>();
 			for(int k = 0; k < 7; k++){
-				home_row.add(new HomeRow(color_list.get(i), false, empty_pawn_list));
+				home_row.add(new HomeRow(color_list.get(i), false, new ArrayList<Pawn>()));
 			}
 			
 			home_circles[i] = new HomeCircle(color_list.get(i), false, pawn_list);
-			home_spaces[i] = new Home(color_list.get(i), false, empty_pawn_list);
+			home_spaces[i] = new Home(color_list.get(i), false, new ArrayList<Pawn>());
 			home_rows.put(color_list.get(i), home_row);
 			
 		}
@@ -42,27 +41,27 @@ class Board {
 		for(int i = 0; i < color_list.size(); i++){
 			int start = i * 17;
 			// entry space
-			this.spaces[start] = new Entry(color_list.get(i), true, empty_pawn_list);
+			this.spaces[start] = new Entry(color_list.get(i), true, new ArrayList<Pawn>());
 			
 			// 6 unsafe spaces
 			for(int j = 1; j < 7; j++){
-				this.spaces[start + j] = new Space(null, false, empty_pawn_list);
+				this.spaces[start + j] = new Space(null, false, new ArrayList<Pawn>());
 			}
 			
 			// 1 safe space
-			this.spaces[start + 7] = new Space(null, true, empty_pawn_list);
+			this.spaces[start + 7] = new Space(null, true, new ArrayList<Pawn>());
 			
 			// 4 unsafe spaces
 			for(int j = 8; j < 12; j++){
-				this.spaces[start + j] = new Space(null, false, empty_pawn_list);
+				this.spaces[start + j] = new Space(null, false, new ArrayList<Pawn>());
 			}
 			
 			// 1 pre-home row space
-			this.spaces[start + 12] = new PreHomeRow(color_list.get(i), true, empty_pawn_list);
+			this.spaces[start + 12] = new PreHomeRow(color_list.get(i), true, new ArrayList<Pawn>());
 			
 			// 4 unsafe spaces
 			for(int j = 13; j < 17; j++){
-				this.spaces[start + j] = new Space(null, false, empty_pawn_list);
+				this.spaces[start + j] = new Space(null, false, new ArrayList<Pawn>());
 			} 
 		}
 		
@@ -75,6 +74,32 @@ class Board {
 		this.home_circles = home_circles;
 		this.home_spaces = home_spaces;
 		this.home_rows = home_rows;
+	}
+	
+	public Home get_Home(String color){
+		  for (Home h : this.home_spaces) {
+			  if (h.get_color().equals(color)){
+				  return h;
+			  }
+		  }
+		  return null;
+	}
+	
+	public HomeCircle get_HomeCircle(String color){
+		  for (HomeCircle h : this.home_circles) {
+			  if (h.get_color().equals(color)){
+				  return h;
+			  }
+		  }
+		  return null;
+	}
+	
+	public ArrayList<HomeRow> get_HomeRow(String color){
+		  return this.home_rows.get(color);
+	}
+	
+	public Space[] get_Spaces(){
+		return this.spaces;
 	}
 	
 	@Override

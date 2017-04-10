@@ -13,6 +13,18 @@ public class Space {
 		this.pawns_list = pawns_list;
 	}
 	
+	public void add_Pawn(Pawn p){
+		pawns_list.add(p);
+	}	
+	
+	public boolean remove_Pawn(Pawn p){
+		return pawns_list.remove(p);
+	}
+	
+	public String get_color(){
+		return this.color;
+	}
+	
 	@Override
 	public boolean equals(Object s){
 		  if(s == null){

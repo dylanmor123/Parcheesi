@@ -19,6 +19,10 @@ class Pawn {
 	  return (this.color.equals(pawn.color)) && (this.id == pawn.id);
   }
   
+  public String get_color(){
+	  return this.color;
+  }
+  
   static Pawn p1;
   static Pawn p2;
   static Pawn p3;
