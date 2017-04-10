@@ -102,16 +102,26 @@ class Board {
 		return this.spaces;
 	}
 	
+	public Entry get_Entry(String color){
+		for (Space s : this.spaces) {
+			  if (s.get_color() == null){
+				  continue;
+			  }
+			  else if (s.get_color().equals(color) && Entry.class.isAssignableFrom(s.getClass())){
+				  return (Entry) s;
+			  }
+		  }
+		return null;
+	}
+	
 	@Override
 	public boolean equals(Object b){
 		if(b == null){
 			return false;
 		}
-		System.out.println("check");
 		if (!Board.class.isAssignableFrom(b.getClass())) {
 			return false;
 		}
-		System.out.println("check 1");
 		Board board = (Board) b;
 		boolean same_board = true;
 		
@@ -119,29 +129,24 @@ class Board {
 		if((this.spaces.length != board.spaces.length) || (this.home_circles.length != board.home_circles.length) || (this.home_spaces.length != board.home_spaces.length)){
 			return false;
 		}
-		System.out.println("check 2");
 		
 		// check if home_rows are equal
 		same_board = same_board && this.home_rows.equals(board.home_rows);
-		System.out.println("check 3");
 		
 		//check if spaces are equal
 		for(int i = 0; i < this.spaces.length; i++){
 			same_board = same_board && this.spaces[i].equals(board.spaces[i]);
 		}
-		System.out.println("check 4");
 		
 		//check if home_circles are equal
 		for(int i = 0; i < this.home_circles.length; i++){
 			same_board = same_board && this.home_circles[i].equals(board.home_circles[i]);
 		}
-		System.out.println("check 5");
 
 		//check if home_spaces are equal
 		for(int i = 0; i < this.home_spaces.length; i++){
 			same_board = same_board && this.home_spaces[i].equals(board.home_spaces[i]);
 		}
-		System.out.println("check 6");
 		
 		return same_board;
 	}
@@ -211,7 +216,6 @@ class Board {
 	// Tests: 
 	
 	public static void main(String argv[]) {
-		System.out.println(players1);
 		Board b = new Board(players1, 4);
 		
 		Tester.check(b.equals(board1), "one-person board init");

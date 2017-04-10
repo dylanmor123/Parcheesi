@@ -25,6 +25,14 @@ public class Space {
 		return this.color;
 	}
 	
+	public boolean get_safe(){
+		return this.safe;
+	}
+	
+	public ArrayList<Pawn> get_pawns(){
+		return this.pawns_list;
+	}
+	
 	@Override
 	public boolean equals(Object s){
 		  if(s == null){
