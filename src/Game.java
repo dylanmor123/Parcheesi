@@ -532,6 +532,41 @@ public class Game implements IGame {
 	static int[] rollssafe;
 	static MoveMain movesafe;
 	
+	// Test wraparound main move
+	static Game gwrap;
+	static Board bwrap1;
+	static Board bwrap2;
+	static Space[] swrap1;
+	static HomeCircle[] hcwrap1;
+	static Home[] hwrap1;
+	static HashMap<String, ArrayList<HomeRow>> hrwrap1;
+	static Space[] swrap2;
+	static HomeCircle[] hcwrap2;
+	static Home[] hwrap2;
+	static HashMap<String, ArrayList<HomeRow>> hrwrap2;
+	static ArrayList<Player> playerswrap;
+	static State stwrap;
+	static int[] rollswrap;
+	static MoveMain moveprewrap;
+	static MoveMain movewrap;
+	
+	// Test move into home row from outside
+	static Game ghome;
+	static Board bhome1;
+	static Space[] shome1;
+	static HomeCircle[] hchome1;
+	static Home[] hhome1;
+	static HashMap<String, ArrayList<HomeRow>> hrhome1;
+	static Board bhome2;
+	static Space[] shome2;
+	static HomeCircle[] hchome2;
+	static Home[] hhome2;
+	static HashMap<String, ArrayList<HomeRow>> hrhome2;
+	static ArrayList<Player> playershome;
+	static State sthome;
+	static int[] rollshome;
+	static MoveMain movehome;
+	
 	
 	public static void createExamples(){
 		if(g1 == null){
@@ -851,6 +886,186 @@ public class Game implements IGame {
 			
 			stsafe = new State(bsafe, playersafe, rollssafe);
 			gsafe.set_state(stsafe);
+			
+			// examples for wraparound move
+			Player playerwrap = new Player();
+			
+			gwrap = new Game();
+			gwrap.register(playerwrap);
+			playerswrap = new ArrayList<Player>();
+			playerswrap.add(playerwrap);
+			rollswrap = new int[2];
+			rollswrap[0] = 1;
+			rollswrap[1] = 5;
+			
+			
+			movewrap = new MoveMain(new Pawn(0, "green"), 16, 5);
+			
+			// board before wraparound move
+			one_pawn = new ArrayList<Pawn>(Arrays.asList(new Pawn(0, "green")));
+			swrap1 = new Space[17];
+			swrap1[0] = new Entry("green", true, new ArrayList<Pawn>());
+			swrap1[1] = new Space(null, false, new ArrayList<Pawn>());
+			swrap1[2] = new Space(null, false, new ArrayList<Pawn>());
+			swrap1[3] = new Space(null, false, new ArrayList<Pawn>());
+			swrap1[4] = new Space(null, false, new ArrayList<Pawn>());
+			swrap1[5] = new Space(null, false, new ArrayList<Pawn>());
+			swrap1[6] = new Space(null, false, new ArrayList<Pawn>());
+			swrap1[7] = new Space(null, true, new ArrayList<Pawn>());
+			swrap1[8] = new Space(null, false, new ArrayList<Pawn>());
+			swrap1[9] = new Space(null, false, new ArrayList<Pawn>());
+			swrap1[10] = new Space(null, false, new ArrayList<Pawn>());
+			swrap1[11] = new Space(null, false, new ArrayList<Pawn>());
+			swrap1[12] = new PreHomeRow("green", true, new ArrayList<Pawn>());
+			swrap1[13] = new Space(null, false, new ArrayList<Pawn>());
+			swrap1[14] = new Space(null, false, new ArrayList<Pawn>());
+			swrap1[15] = new Space(null, false, new ArrayList<Pawn>());
+			swrap1[16] = new Space(null, false, one_pawn);
+		   
+			hwrap1 = new Home[1];
+			hwrap1[0] = new Home("green", false, new ArrayList<Pawn>());
+			
+			hcwrap1 = new HomeCircle[1];
+			hcwrap1[0] = new HomeCircle("green", false, three_pawns);
+			
+			ArrayList<HomeRow> rowwrap = new ArrayList<HomeRow>();
+			for(int j = 0; j < 7; j++){
+				rowwrap.add(new HomeRow("green", false, new ArrayList<Pawn>()));
+			}
+			
+			hrwrap1 = new HashMap<String, ArrayList<HomeRow>>();
+			hrwrap1.put("green", rowwrap);
+			
+			bwrap1 = new Board(swrap1, hcwrap1, hwrap1, hrwrap1);
+			stwrap = new State(bwrap1, playerwrap, rollswrap);
+			gwrap.set_state(stwrap);
+			
+			// board after wraparound move
+			one_pawn = new ArrayList<Pawn>(Arrays.asList(new Pawn(0, "green")));
+			swrap2 = new Space[17];
+			swrap2[0] = new Entry("green", true, new ArrayList<Pawn>());
+			swrap2[1] = new Space(null, false, new ArrayList<Pawn>());
+			swrap2[2] = new Space(null, false, new ArrayList<Pawn>());
+			swrap2[3] = new Space(null, false, new ArrayList<Pawn>());
+			swrap2[4] = new Space(null, false, one_pawn);
+			swrap2[5] = new Space(null, false, new ArrayList<Pawn>());
+			swrap2[6] = new Space(null, false, new ArrayList<Pawn>());
+			swrap2[7] = new Space(null, true, new ArrayList<Pawn>());
+			swrap2[8] = new Space(null, false, new ArrayList<Pawn>());
+			swrap2[9] = new Space(null, false, new ArrayList<Pawn>());
+			swrap2[10] = new Space(null, false, new ArrayList<Pawn>());
+			swrap2[11] = new Space(null, false, new ArrayList<Pawn>());
+			swrap2[12] = new PreHomeRow("green", true, new ArrayList<Pawn>());
+			swrap2[13] = new Space(null, false, new ArrayList<Pawn>());
+			swrap2[14] = new Space(null, false, new ArrayList<Pawn>());
+			swrap2[15] = new Space(null, false, new ArrayList<Pawn>());
+			swrap2[16] = new Space(null, false, new ArrayList<Pawn>());
+		   
+			hwrap2 = new Home[1];
+			hwrap2[0] = new Home("green", false, new ArrayList<Pawn>());
+			
+			hcwrap2 = new HomeCircle[1];
+			hcwrap2[0] = new HomeCircle("green", false, three_pawns);
+			
+			
+			hrwrap2 = new HashMap<String, ArrayList<HomeRow>>();
+			hrwrap2.put("green", rowwrap);
+			
+			bwrap2 = new Board(swrap2, hcwrap2, hwrap2, hrwrap2);
+			
+			// examples for move into home row from outside
+			Player playerhome = new Player();
+			
+			ghome = new Game();
+			ghome.register(playerhome);
+			playershome = new ArrayList<Player>();
+			playershome.add(playerhome);
+			rollshome = new int[2];
+			rollshome[0] = 1;
+			rollshome[1] = 5;
+			
+			
+			movehome = new MoveMain(new Pawn(0, "green"), 11, 5);
+			
+			// board before home move
+			one_pawn = new ArrayList<Pawn>(Arrays.asList(new Pawn(0, "green")));
+			shome1 = new Space[17];
+			shome1[0] = new Entry("green", true, new ArrayList<Pawn>());
+			shome1[1] = new Space(null, false, new ArrayList<Pawn>());
+			shome1[2] = new Space(null, false, new ArrayList<Pawn>());
+			shome1[3] = new Space(null, false, new ArrayList<Pawn>());
+			shome1[4] = new Space(null, false, new ArrayList<Pawn>());
+			shome1[5] = new Space(null, false, new ArrayList<Pawn>());
+			shome1[6] = new Space(null, false, new ArrayList<Pawn>());
+			shome1[7] = new Space(null, true, new ArrayList<Pawn>());
+			shome1[8] = new Space(null, false, new ArrayList<Pawn>());
+			shome1[9] = new Space(null, false, new ArrayList<Pawn>());
+			shome1[10] = new Space(null, false, new ArrayList<Pawn>());
+			shome1[11] = new Space(null, false, one_pawn);
+			shome1[12] = new PreHomeRow("green", true, new ArrayList<Pawn>());
+			shome1[13] = new Space(null, false, new ArrayList<Pawn>());
+			shome1[14] = new Space(null, false, new ArrayList<Pawn>());
+			shome1[15] = new Space(null, false, new ArrayList<Pawn>());
+			shome1[16] = new Space(null, false, new ArrayList<Pawn>());
+		   
+			hhome1 = new Home[1];
+			hhome1[0] = new Home("green", false, new ArrayList<Pawn>());
+			
+			hchome1 = new HomeCircle[1];
+			hchome1[0] = new HomeCircle("green", false, three_pawns);
+			
+			ArrayList<HomeRow> rowhome = new ArrayList<HomeRow>();
+			for(int j = 0; j < 7; j++){
+				rowhome.add(new HomeRow("green", false, new ArrayList<Pawn>()));
+			}
+			
+			hrhome1 = new HashMap<String, ArrayList<HomeRow>>();
+			hrhome1.put("green", rowhome);
+			
+			bhome1 = new Board(shome1, hchome1, hhome1, hrhome1);
+			sthome = new State(bhome1, playerwrap, rollshome);
+			ghome.set_state(sthome);
+			
+			// board after wraparound move
+			one_pawn = new ArrayList<Pawn>(Arrays.asList(new Pawn(0, "green")));
+			shome2 = new Space[17];
+			shome2[0] = new Entry("green", true, new ArrayList<Pawn>());
+			shome2[1] = new Space(null, false, new ArrayList<Pawn>());
+			shome2[2] = new Space(null, false, new ArrayList<Pawn>());
+			shome2[3] = new Space(null, false, new ArrayList<Pawn>());
+			shome2[4] = new Space(null, false, new ArrayList<Pawn>());
+			shome2[5] = new Space(null, false, new ArrayList<Pawn>());
+			shome2[6] = new Space(null, false, new ArrayList<Pawn>());
+			shome2[7] = new Space(null, true, new ArrayList<Pawn>());
+			shome2[8] = new Space(null, false, new ArrayList<Pawn>());
+			shome2[9] = new Space(null, false, new ArrayList<Pawn>());
+			shome2[10] = new Space(null, false, new ArrayList<Pawn>());
+			shome2[11] = new Space(null, false, new ArrayList<Pawn>());
+			shome2[12] = new PreHomeRow("green", true, new ArrayList<Pawn>());
+			shome2[13] = new Space(null, false, new ArrayList<Pawn>());
+			shome2[14] = new Space(null, false, new ArrayList<Pawn>());
+			shome2[15] = new Space(null, false, new ArrayList<Pawn>());
+			shome2[16] = new Space(null, false, new ArrayList<Pawn>());
+		   
+			hhome2 = new Home[1];
+			hhome2[0] = new Home("green", false, new ArrayList<Pawn>());
+			
+			hchome2 = new HomeCircle[1];
+			hchome2[0] = new HomeCircle("green", false, three_pawns);
+			
+			rowhome = new ArrayList<HomeRow>();
+			for(int j = 0; j < 3; j++){
+				rowhome.add(new HomeRow("green", false, new ArrayList<Pawn>()));
+			}
+			rowhome.add(new HomeRow("green", false, one_pawn));
+			for(int j = 4; j < 7; j++){
+				rowhome.add(new HomeRow("green", false, new ArrayList<Pawn>()));
+			}
+			
+			hrhome2 = new HashMap<String, ArrayList<HomeRow>>();
+			hrhome2.put("green", rowhome);
+			
+			bhome2 = new Board(shome2, hchome2, hhome2, hrhome2);
 		}
 		
 	}
@@ -880,6 +1095,14 @@ public class Game implements IGame {
 		Tester.check(!gblock.is_Legal(moveblock2), "blockade move legal test 2");
 		
 		Tester.check(!gsafe.is_Legal(movesafe), "safe space move legal test 1");
+		
+		Tester.check(gwrap.is_Legal(movewrap), "wraparound move legal test");
+		gwrap.update_Board(movewrap);
+		Tester.check(gwrap.game_state.get_board().equals(bwrap2), "wraparound move test");
+		
+		Tester.check(ghome.is_Legal(movehome), "move to home legal test");
+		ghome.update_Board(movehome);
+		Tester.check(ghome.game_state.get_board().equals(bhome2), "move to home test");
 
 
 		
