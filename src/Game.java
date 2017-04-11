@@ -231,6 +231,22 @@ public class Game implements IGame {
 	}
 	
 	
+	// checks whether a pawn will
+	// be bopped given a space and color
+	
+	public boolean bop(Space s, String color){
+		if (s.pawns_list.size() == 1){
+			Pawn curr_pawn = s.get_pawns().get(0);
+			if(!curr_pawn.get_color().equals(color)){
+				HomeCircle curr_pawn_home = this.game_state.get_board().get_HomeCircle(curr_pawn.get_color());
+				s.remove_Pawn(curr_pawn);
+				curr_pawn_home.add_Pawn(curr_pawn);
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	
 	
 	
@@ -238,33 +254,110 @@ public class Game implements IGame {
 	
 	// alters Board in curr_state with move
 	// checks if move is legal before update
-	public int update_Board(IMove move){
+	public boolean update_Board(IMove move){
+		Board b = this.game_state.get_board();
 		if (move == null){
-			  return 0;
+			  return false;
 		  }
+		if (!is_Legal(move)){
+			return false;
+		}
 		
 		if (EnterPiece.class.isAssignableFrom(move.getClass())) {
-			Board b = this.game_state.get_board();
 			EnterPiece m = (EnterPiece) move;
 			Pawn p = m.get_pawn();
 			String pawn_color = p.get_color();		   
 			HomeCircle h = b.get_HomeCircle(pawn_color);
-			for (Space s : b.get_Spaces()) {
-				  if (s.get_color() == null){
-					  continue;
-				  }
-				  else if (s.get_color().equals(pawn_color) && Entry.class.isAssignableFrom(s.getClass())){
-					  s.add_Pawn(p);
-					  h.remove_Pawn(p);
-					  break;
-				  }
-			  }
+			Entry e = b.get_Entry(pawn_color);
+			boolean bopped = bop(e, pawn_color);
+		
+			e.add_Pawn(p);
+			h.remove_Pawn(p);
+
+			if (!this.game_state.remove_roll(5)){
+				this.game_state.set_rolls(new int[0]);
+			}
+			if(bopped){
+				this.game_state.add_roll(20);
+			}
+			return true;
 		  }
 		
 		else if(MoveMain.class.isAssignableFrom(move.getClass())){
-			return 0;
+			MoveMain m = (MoveMain) move;
+			Pawn p = m.get_pawn();
+			String pawn_color = p.get_color();	
+			int start = m.get_start();
+			int distance = m.get_distance();
+			Space[] spaces = this.game_state.get_board().get_Spaces();
+			int space_length = spaces.length;
+			Space starting_space = spaces[start];
+			Space ending_space = null;
+			int curr_space_index = start;
+			
+			boolean in_home_row = false; // true if list of spaces includes home row
+			boolean reached_home = false; // true if list of spaces includes home
+			ArrayList<HomeRow> homerow = null;
+			
+			for(int i = 0; i <= distance; i++){
+				if(!in_home_row){
+					ending_space = spaces[curr_space_index];
+					
+					if (pawn_color.equals(ending_space.get_color()) && PreHomeRow.class.isAssignableFrom(ending_space.getClass())){
+						homerow = this.game_state.get_board().get_HomeRow(pawn_color);
+						in_home_row = true;
+						curr_space_index = 0;
+						
+					}
+					else{
+						curr_space_index = (curr_space_index + 1) % space_length; // next space on board; could wrap around
+					}
+				}
+				else if(!reached_home){
+					if(curr_space_index == homerow.size()){
+						Home home = this.game_state.get_board().get_Home(pawn_color);
+						ending_space = home;
+						reached_home = true;
+					}
+					else{
+						ending_space = homerow.get(curr_space_index);
+						curr_space_index++;
+					}
+					
+				}
+			}
+			boolean bopped = bop(ending_space, pawn_color);
+			
+			ending_space.add_Pawn(p);
+			starting_space.remove_Pawn(p);
+
+			this.game_state.remove_roll(distance);
+			
+			if(bopped){
+				this.game_state.add_roll(20);
+			}
+			return true;
+		  }
+		else{
+			MoveHome m = (MoveHome) move;
+			Pawn p = m.get_pawn();
+			String pawn_color = p.get_color();	
+			int start = m.get_start();
+			int distance = m.get_distance();
+			ArrayList<HomeRow> homerow = this.game_state.get_board().get_HomeRow(pawn_color);
+			Space starting_space = homerow.get(start);
+			Space ending_space = null;
+			if(start + distance < 7){
+				ending_space = homerow.get(start+distance);
+			}
+			else{
+				ending_space = this.game_state.get_board().get_Home(pawn_color);
+			}
+			ending_space.add_Pawn(p);
+			starting_space.remove_Pawn(p);
+			
+			return true;
 		}
-		return 0;
 	}
 	
 	public void start() {
@@ -551,13 +644,14 @@ public class Game implements IGame {
 		Tester.check(g2.is_Legal(move5), "main move legal test 1");
 		Tester.check(!g2.is_Legal(move6), "main move legal test 2");
 		Tester.check(!g2.is_Legal(move7), "main move legal test 3");
+		g2.update_Board(move5);
+		Tester.check(g2.game_state.get_board().equals(b4), "main move test");
 		
 		Tester.check(g3.is_Legal(move8), "home row move legal test 1");
 		Tester.check(!g3.is_Legal(move9), "home row move legal test 2");
 		Tester.check(!g3.is_Legal(move10), "home row move legal test 3");
 
-//		g2.update_Board(move5);
-//		Tester.check(g2.game_state.get_board().equals(b4), "main move test");
+
 		
 		
 		

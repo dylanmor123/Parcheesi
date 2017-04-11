@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class State {
 	protected Board curr_b;
@@ -34,6 +36,31 @@ public class State {
 		this.rolls_vals_left = r;
 	}
 	
+	public boolean remove_roll(int r){
+		ArrayList<Integer> new_rolls = new ArrayList<Integer>();
+		boolean removed = false;
+		for(int i=0; i < rolls_vals_left.length; i++){
+			if(rolls_vals_left[i] != r) {
+				new_rolls.add(rolls_vals_left[i]);
+			}
+			else if(rolls_vals_left[i] == r){
+				removed = true;
+			}
+		}
+		int[] nr = new int[new_rolls.size()];
+		for(int i=0, len = new_rolls.size(); i < len; i++){
+		   nr[i] = new_rolls.get(i);
+		}
+		this.set_rolls(nr);
+		return removed;
+	}
 	
-
+	public void add_roll(int r){
+		int[] new_rolls = new int[this.rolls_vals_left.length+1];
+		for (int i=0; i < rolls_vals_left.length; i++){
+			new_rolls[i] = rolls_vals_left[i];
+		}
+		new_rolls[new_rolls.length] = r;
+	}
 }
+	
