@@ -9,4 +9,16 @@ class MoveHome implements IMove {
     this.start=start;
     this.distance=distance;
   }
+  
+  public Pawn get_pawn(){
+	  return this.pawn;
+  }
+  
+  public int get_start(){
+	  return this.start;
+  }
+  
+  public int get_distance(){
+	  return this.distance;
+  }
 }

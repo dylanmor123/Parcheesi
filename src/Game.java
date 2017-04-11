@@ -183,13 +183,51 @@ public class Game implements IGame {
 			
 		}
 		else if(MoveHome.class.isAssignableFrom(move.getClass())){
-			//Logic for MoveHome move type
+			MoveHome m = (MoveHome) move;
+			Pawn pawn = m.get_pawn();
+			int start = m.get_start();
+			int distance = m.get_distance();
+			Player player = (Player) this.game_state.get_curr_player();
+			Board b = this.game_state.get_board();
+			
+			// check if player color matches pawn color
+			String player_color = player.get_color();
+			String pawn_color = pawn.get_color();
+			if(! pawn_color.equals(player_color) ){
+				return false;
+			}
+			
+			// Check if pawn is in space defined by start
+			ArrayList<HomeRow> row = b.get_HomeRow(pawn_color);
+			int row_length = row.size();
+			if(start < 0 || start >= row_length){
+				return false;
+			}
+			HomeRow hr = row.get(start);
+			ArrayList<Pawn> in_space = hr.get_pawns();
+			if(! in_space.contains(pawn)){
+				return false;
+			}
+			
+			// Check if move is too long
+			int end = start + distance;
+			if(end >= row_length + 1){
+				return false;
+			}
+			
+			// Check if distance appears in rolls
+			int[] rolls = this.game_state.get_rolls();
+			for(int r : rolls){
+				if(r == distance){
+					return true;
+				}
+			}
+			return false; 
 		}
 		else{
 			return false;
 		}
 		
-		return false;
 	}
 	
 	
@@ -267,6 +305,21 @@ public class Game implements IGame {
 	static Home[] h4;
 	static HashMap<String, ArrayList<HomeRow>> hr4;
 	
+	// Test home row moves
+	static Game g3;
+	static Board b5;
+	static ArrayList<Player> players3;
+	static State st3;
+	static int[] rolls3;
+	static MoveHome move8;
+	static MoveHome move9;
+	static MoveHome move10;
+	
+	static Board b6;
+	static Space[] s6;
+	static HomeCircle[] hc6;
+	static Home[] h6;
+	static HashMap<String, ArrayList<HomeRow>> hr6;
 	
 	
 	public static void createExamples(){
@@ -417,6 +470,69 @@ public class Game implements IGame {
 			hr4.put("blue", new ArrayList<HomeRow>(hrblue));
 			
 			b4 = new Board(s4, hc4, h4, hr4);
+			
+			// home row move examples
+			Player player3 = new Player();
+			player.startGame("green");
+			
+			g3 = new Game();
+			g3.register(player3);
+			players3 = new ArrayList<Player>();
+			players3.add(player3);
+			b5 = new Board(players1, 4);
+			rolls3 = new int[2];
+			rolls3[0] = 1;
+			rolls3[1] = 5;
+			
+			
+			move8 = new MoveHome(new Pawn(0, "green"), 5, 1);
+			move9 = new MoveHome(new Pawn(0, "green"), 5, 5);
+			move10 = new MoveHome(new Pawn(0, "green"), 2, 1);
+			
+			// board after entry move
+			s6 = new Space[17];
+			s6[0] = new Entry("green", true, empty_pawns);
+			s6[1] = new Space(null, false, empty_pawns);
+			s6[2] = new Space(null, false, empty_pawns);
+			s6[3] = new Space(null, false, empty_pawns);
+			s6[4] = new Space(null, false, empty_pawns);
+			s6[5] = new Space(null, false, empty_pawns);
+			s6[6] = new Space(null, false, empty_pawns);
+			s6[7] = new Space(null, true, empty_pawns);
+			s6[8] = new Space(null, false, empty_pawns);
+			s6[9] = new Space(null, false, empty_pawns);
+			s6[10] = new Space(null, false, empty_pawns);
+			s6[11] = new Space(null, false, empty_pawns);
+			s6[12] = new PreHomeRow("green", true, empty_pawns);
+			s6[13] = new Space(null, false, empty_pawns);
+			s6[14] = new Space(null, false, empty_pawns);
+			s6[15] = new Space(null, false, empty_pawns);
+			s6[16] = new Space(null, false, empty_pawns);
+		   
+			h6 = new Home[1];
+			h6[0] = new Home("green", false, empty_pawns);
+			
+			hc6 = new HomeCircle[1];
+			hc6[0] = new HomeCircle("green", false, three_pawns);
+			
+			ArrayList<Pawn> single_pawn = new ArrayList<Pawn>();
+			single_pawn.add(new Pawn(0, "green"));
+			ArrayList<HomeRow> row3 = new ArrayList<HomeRow>();
+			for(int j = 0; j < 5; j++){
+				row3.add(new HomeRow("green", false, empty_pawns));
+			}
+			row3.add(new HomeRow("green", false, single_pawn));
+			for(int j = 6; j < 6; j++){
+				row3.add(new HomeRow("green", false, empty_pawns));
+			}
+			
+			hr6 = new HashMap<String, ArrayList<HomeRow>>();
+			hr6.put("green", row3);
+			
+			b6 = new Board(s6, hc6, h6, hr6);
+			
+			st3 = new State(b6, player3, rolls3);
+			g3.set_state(st3);
 		}
 		
 	}
@@ -435,6 +551,11 @@ public class Game implements IGame {
 		Tester.check(g2.is_Legal(move5), "main move legal test 1");
 		Tester.check(!g2.is_Legal(move6), "main move legal test 2");
 		Tester.check(!g2.is_Legal(move7), "main move legal test 3");
+		
+		Tester.check(g3.is_Legal(move8), "home row move legal test 1");
+		Tester.check(!g3.is_Legal(move9), "home row move legal test 2");
+		Tester.check(!g3.is_Legal(move10), "home row move legal test 3");
+
 //		g2.update_Board(move5);
 //		Tester.check(g2.game_state.get_board().equals(b4), "main move test");
 		
