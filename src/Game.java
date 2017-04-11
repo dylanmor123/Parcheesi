@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Random;
 
 public class Game implements IGame {
 	protected ArrayList<Player> players = new ArrayList<Player>();
@@ -119,7 +120,7 @@ public class Game implements IGame {
 			Space curr_space = null;
 			ArrayList<HomeRow> homerow = null;
 			
-			while(spaces_to_check.size() < distance){
+			while(spaces_to_check.size() <= distance){
 				if(!in_home_row){
 					curr_space = spaces[curr_space_index];
 					spaces_to_check.add(curr_space);
@@ -359,6 +360,7 @@ public class Game implements IGame {
 			}
 			else{
 				ending_space = this.game_state.get_board().get_Home(pawn_color);
+				this.game_state.add_roll(10);
 			}
 			ending_space.add_Pawn(p);
 			starting_space.remove_Pawn(p);
@@ -367,8 +369,91 @@ public class Game implements IGame {
 		}
 	}
 	
+	public int roll_die(){
+		return 1 + (int)(Math.random() * 6);
+	}
+	
+	// returns true if somebody has won game; false otherwise
+	public boolean game_over(){
+		for(Player p : this.players){
+			String color = p.get_color();
+			Home h = this.game_state.get_board().get_Home(color);
+			
+			if(h.get_pawns().size() == this.num_pawns){
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public void start() {
-		// this.b = new Board(this.players, num_pawns);
+		// initialize state
+		Board new_board = new Board(this.players, this.num_pawns);
+		Player curr_player = this.players.get(0);
+		int[] rolls = new int[0];
+		this.game_state = new State(new_board, curr_player, rolls);
+		
+		// loop through players until winner
+		// generate dice rolls
+		// ask player for move
+		// if move is illegal, remove cheating player from game
+		// double penalty thing
+		boolean won = false;
+		boolean doubles = false; //true if doubles were rolled
+		boolean cheated = false; //true if player cheated on turn
+		int player_index = 0;
+		int num_players = this.players.size();
+		
+		while(!game_over()){
+			// add two rolls
+			curr_player = this.players.get(player_index);
+			int roll1 = roll_die();
+			int roll2 = roll_die();
+			if (roll1 == roll2){
+				int roll1c = 7 - roll1;
+				int roll2c = 7 - roll2;
+				game_state.add_roll(roll1c);
+				game_state.add_roll(roll2c);
+				doubles = true;
+			}
+			game_state.add_roll(roll1);
+			game_state.add_roll(roll2);
+			
+			
+			while(game_state.get_rolls().length != 0 && !game_over()){
+				IMove move = game_state.get_curr_player().doMove(game_state.get_board(), game_state.get_rolls());
+				
+				if(!update_Board(move)){
+					// update_Board returns false if player passed illegal move (cheated)
+					num_players = this.players.size();
+					this.players.remove(curr_player); // remove cheating player
+					cheated = true;
+					break;
+				}
+				
+				
+			}
+			
+			// update player index, reset flags
+			if(cheated){
+				cheated = false;
+				doubles = false;
+				if(player_index == num_players){
+					player_index = 0;
+				}
+				else{
+					continue;
+				}
+			}
+			else{
+				player_index = (player_index + 1) % num_players;
+			}
+			
+		}
+		
+		// Broken out of loop -> current player wins
+		System.out.println(curr_player.get_color() + " player wins!");
+		
 	}
 	
 	// Examples
@@ -420,6 +505,32 @@ public class Game implements IGame {
 	static HomeCircle[] hc6;
 	static Home[] h6;
 	static HashMap<String, ArrayList<HomeRow>> hr6;
+	
+	// Test blockade check
+	static Game gblock;
+	static Board bblock;
+	static Space[] sblock;
+	static HomeCircle[] hcblock;
+	static Home[] hblock;
+	static HashMap<String, ArrayList<HomeRow>> hrblock;
+	static ArrayList<Player> playersblock;
+	static State stblock;
+	static int[] rollsblock;
+	static MoveMain moveblock1;
+	static MoveMain moveblock2;
+	
+	
+	// Test preventing move onto safe space with opposing pawn
+	static Game gsafe;
+	static Board bsafe;
+	static Space[] ssafe;
+	static HomeCircle[] hcsafe;
+	static Home[] hsafe;
+	static HashMap<String, ArrayList<HomeRow>> hrsafe;
+	static ArrayList<Player> playerssafe;
+	static State stsafe;
+	static int[] rollssafe;
+	static MoveMain movesafe;
 	
 	
 	public static void createExamples(){
@@ -633,6 +744,113 @@ public class Game implements IGame {
 			
 			st3 = new State(b6, player3, rolls3);
 			g3.set_state(st3);
+			
+			// blockaded move examples
+			Player playerblock = new Player();
+			
+			gblock = new Game();
+			gblock.register(playerblock);
+			
+			rollsblock = new int[2];
+			rollsblock[0] = 1;
+			rollsblock[1] = 5;
+			
+			
+			moveblock1 = new MoveMain(new Pawn(0, "green"), 5, 1);
+			moveblock2 = new MoveMain(new Pawn(0, "green"), 5, 5);
+			
+			// board with blockade move
+			ArrayList<Pawn> blockade = new ArrayList<Pawn>();
+			blockade.add(new Pawn(0, "blue"));
+			blockade.add(new Pawn(1, "blue"));
+			
+			sblock = new Space[17];
+			sblock[0] = new Entry("green", true, empty_pawns);
+			sblock[1] = new Space(null, false, empty_pawns);
+			sblock[2] = new Space(null, false, empty_pawns);
+			sblock[3] = new Space(null, false, empty_pawns);
+			sblock[4] = new Space(null, false, empty_pawns);
+			sblock[5] = new Space(null, false, one_pawn);
+			sblock[6] = new Space(null, false, empty_pawns);
+			sblock[7] = new Space(null, true, blockade);
+			sblock[8] = new Space(null, false, empty_pawns);
+			sblock[9] = new Space(null, false, empty_pawns);
+			sblock[10] = new Space(null, false, empty_pawns);
+			sblock[11] = new Space(null, false, empty_pawns);
+			sblock[12] = new PreHomeRow("green", true, empty_pawns);
+			sblock[13] = new Space(null, false, empty_pawns);
+			sblock[14] = new Space(null, false, empty_pawns);
+			sblock[15] = new Space(null, false, empty_pawns);
+			sblock[16] = new Space(null, false, empty_pawns);
+		   
+			hblock = new Home[1];
+			hblock[0] = new Home("green", false, empty_pawns);
+			
+			hcblock = new HomeCircle[1];
+			hcblock[0] = new HomeCircle("green", false, three_pawns);
+			
+			ArrayList<HomeRow> r = new ArrayList<HomeRow>();
+			for(int j = 0; j < 7; j++){
+				r.add(new HomeRow("green", false, empty_pawns));
+			}
+			
+			hrblock = new HashMap<String, ArrayList<HomeRow>>();
+			hrblock.put("green", r);
+			
+			bblock = new Board(sblock, hcblock, hblock, hrblock);
+			
+			stblock = new State(bblock, playerblock, rollsblock);
+			gblock.set_state(stblock);
+			
+			// safe space move examples
+			Player playersafe = new Player();
+			
+			gsafe = new Game();
+			gsafe.register(playersafe);
+			
+			rollssafe = new int[2];
+			rollssafe[0] = 1;
+			rollssafe[1] = 5;
+			
+			
+			movesafe = new MoveMain(new Pawn(0, "green"), 7, 5);
+			
+			// board with safe move
+			ArrayList<Pawn> opposing_pawn = new ArrayList<Pawn>();
+			opposing_pawn.add(new Pawn(0, "blue"));
+			
+			ssafe = new Space[17];
+			ssafe[0] = new Entry("green", true, empty_pawns);
+			ssafe[1] = new Space(null, false, empty_pawns);
+			ssafe[2] = new Space(null, false, empty_pawns);
+			ssafe[3] = new Space(null, false, empty_pawns);
+			ssafe[4] = new Space(null, false, empty_pawns);
+			ssafe[5] = new Space(null, false, empty_pawns);
+			ssafe[6] = new Space(null, false, empty_pawns);
+			ssafe[7] = new Space(null, true, one_pawn);
+			ssafe[8] = new Space(null, false, empty_pawns);
+			ssafe[9] = new Space(null, false, empty_pawns);
+			ssafe[10] = new Space(null, false, empty_pawns);
+			ssafe[11] = new Space(null, false, empty_pawns);
+			ssafe[12] = new PreHomeRow("green", true, opposing_pawn);
+			ssafe[13] = new Space(null, false, empty_pawns);
+			ssafe[14] = new Space(null, false, empty_pawns);
+			ssafe[15] = new Space(null, false, empty_pawns);
+			ssafe[16] = new Space(null, false, empty_pawns);
+		   
+			hsafe = new Home[1];
+			hsafe[0] = new Home("green", false, empty_pawns);
+			
+			hcsafe = new HomeCircle[1];
+			hcsafe[0] = new HomeCircle("green", false, three_pawns);
+			
+			hrsafe = new HashMap<String, ArrayList<HomeRow>>();
+			hrsafe.put("green", r);
+			
+			bsafe = new Board(ssafe, hcsafe, hsafe, hrsafe);
+			
+			stsafe = new State(bsafe, playersafe, rollssafe);
+			gsafe.set_state(stsafe);
 		}
 		
 	}
@@ -657,6 +875,11 @@ public class Game implements IGame {
 		Tester.check(g3.is_Legal(move8), "home row move legal test 1");
 		Tester.check(!g3.is_Legal(move9), "home row move legal test 2");
 		Tester.check(!g3.is_Legal(move10), "home row move legal test 3");
+		
+		Tester.check(gblock.is_Legal(moveblock1), "blockade move legal test 1");
+		Tester.check(!gblock.is_Legal(moveblock2), "blockade move legal test 2");
+		
+		Tester.check(!gsafe.is_Legal(movesafe), "safe space move legal test 1");
 
 
 		
