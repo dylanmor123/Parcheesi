@@ -10,7 +10,14 @@ public class Game implements IGame {
 	public void register(IPlayer p) {
 		Player player = (Player) p;
 		this.players.add(player);
-		String color = "green";
+		String color = "red";
+		if(players.size() == 1){
+			color = "green";
+		}
+		else if(players.size() == 2){
+			color = "blue";
+		}
+		
 		p.startGame(color);
 	}
 	
@@ -636,7 +643,7 @@ public class Game implements IGame {
 		Tester.check(g1.game_state.get_board().equals(b2), "entry move test");
 		Tester.check(!g1.is_Legal(move1), "entry move legal test 2");
 		Tester.check(!g1.is_Legal(move4), "entry move legal test 3");
-		Tester.check(g1.is_Legal(move2), "entry move legal test 4");
+		Tester.check(!g1.is_Legal(move2), "entry move legal test 4");
 		g1.update_Board(move2);
 		Tester.check(!g1.is_Legal(move3), "entry move legal test 5");
 		

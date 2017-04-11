@@ -3,10 +3,10 @@ import java.util.Arrays;
 
 public class State {
 	protected Board curr_b;
-	protected IPlayer curr_player;
+	protected Player curr_player;
 	protected int[] rolls_vals_left;
 	
-	public State(Board b, IPlayer p, int[] rolls){
+	public State(Board b, Player p, int[] rolls){
 		this.curr_b = b;
 		this.curr_player = p;
 		this.rolls_vals_left = rolls;
@@ -16,7 +16,7 @@ public class State {
 		return this.curr_b;
 	}
 	
-	public IPlayer get_curr_player(){
+	public Player get_curr_player(){
 		return this.curr_player;
 	}
 	
@@ -28,7 +28,7 @@ public class State {
 		this.curr_b = b;
 	}
 	
-	public void set_curr_player(IPlayer p){
+	public void set_curr_player(Player p){
 		this.curr_player = p;
 	}
 	
@@ -61,6 +61,20 @@ public class State {
 			new_rolls[i] = rolls_vals_left[i];
 		}
 		new_rolls[new_rolls.length] = r;
+	}
+	
+	@Override
+	public boolean equals(Object s){
+		if(s == null){
+			return false;
+		}
+		if (!State.class.isAssignableFrom(s.getClass())) {
+			return false;
+		}
+		
+		State state = (State) s;
+		
+		return state.get_curr_player().get_color().equals(this.curr_player.get_color()) && state.get_board().equals(this.curr_b) && (state.get_rolls() == this.rolls_vals_left);
 	}
 }
 	
