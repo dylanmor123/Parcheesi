@@ -1,10 +1,137 @@
+import java.io.*;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashMap;
 
 public class State {
 	protected Board curr_b;
 	protected Player curr_player;
-	protected int[] rolls_vals_left;
+	protected int[] rolls_vals_left = new int[0];
+	
+	// construct game state from text file
+	public State(String filepath, int num_players) throws IOException{
+		BufferedReader br = new BufferedReader(new FileReader(filepath)); 
+	    for(String line; (line = br.readLine()) != null; ) {
+	        if(line.equals("_Player")){
+	        	String color = br.readLine();
+	        	boolean doubles_penalty = Boolean.parseBoolean(br.readLine());
+	        	this.curr_player = new Player(color, doubles_penalty);
+	        }
+	        else if(line.equals("_Rolls")){
+	        	line = br.readLine();
+	        	while(!line.equals("_Board")){
+	        		this.add_roll(Integer.parseInt(line));
+	        		line = br.readLine();
+	        	}
+	        }
+	        else{ // everything after _Board
+	        	Space[] spaces = new Space[17 * num_players];
+	        	int i = 0;
+	        	
+	        	while(!line.equals("_HomeCircle")){
+	        		String type = line;
+	        		String color = br.readLine();
+	        		if(color.equals("null")){
+	        			color = null;
+	        		}
+	        		boolean safe = Boolean.parseBoolean(br.readLine());
+	        		line = br.readLine();
+	        		ArrayList<Pawn> pawns = new ArrayList<Pawn>();
+	        		while(line.equals("_Pawn")){
+	        			String pawn_color = br.readLine();
+	        			int id = Integer.parseInt(br.readLine());
+	        			pawns.add(new Pawn(id, pawn_color));
+	        			line = br.readLine();
+	        		}
+	        		
+	        		Space s = null;
+	        		
+	        		if(type.equals("_Entry")){
+	        			s = new Entry(color, safe, pawns);
+	        		}
+	        		else if (type.equals("_Space")){
+	        			s = new Space(color, safe, pawns);
+	        		}
+	        		else{
+	        			s = new PreHomeRow(color, safe, pawns);
+	        		}
+	        		
+	        		spaces[i] = s;
+	        		i++;
+	        		
+	        	}
+	        	
+	        	HomeCircle[] home_circles = new HomeCircle[num_players];
+	        	i = 0;
+	        	
+	        	while(!line.equals("_Home")){
+	        		String color = br.readLine();
+	        		boolean safe = Boolean.parseBoolean(br.readLine());
+	        		line = br.readLine();
+	        		ArrayList<Pawn> pawns = new ArrayList<Pawn>();
+	        		while(line.equals("_Pawn")){
+	        			String pawn_color = br.readLine();
+	        			int id = Integer.parseInt(br.readLine());
+	        			pawns.add(new Pawn(id, pawn_color));
+	        			line = br.readLine();
+	        		}
+	        		
+	        		home_circles[i] = new HomeCircle(color, safe, pawns);
+	        		i++;
+	        		
+	        	}
+	        	
+	        	Home[] homes= new Home[num_players];
+	        	i = 0;
+	        	
+	        	while(!line.equals("_HomeRows")){
+	        		String color = br.readLine();
+	        		boolean safe = Boolean.parseBoolean(br.readLine());
+	        		line = br.readLine();
+	        		ArrayList<Pawn> pawns = new ArrayList<Pawn>();
+	        		while(line.equals("_Pawn")){
+	        			String pawn_color = br.readLine();
+	        			int id = Integer.parseInt(br.readLine());
+	        			pawns.add(new Pawn(id, pawn_color));
+	        			line = br.readLine();
+	        		}
+	        		
+	        		homes[i] = new Home(color, safe, pawns);
+	        		i++;
+	        	}
+	        	
+	        	HashMap<String, ArrayList<HomeRow>> home_rows = new HashMap<String, ArrayList<HomeRow>>();
+	        	
+	        	while(line != null){
+	        		ArrayList<HomeRow> row = new ArrayList<HomeRow>();
+	        		line = br.readLine();
+	        		String key = null;
+	        		while(line != null && line.equals("_Color")){
+	        			key = br.readLine();
+	        			line = br.readLine();
+	        			while(line != null && line.equals("_HomeRow")){
+	        				String space_color = br.readLine();
+	        				boolean safe = Boolean.parseBoolean(br.readLine());
+	        				line = br.readLine();
+	        				ArrayList<Pawn> pawns = new ArrayList<Pawn>();
+	    	        		while(line != null && line.equals("_Pawn")){
+	    	        			String pawn_color = br.readLine();
+	    	        			int id = Integer.parseInt(br.readLine());
+	    	        			pawns.add(new Pawn(id, pawn_color));
+	    	        			line = br.readLine();
+	    	        		}
+	    	        		
+	    	        		row.add(new HomeRow(space_color, safe, pawns));
+	        			}
+	        			
+	        			
+	        		}
+	        		home_rows.put(key, row);
+	        	}
+	        	
+	        	this.curr_b = new Board(spaces, home_circles, homes, home_rows);
+	        }
+	    }
+	}
 	
 	public State(Board b, Player p, int[] rolls){
 		this.curr_b = b;
@@ -60,7 +187,9 @@ public class State {
 		for (int i=0; i < rolls_vals_left.length; i++){
 			new_rolls[i] = rolls_vals_left[i];
 		}
-		new_rolls[new_rolls.length] = r;
+		new_rolls[new_rolls.length - 1] = r;
+		
+		this.rolls_vals_left = new_rolls;
 	}
 	
 	@Override

@@ -1,3 +1,5 @@
+import java.io.IOException;
+
 class Tester {
 
     static int faults = 0; 
@@ -9,7 +11,9 @@ class Tester {
 	}
     }
 
-    public static void main(String argv[]) {
+    public static void main(String argv[]) throws IOException {
+    	State s = new State("boards/test.txt", 1);
+    	
 	System.out.println("setting up examples ...");
 	Pawn.createExamples();
 	Space.createExamples();
