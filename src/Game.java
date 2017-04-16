@@ -527,7 +527,7 @@ public class Game implements IGame {
 		green_moves.add(new MoveMain(new Pawn(0, "green"), 15, 3));
 		green_moves.add(new MoveMain(new Pawn(1, "green"), 0, 3));
 		green_moves.add(new MoveMain(new Pawn(1, "green"), 3, 4));
-		green_moves.add(new MoveMain(new Pawn(1, "green"), 15, 1));
+		green_moves.add(new MoveMain(new Pawn(0, "green"), 15, 1));
 		
 		green.set_moves(green_moves);
 		
