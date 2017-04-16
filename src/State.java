@@ -1,5 +1,6 @@
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class State {
@@ -122,10 +123,10 @@ public class State {
 	    	        		
 	    	        		row.add(new HomeRow(space_color, safe, pawns));
 	        			}
-	        			
-	        			
+	        			home_rows.put(key, row);
+		        		row = new ArrayList<HomeRow>();
 	        		}
-	        		home_rows.put(key, row);
+	        		
 	        	}
 	        	
 	        	this.curr_b = new Board(spaces, home_circles, homes, home_rows);
@@ -167,7 +168,7 @@ public class State {
 		ArrayList<Integer> new_rolls = new ArrayList<Integer>();
 		boolean removed = false;
 		for(int i=0; i < rolls_vals_left.length; i++){
-			if(rolls_vals_left[i] != r) {
+			if(rolls_vals_left[i] != r || removed) {
 				new_rolls.add(rolls_vals_left[i]);
 			}
 			else if(rolls_vals_left[i] == r){
@@ -175,7 +176,7 @@ public class State {
 			}
 		}
 		int[] nr = new int[new_rolls.size()];
-		for(int i=0, len = new_rolls.size(); i < len; i++){
+		for(int i=0; i < new_rolls.size(); i++){
 		   nr[i] = new_rolls.get(i);
 		}
 		this.set_rolls(nr);
@@ -203,7 +204,7 @@ public class State {
 		
 		State state = (State) s;
 		
-		return state.get_curr_player().get_color().equals(this.curr_player.get_color()) && state.get_board().equals(this.curr_b) && (state.get_rolls() == this.rolls_vals_left);
+		return state.get_curr_player().get_color().equals(this.curr_player.get_color()) && state.get_board().equals(this.curr_b) && (Arrays.equals(state.get_rolls(), this.rolls_vals_left));
 	}
 }
 	

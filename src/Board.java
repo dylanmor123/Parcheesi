@@ -57,7 +57,7 @@ class Board {
 			}
 			
 			// 1 pre-home row space
-			this.spaces[start + 12] = new PreHomeRow(color_list.get(i), true, new ArrayList<Pawn>());
+			this.spaces[start + 12] = new PreHomeRow(color_list.get((i + 1) % color_list.size()), true, new ArrayList<Pawn>());
 			
 			// 4 unsafe spaces
 			for(int j = 13; j < 17; j++){
@@ -164,7 +164,7 @@ class Board {
     public static void createExamples() {
 		if (board1 == null) {
 			ArrayList<Pawn> empty_pawns = new ArrayList<Pawn>();
-			spaces1 = new Space[17];
+			spaces1 = new Space[34];
 			spaces1[0] = new Entry("green", true, empty_pawns);
 			spaces1[1] = new Space(null, false, empty_pawns);
 			spaces1[2] = new Space(null, false, empty_pawns);
@@ -177,35 +177,67 @@ class Board {
 			spaces1[9] = new Space(null, false, empty_pawns);
 			spaces1[10] = new Space(null, false, empty_pawns);
 			spaces1[11] = new Space(null, false, empty_pawns);
-			spaces1[12] = new PreHomeRow("green", true, empty_pawns);
+			spaces1[12] = new PreHomeRow("blue", true, empty_pawns);
 			spaces1[13] = new Space(null, false, empty_pawns);
 			spaces1[14] = new Space(null, false, empty_pawns);
 			spaces1[15] = new Space(null, false, empty_pawns);
 			spaces1[16] = new Space(null, false, empty_pawns);
+			spaces1[17] = new Entry("blue", true, empty_pawns);
+			spaces1[18] = new Space(null, false, empty_pawns);
+			spaces1[19] = new Space(null, false, empty_pawns);
+			spaces1[20] = new Space(null, false, empty_pawns);
+			spaces1[21] = new Space(null, false, empty_pawns);
+			spaces1[22] = new Space(null, false, empty_pawns);
+			spaces1[23] = new Space(null, false, empty_pawns);
+			spaces1[24] = new Space(null, true, empty_pawns);
+			spaces1[25] = new Space(null, false, empty_pawns);
+			spaces1[26] = new Space(null, false, empty_pawns);
+			spaces1[27] = new Space(null, false, empty_pawns);
+			spaces1[28] = new Space(null, false, empty_pawns);
+			spaces1[29] = new PreHomeRow("green", true, empty_pawns);
+			spaces1[30] = new Space(null, false, empty_pawns);
+			spaces1[31] = new Space(null, false, empty_pawns);
+			spaces1[32] = new Space(null, false, empty_pawns);
+			spaces1[33] = new Space(null, false, empty_pawns);
 		    
-			homes1 = new Home[1];
+			homes1 = new Home[2];
 			homes1[0] = new Home("green", false, empty_pawns);
+			homes1[1] = new Home("blue", false, empty_pawns);
 			
-			ArrayList<Pawn> four_pawns = new ArrayList<Pawn>();
+			ArrayList<Pawn> four_green_pawns = new ArrayList<Pawn>();
 			for(int i = 0; i < 4; i++){
-				four_pawns.add(new Pawn(i, "green"));
+				four_green_pawns.add(new Pawn(i, "green"));
 			}
 			
-			homecircles1 = new HomeCircle[1];
-			homecircles1[0] = new HomeCircle("green", false, four_pawns);
+			ArrayList<Pawn> four_blue_pawns = new ArrayList<Pawn>();
+			for(int i = 0; i < 4; i++){
+				four_blue_pawns.add(new Pawn(i, "blue"));
+			}
+			
+			homecircles1 = new HomeCircle[2];
+			homecircles1[0] = new HomeCircle("green", false, four_green_pawns);
+			homecircles1[1] = new HomeCircle("blue", false, four_blue_pawns);
 			
 			ArrayList<HomeRow> homerow1 = new ArrayList<HomeRow>();
 			for(int j = 0; j < 7; j++){
 				homerow1.add(new HomeRow("green", false, empty_pawns));
 			}
+			ArrayList<HomeRow> homerow2 = new ArrayList<HomeRow>();
+			for(int j = 0; j < 7; j++){
+				homerow2.add(new HomeRow("blue", false, empty_pawns));
+			}
 			
 			homerows1 = new HashMap<String, ArrayList<HomeRow>>();
 			homerows1.put("green", new ArrayList<HomeRow>(homerow1));
+			homerows1.put("blue", new ArrayList<HomeRow>(homerow2));
 			
 			players1 = new ArrayList<Player>();
 			Player p = new Player();
 			p.startGame("green");
+			Player q = new Player();
+			q.startGame("blue");
 			players1.add(p);
+			players1.add(q);
 			
 			board1 = new Board(spaces1, homecircles1, homes1, homerows1);
 			
@@ -218,7 +250,7 @@ class Board {
 	public static void main(String argv[]) {
 		Board b = new Board(players1, 4);
 		
-		Tester.check(b.equals(board1), "one-person board init");
+		Tester.check(b.equals(board1), "two-person board init");
 	}
 
 	

@@ -1,6 +1,11 @@
+import java.util.ArrayList;
+
 class Player implements IPlayer {
 	protected boolean doubles_penalty; //true if third doubles is rolled
 	private String color;
+	
+	// for testing purposes - list of moves in order to make
+	private ArrayList<IMove> moves;
 	
 	public Player(){
 		this.color = null;
@@ -25,12 +30,21 @@ class Player implements IPlayer {
 	}
 	
 	public IMove doMove(Board brd, int[] dice){
-		return null;
+		// for testing - return first move in list of moves
+		return this.moves.remove(0);
 		
 	}
 	
 	public void DoublesPenalty() {
 		this.doubles_penalty = true;
+	}
+	
+	public void set_moves(ArrayList<IMove> moves){
+		this.moves =  moves;
+	}
+	
+	public ArrayList<IMove> get_moves(){
+		return this.moves;
 	}
 
 }

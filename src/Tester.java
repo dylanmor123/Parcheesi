@@ -24,8 +24,9 @@ class Tester {
 	Pawn.main(argv);
 	Space.main(argv);
 	Board.main(argv);
+	System.out.println("testing with simulated game ...");
 	Game.main(argv);
-
+	
 	System.out.println("faulty tests: " + faults); 
 	System.exit(0);
     }
