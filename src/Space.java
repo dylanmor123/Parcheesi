@@ -7,6 +7,13 @@ public class Space {
 	protected boolean safe; //TRUE if cannot be bopped
 	protected ArrayList<Pawn> pawns_list; //List of pawns on space n
 	
+	// copy constructor
+	public Space(Space s){
+		this.color = s.color;
+		this.safe = s.safe;
+		this.pawns_list = new ArrayList<Pawn>(s.pawns_list);
+	}
+	
 	public Space(String color, boolean safe, ArrayList<Pawn> pawns_list) {
 		this.color = color;
 		this.safe = safe;

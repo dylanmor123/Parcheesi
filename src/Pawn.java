@@ -1,10 +1,19 @@
 
-class Pawn {
+class Pawn implements Comparable<Pawn>{
   protected int /* 0-n */ id;
   protected String color;
   Pawn (int id, String color) {
     this.id=id;
     this.color=color;
+  }
+  
+  public int get_id(){
+	  return this.id;
+  }
+  
+  @Override
+  public int compareTo(Pawn pawn) {
+     return Integer.compare(this.id, pawn.get_id()); 
   }
   
   @Override
