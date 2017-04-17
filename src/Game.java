@@ -528,6 +528,20 @@ public class Game implements IGame {
 		green_moves.add(new MoveMain(new Pawn(1, "green"), 0, 3));
 		green_moves.add(new MoveMain(new Pawn(1, "green"), 3, 4));
 		green_moves.add(new MoveMain(new Pawn(0, "green"), 15, 1));
+		green_moves.add(new EnterPiece(new Pawn(2, "green")));
+		green_moves.add(new EnterPiece(new Pawn(3, "green")));
+		green_moves.add(new MoveMain(new Pawn(2, "green"), 0, 2));
+		//green_moves.add(new MoveMain(new Pawn(2, "green"), 17, 2)); tests moving blockade together from doubles bonus
+		green_moves.add(new MoveMain(new Pawn(2, "green"), 2, 2));
+		green_moves.add(new MoveMain(new Pawn(2, "green"), 4, 3));
+		green_moves.add(new MoveMain(new Pawn(0, "green"), 0, 3));
+		green_moves.add(new MoveMain(new Pawn(0, "green"), 16, 1));
+		green_moves.add(new MoveMain(new Pawn(3, "green"), 0, 6));
+		//green_moves.add(new MoveMain(new Pawn(3, "green"), 6, 3)); tests moving past one's own blockade
+		green_moves.add(new MoveMain(new Pawn(1, "green"), 7, 3));
+		green_moves.add(new MoveMain(new Pawn(2, "green"), 7, 4));
+		green_moves.add(new MoveMain(new Pawn(3, "green"), 6, 2));
+
 		
 		green.set_moves(green_moves);
 		
@@ -542,12 +556,30 @@ public class Game implements IGame {
 		blue_moves.add(new EnterPiece(new Pawn(3, "blue")));
 		blue_moves.add(new MoveMain(new Pawn(0, "blue"), 19, 2));
 		blue_moves.add(new MoveMain(new Pawn(0, "blue"), 21, 5));
-		
+		blue_moves.add(new EnterPiece(new Pawn(3, "blue")));
+		blue_moves.add(new MoveMain(new Pawn(1, "blue"), 17, 2));
+		blue_moves.add(new MoveMain(new Pawn(2, "blue"), 17, 4));
+		blue_moves.add(new MoveMain(new Pawn(1, "blue"), 19, 5));
+		blue_moves.add(new MoveMain(new Pawn(2, "blue"), 21, 5));
+		blue_moves.add(new MoveMain(new Pawn(1, "blue"), 24, 2));
+		blue_moves.add(new MoveMain(new Pawn(2, "blue"), 26, 2));
+		blue_moves.add(new MoveMain(new Pawn(1, "blue"), 24, 2));
+		blue_moves.add(new EnterPiece(new Pawn(3, "blue")));
+		blue_moves.add(new MoveMain(new Pawn(3, "blue"), 17, 20));
+		blue_moves.add(new MoveMain(new Pawn(3, "blue"), 3, 4));
+		blue_moves.add(new MoveMain(new Pawn(2, "blue"), 28, 4));
+		blue_moves.add(new MoveMain(new Pawn(3, "blue"), 3, 4));
+		blue_moves.add(new MoveMain(new Pawn(2, "blue"), 32, 4));
+		blue_moves.add(new MoveMain(new Pawn(3, "blue"), 3, 2));
+
+
+
+
 		blue.set_moves(blue_moves);
 		
 		sinit = new State("boards/init.txt",2);
 		states.add(sinit);
-		for (int i = 1; i <= 14; i++){
+		for (int i = 1; i <= 35; i++){
 			states.add(new State("boards/" + i + ".txt", 2));
 		}
 	}
