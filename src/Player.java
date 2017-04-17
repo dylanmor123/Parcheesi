@@ -7,6 +7,12 @@ class Player implements IPlayer {
 	// for testing purposes - list of moves in order to make
 	private ArrayList<IMove> moves;
 	
+	// copy constructor
+	public Player(Player p){
+		this.doubles_penalty = p.doubles_penalty;
+		this.color = p.color;
+	}
+	
 	public Player(){
 		this.color = null;
 		this.doubles_penalty = false;

@@ -8,6 +8,13 @@ public class State {
 	protected Player curr_player;
 	protected int[] rolls_vals_left = new int[0];
 	
+	// copy constructor for state
+	public State(State s){
+		this.curr_b = new Board(s.curr_b);
+		this.curr_player = new Player(s.curr_player);
+		this.rolls_vals_left = s.rolls_vals_left;
+	}
+	
 	// construct game state from text file
 	public State(String filepath, int num_players) throws IOException{
 		BufferedReader br = new BufferedReader(new FileReader(filepath)); 
