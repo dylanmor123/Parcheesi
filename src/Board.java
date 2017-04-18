@@ -16,12 +16,12 @@ class Board {
 		
 		this.home_circles = new HomeCircle[b.home_circles.length];
 		for (int i = 0; i < b.home_circles.length; i++){
-			this.home_circles[i] =(HomeCircle) (new Space((Space) b.home_circles[i]));
+			this.home_circles[i] = new HomeCircle(b.home_circles[i]);
 		}
 		
 		this.home_spaces = new Home[b.home_spaces.length];
 		for (int i = 0; i < b.home_spaces.length; i++){
-			this.home_spaces[i] =(Home) (new Space((Space) b.home_spaces[i]));
+			this.home_spaces[i] = new Home(b.home_spaces[i]);
 		}
 		
 		this.home_rows = new HashMap<String, ArrayList<HomeRow>>(b.home_rows);

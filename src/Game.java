@@ -156,8 +156,8 @@ public class Game implements IGame {
 			}
 			else if(!reached_home){
 				if(curr_space_index == homerow.size()){
-					// can't move directly to home from main ring
-					return false;
+					curr_space = this.game_state.get_board().get_Home(pawn_color);
+					spaces_to_check.add(curr_space);
 				}
 				else{
 					curr_space = homerow.get(curr_space_index);
@@ -262,10 +262,7 @@ public class Game implements IGame {
 		// Construct list of spaces to check for blockade
 		ArrayList<Space> spaces_to_check = new ArrayList<Space>();
 		int curr_space_index = start + 1;
-		boolean in_home_row = false; // true if list of spaces includes home row
-		boolean reached_home = false; // true if list of spaces includes home
 		Space curr_space = null;
-		ArrayList<HomeRow> homerow = null;
 		
 		while(spaces_to_check.size() < distance){
 			curr_space = row.get(curr_space_index);
@@ -530,8 +527,11 @@ public class Game implements IGame {
 	// returns false if all legal moves have been exhausted by the current player; true otherwise
 	private boolean moves_remaining(){
 		Player p = this.game_state.curr_player;
+		String color = p.get_color();
+		boolean moves_remaining = true;
+		// check all main pawns
 		
-		return false;
+		return moves_remaining;
 	}
 	
 	public void start() {
