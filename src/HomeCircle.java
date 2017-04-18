@@ -2,6 +2,10 @@ import java.util.ArrayList;
 
 public class HomeCircle extends Space {
 	
+	public HomeCircle(HomeCircle space){
+		super(space);
+	}
+	
 	public HomeCircle(String color, boolean safe, ArrayList<Pawn> pawnsList) {
 		
 		super(color, safe, pawnsList);
