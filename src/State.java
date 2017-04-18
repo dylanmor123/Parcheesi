@@ -210,8 +210,11 @@ public class State {
 		}
 		
 		State state = (State) s;
-		
-		return state.get_curr_player().get_color().equals(this.curr_player.get_color()) && state.get_board().equals(this.curr_b) && (Arrays.equals(state.get_rolls(), this.rolls_vals_left));
+		int[] rolls1 = state.rolls_vals_left;
+		int[] rolls2 = this.rolls_vals_left;
+		Arrays.sort(rolls1);
+		Arrays.sort(rolls2);
+		return state.get_curr_player().get_color().equals(this.curr_player.get_color()) && state.get_board().equals(this.curr_b) && (Arrays.equals(rolls1, rolls2));
 	}
 }
 	

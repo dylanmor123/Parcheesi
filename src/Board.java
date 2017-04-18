@@ -177,7 +177,7 @@ class Board {
 		
 		// search in home row
 		ArrayList<HomeRow> row = this.get_HomeRow(color);
-		for(int i = row.size() - 1; i >= 0; i++){
+		for(int i = row.size() - 1; i >= 0; i--){
 			HomeRow s = row.get(i);
 			if(s.get_pawns().size() > 0 && s.get_pawns().get(0).get_color().equals(color)){
 				Pawn p = s.get_pawns().get(0);
@@ -198,8 +198,8 @@ class Board {
 		}
 		// k is index of entry in array of spaces
 		
-		for(int j = (entry_index - 1) % this.spaces.length; j != entry_index; j = (j - 1) % this.spaces.length){
-			Space s = row.get(j);
+		for(int j = (((entry_index - 1) % this.spaces.length) + this.spaces.length) % this.spaces.length; j != entry_index; j = (j - 1) % this.spaces.length){
+			Space s = this.spaces[j];
 			if(s.get_pawns().size() > 0 && s.get_pawns().get(0).get_color().equals(color)){
 				Pawn p = s.get_pawns().get(0);
 				s.remove_Pawn(p);

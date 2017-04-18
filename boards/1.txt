@@ -2,7 +2,9 @@ _Player
 green
 false
 _Rolls
-3
+5
+2
+2
 _Board
 _Entry
 green

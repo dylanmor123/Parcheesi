@@ -9,6 +9,9 @@ true
 _Pawn
 green
 1
+_Pawn
+green
+2
 _Space
 null
 false
@@ -21,6 +24,9 @@ false
 _Space
 null
 false
+_Pawn
+green
+0
 _Space
 null
 false
@@ -36,9 +42,6 @@ false
 _Space
 null
 false
-_Pawn
-green
-0
 _Space
 null
 false
@@ -63,9 +66,6 @@ false
 _Entry
 blue
 true
-_Pawn
-blue
-0
 _Space
 null
 false
@@ -119,13 +119,13 @@ green
 false
 _Pawn
 green
-2
-_Pawn
-green
 3
 _HomeCircle
 blue
 false
+_Pawn
+blue
+0
 _Pawn
 blue
 1

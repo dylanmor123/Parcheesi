@@ -610,22 +610,30 @@ public class Game implements IGame {
 				game_state.add_roll(roll2c);
 				doubles = true;
 				num_doubles++;
+				
 				if(num_doubles == 3){
 					//penalize the current player
 					Pawn removed = this.game_state.get_board().remove_furthest(curr_player.get_color());
-					HomeCircle hc = this.game_state.get_board().get_HomeCircle(curr_player.get_color());
-					hc.add_Pawn(removed);
+					
+					if(removed != null){
+						HomeCircle hc = this.game_state.get_board().get_HomeCircle(curr_player.get_color());
+						hc.add_Pawn(removed);
+					}
 					
 					player_index = (player_index + 1) % num_players;
 					this.game_state.set_curr_player(this.players.get(player_index));
+					int[] rolls_left = new int[0];
+					this.game_state.set_rolls(rolls_left);
 					num_doubles = 0;
 					doubles = false;
-					
+					continue;
 				}
 			}
 			
 			
+			
 			while(moves_remaining() && !game_over()){
+				
 				IMove move = curr_player.doMove(game_state.get_board(), game_state.get_rolls());
 				
 				if(!update_Board(move)){
@@ -657,6 +665,7 @@ public class Game implements IGame {
 			if(cheated){
 				cheated = false;
 				doubles = false;
+				num_doubles = 0;
 				if(player_index == num_players){
 					player_index = 0;
 				}
@@ -669,6 +678,7 @@ public class Game implements IGame {
 			}
 			else{
 				player_index = (player_index + 1) % num_players;
+				num_doubles = 0;
 			}
 				
 			this.game_state.set_curr_player(this.players.get(player_index));
@@ -705,27 +715,24 @@ public class Game implements IGame {
 		green.startGame("green");
 		ArrayList<IMove> green_moves = new ArrayList<IMove>();
 		green_moves.add(new EnterPiece(new Pawn(0, "green")));
-		green_moves.add(new MoveMain(new Pawn(0, "green"), 0, 3));
 		green_moves.add(new EnterPiece(new Pawn(1, "green")));
-		green_moves.add(new MoveMain(new Pawn(0, "green"), 3, 6));
-		green_moves.add(new MoveMain(new Pawn(0, "green"), 9, 6));
-		green_moves.add(new MoveMain(new Pawn(0, "green"), 15, 3));
-		green_moves.add(new MoveMain(new Pawn(1, "green"), 0, 3));
-		green_moves.add(new MoveMain(new Pawn(1, "green"), 3, 4));
-		green_moves.add(new MoveMain(new Pawn(0, "green"), 15, 1));
 		green_moves.add(new EnterPiece(new Pawn(2, "green")));
-		green_moves.add(new EnterPiece(new Pawn(3, "green")));
-		green_moves.add(new MoveMain(new Pawn(2, "green"), 0, 2));
-		//green_moves.add(new MoveMain(new Pawn(2, "green"), 17, 2)); tests moving blockade together from doubles bonus
-		green_moves.add(new MoveMain(new Pawn(2, "green"), 2, 2));
+		green_moves.add(new MoveMain(new Pawn(0, "green"), 0, 2));
+		green_moves.add(new MoveMain(new Pawn(2, "green"), 16, 2));
+		green_moves.add(new MoveMain(new Pawn(0, "green"), 2, 2));
+		green_moves.add(new EnterPiece(new Pawn(2, "green")));
+		green_moves.add(new MoveMain(new Pawn(1, "green"), 0, 4));
+		green_moves.add(new MoveMain(new Pawn(2, "green"), 0, 4));
+		green_moves.add(new MoveMain(new Pawn(0, "green"), 4, 3));
+		green_moves.add(new MoveMain(new Pawn(2, "green"), 0, 4));
+		green_moves.add(new MoveMain(new Pawn(1, "green"), 4, 3));
+		green_moves.add(new MoveMain(new Pawn(2, "green"), 0, 4));
 		green_moves.add(new MoveMain(new Pawn(2, "green"), 4, 3));
-		green_moves.add(new MoveMain(new Pawn(0, "green"), 0, 3));
-		green_moves.add(new MoveMain(new Pawn(0, "green"), 16, 1));
-		green_moves.add(new MoveMain(new Pawn(3, "green"), 0, 6));
-		//green_moves.add(new MoveMain(new Pawn(3, "green"), 6, 3)); tests moving past one's own blockade
-		green_moves.add(new MoveMain(new Pawn(1, "green"), 7, 3));
-		green_moves.add(new MoveMain(new Pawn(2, "green"), 7, 4));
-		green_moves.add(new MoveMain(new Pawn(3, "green"), 6, 2));
+		green_moves.add(new MoveMain(new Pawn(0, "green"), 7, 3));
+		green_moves.add(new MoveMain(new Pawn(0, "green"), 10, 4));
+		green_moves.add(new MoveMain(new Pawn(1, "green"), 7, 4));
+		green_moves.add(new MoveMain(new Pawn(1, "green"), 11, 3));
+		green_moves.add(new MoveMain(new Pawn(2, "green"), 4, 3));
 
 		
 		green.set_moves(green_moves);
@@ -736,26 +743,15 @@ public class Game implements IGame {
 		ArrayList<IMove> blue_moves = new ArrayList<IMove>();
 		blue_moves.add(new EnterPiece(new Pawn(0, "blue")));
 		blue_moves.add(new EnterPiece(new Pawn(1, "blue")));
-		blue_moves.add(new MoveMain(new Pawn(0, "blue"), 17, 2));
 		blue_moves.add(new EnterPiece(new Pawn(2, "blue")));
-		blue_moves.add(new EnterPiece(new Pawn(3, "blue")));
-		blue_moves.add(new MoveMain(new Pawn(0, "blue"), 19, 2));
-		blue_moves.add(new MoveMain(new Pawn(0, "blue"), 21, 5));
-		blue_moves.add(new EnterPiece(new Pawn(3, "blue")));
+		blue_moves.add(new MoveMain(new Pawn(0, "blue"), 17, 5));
 		blue_moves.add(new MoveMain(new Pawn(1, "blue"), 17, 2));
-		blue_moves.add(new MoveMain(new Pawn(2, "blue"), 17, 4));
-		blue_moves.add(new MoveMain(new Pawn(1, "blue"), 19, 5));
-		blue_moves.add(new MoveMain(new Pawn(2, "blue"), 21, 5));
-		blue_moves.add(new MoveMain(new Pawn(1, "blue"), 24, 2));
-		blue_moves.add(new MoveMain(new Pawn(2, "blue"), 26, 2));
-		blue_moves.add(new MoveMain(new Pawn(1, "blue"), 24, 2));
-		blue_moves.add(new EnterPiece(new Pawn(3, "blue")));
-		blue_moves.add(new MoveMain(new Pawn(3, "blue"), 17, 20));
-		blue_moves.add(new MoveMain(new Pawn(3, "blue"), 3, 4));
-		blue_moves.add(new MoveMain(new Pawn(2, "blue"), 28, 4));
-		blue_moves.add(new MoveMain(new Pawn(3, "blue"), 3, 4));
-		blue_moves.add(new MoveMain(new Pawn(2, "blue"), 32, 4));
-		blue_moves.add(new MoveMain(new Pawn(3, "blue"), 3, 2));
+		blue_moves.add(new MoveMain(new Pawn(1, "blue"), 19, 2));
+		blue_moves.add(new MoveMain(new Pawn(0, "blue"), 22, 6));
+		blue_moves.add(new MoveMain(new Pawn(0, "blue"), 28, 6));
+		blue_moves.add(new MoveMain(new Pawn(1, "blue"), 21, 1));
+		blue_moves.add(new MoveMain(new Pawn(1, "blue"), 22, 1));
+
 
 
 
@@ -764,7 +760,7 @@ public class Game implements IGame {
 		
 		sinit = new State("boards/init.txt",2);
 		states.add(sinit);
-		for (int i = 1; i <= 35; i++){
+		for (int i = 1; i <= 22; i++){
 			states.add(new State("boards/" + i + ".txt", 2));
 		}
 	}

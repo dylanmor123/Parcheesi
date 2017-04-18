@@ -12,7 +12,6 @@ class Tester {
     }
 
     public static void main(String argv[]) throws IOException {
-    	State s = new State("boards/test.txt", 1);
     	
 	System.out.println("setting up examples ...");
 	Pawn.createExamples();

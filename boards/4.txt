@@ -2,7 +2,6 @@ _Player
 green
 false
 _Rolls
-6
 _Board
 _Entry
 green
@@ -19,12 +18,12 @@ false
 _Space
 null
 false
-_Pawn
-green
-0
 _Space
 null
 false
+_Pawn
+green
+0
 _Space
 null
 false
@@ -64,9 +63,6 @@ false
 _Entry
 blue
 true
-_Pawn
-blue
-0
 _Space
 null
 false
@@ -127,6 +123,9 @@ green
 _HomeCircle
 blue
 false
+_Pawn
+blue
+0
 _Pawn
 blue
 1
