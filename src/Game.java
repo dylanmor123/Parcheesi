@@ -682,7 +682,10 @@ public class Game implements IGame {
 			}
 				
 			this.game_state.set_curr_player(this.players.get(player_index));
+			int[] rolls_left = new int[0];
+			this.game_state.set_rolls(rolls_left);
 			this.prev_state = new State(this.game_state);
+			
 			
 			if(testing){
 				boolean out_of_moves = true; //true if all players are out of preset moves
