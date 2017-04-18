@@ -526,10 +526,42 @@ public class Game implements IGame {
 	
 	// returns false if all legal moves have been exhausted by the current player; true otherwise
 	private boolean moves_remaining(){
-		Player p = this.game_state.curr_player;
-		String color = p.get_color();
-		boolean moves_remaining = true;
-		// check all main pawns
+		Player player = this.game_state.curr_player;
+		String color = player.get_color();
+		boolean moves_remaining = false;
+		
+		// check all main pawns for moves
+		Space[] main_spaces = this.game_state.get_board().get_Spaces();
+		for(int i = 0; i < main_spaces.length; i++){
+			Space s = main_spaces[i];
+			for(Pawn p: s.get_pawns()){
+				if(p.get_color().equals(color)){
+					for(int val: this.game_state.rolls_vals_left){
+						moves_remaining = moves_remaining || this.is_Legal(new MoveMain(p, i, val));
+					}
+				}
+			}
+		}
+		
+		// check all home row pawns for moves
+		ArrayList<HomeRow> row = this.game_state.get_board().get_HomeRow(color);
+		for(int i = 0; i < row.size(); i++){
+			HomeRow s = row.get(i);
+			for(Pawn p: s.get_pawns()){
+				if(p.get_color().equals(color)){
+					for(int val: this.game_state.rolls_vals_left){
+						moves_remaining = moves_remaining || this.is_Legal(new MoveHome(p, i, val));
+					}
+				}
+			}
+		}
+		
+		// check all home circle pawns for moves
+		HomeCircle h = this.game_state.get_board().get_HomeCircle(color);
+		for(Pawn p: h.get_pawns()){
+			moves_remaining = moves_remaining || this.is_Legal(new EnterPiece(p));
+		}
+		
 		
 		return moves_remaining;
 	}
@@ -553,6 +585,7 @@ public class Game implements IGame {
 		// if move is illegal, remove cheating player from game
 		// double penalty thing
 		boolean doubles = false; //true if doubles were rolled
+		int num_doubles = 0; //incremented if doubles were rolled; player penalized when num = 3;
 		boolean cheated = false; //true if player cheated on turn
 		int player_index = 0;
 		int num_players = this.players.size();
@@ -576,10 +609,23 @@ public class Game implements IGame {
 				game_state.add_roll(roll1c);
 				game_state.add_roll(roll2c);
 				doubles = true;
+				num_doubles++;
+				if(num_doubles == 3){
+					//penalize the current player
+					Pawn removed = this.game_state.get_board().remove_furthest(curr_player.get_color());
+					HomeCircle hc = this.game_state.get_board().get_HomeCircle(curr_player.get_color());
+					hc.add_Pawn(removed);
+					
+					player_index = (player_index + 1) % num_players;
+					this.game_state.set_curr_player(this.players.get(player_index));
+					num_doubles = 0;
+					doubles = false;
+					
+				}
 			}
 			
 			
-			while(game_state.get_rolls().length != 0 && !game_over()){
+			while(moves_remaining() && !game_over()){
 				IMove move = curr_player.doMove(game_state.get_board(), game_state.get_rolls());
 				
 				if(!update_Board(move)){
@@ -602,7 +648,7 @@ public class Game implements IGame {
 				System.out.println("Move processed");
 				num_moves++;
 				if(testing){
-					State curr_state = this.states.get(num_moves);
+					State curr_state = Game.states.get(num_moves);
 					Tester.check(curr_state.equals(this.game_state), num_moves + " move test");
 				}
 			}
@@ -615,14 +661,18 @@ public class Game implements IGame {
 					player_index = 0;
 				}
 				else{
-					continue;
+					player_index = (player_index + 1) % num_players;
 				}
+			}
+			else if (doubles){
+				doubles = false;
 			}
 			else{
 				player_index = (player_index + 1) % num_players;
-				this.game_state.set_curr_player(this.players.get(player_index));
-				this.prev_state = new State(this.game_state);
 			}
+				
+			this.game_state.set_curr_player(this.players.get(player_index));
+			this.prev_state = new State(this.game_state);
 			
 			if(testing){
 				boolean out_of_moves = true; //true if all players are out of preset moves
