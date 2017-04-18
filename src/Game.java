@@ -733,6 +733,13 @@ public class Game implements IGame {
 		green_moves.add(new MoveMain(new Pawn(1, "green"), 7, 4));
 		green_moves.add(new MoveMain(new Pawn(1, "green"), 11, 3));
 		green_moves.add(new MoveMain(new Pawn(2, "green"), 4, 3));
+		green_moves.add(new EnterPiece(new Pawn(3, "green")));
+		green_moves.add(new MoveMain(new Pawn(3, "green"), 0, 20));
+		green_moves.add(new MoveMain(new Pawn(3, "green"), 20, 6));
+		green_moves.add(new MoveMain(new Pawn(2, "green"), 7, 20));
+		green_moves.add(new MoveMain(new Pawn(1, "green"), 11, 6));
+		green_moves.add(new MoveMain(new Pawn(1, "green"), 17, 5));
+		green_moves.add(new EnterPiece(new Pawn(0, "green")));
 
 		
 		green.set_moves(green_moves);
@@ -751,7 +758,14 @@ public class Game implements IGame {
 		blue_moves.add(new MoveMain(new Pawn(0, "blue"), 28, 6));
 		blue_moves.add(new MoveMain(new Pawn(1, "blue"), 21, 1));
 		blue_moves.add(new MoveMain(new Pawn(1, "blue"), 22, 1));
-
+		blue_moves.add(new MoveMain(new Pawn(1, "blue"), 23, 1));
+		blue_moves.add(new MoveMain(new Pawn(1, "blue"), 24, 2));
+		blue_moves.add(new EnterPiece(new Pawn(0, "blue")));
+		blue_moves.add(new EnterPiece(new Pawn(1, "blue")));
+		blue_moves.add(new MoveMain(new Pawn(0, "blue"), 17, 2));
+		blue_moves.add(new MoveMain(new Pawn(0, "blue"), 19, 2));
+		blue_moves.add(new MoveMain(new Pawn(1, "blue"), 17, 3));
+		blue_moves.add(new MoveMain(new Pawn(1, "blue"), 20, 1));
 
 
 
@@ -760,7 +774,7 @@ public class Game implements IGame {
 		
 		sinit = new State("boards/init.txt",2);
 		states.add(sinit);
-		for (int i = 1; i <= 22; i++){
+		for (int i = 1; i <= 36; i++){
 			states.add(new State("boards/" + i + ".txt", 2));
 		}
 	}
