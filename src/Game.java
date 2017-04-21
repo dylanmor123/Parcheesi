@@ -133,7 +133,7 @@ public class Game implements IGame {
 		// Check if pawn can be moved distance tiles without conflict
 		// Construct list of spaces to check for blockade
 		ArrayList<Space> spaces_to_check = new ArrayList<Space>();
-		int curr_space_index = start + 1;
+		int curr_space_index = (start + 1) % space_length; // next space on board; could wrap around
 		boolean in_home_row = false; // true if list of spaces includes home row
 		boolean reached_home = false; // true if list of spaces includes home
 		Space curr_space = null;
@@ -447,6 +447,9 @@ public class Game implements IGame {
 		if(bopped){
 			this.game_state.add_roll(20);
 		}
+		if(reached_home){
+			this.game_state.add_roll(10);
+		}
 		return true;		
 	}
 	
@@ -475,6 +478,8 @@ public class Game implements IGame {
 		}
 		ending_space.add_Pawn(p);
 		starting_space.remove_Pawn(p);
+		this.game_state.remove_roll(distance);
+
 		
 		return true;		
 	}
@@ -743,8 +748,17 @@ public class Game implements IGame {
 		green_moves.add(new MoveMain(new Pawn(1, "green"), 11, 6));
 		green_moves.add(new MoveMain(new Pawn(1, "green"), 17, 5));
 		green_moves.add(new EnterPiece(new Pawn(0, "green")));
+		green_moves.add(new MoveMain(new Pawn(0, "green"), 0, 6));
+		green_moves.add(new MoveMain(new Pawn(0, "green"), 6, 5));
+		green_moves.add(new MoveMain(new Pawn(2, "green"), 27, 2));
+		green_moves.add(new MoveMain(new Pawn(0, "green"), 11, 4));
+		green_moves.add(new MoveMain(new Pawn(0, "green"), 15, 2));
+		green_moves.add(new MoveMain(new Pawn(3, "green"), 26, 3));
+		green_moves.add(new MoveMain(new Pawn(1, "green"), 17, 3));
+		green_moves.add(new MoveMain(new Pawn(1, "green"), 20, 5));
+		green_moves.add(new MoveMain(new Pawn(3, "green"), 26, 5));
+		green_moves.add(new MoveMain(new Pawn(1, "green"), 25, 6));
 
-		
 		green.set_moves(green_moves);
 		
 		Player blue = new Player();
@@ -769,7 +783,23 @@ public class Game implements IGame {
 		blue_moves.add(new MoveMain(new Pawn(0, "blue"), 19, 2));
 		blue_moves.add(new MoveMain(new Pawn(1, "blue"), 17, 3));
 		blue_moves.add(new MoveMain(new Pawn(1, "blue"), 20, 1));
-
+		blue_moves.add(new MoveMain(new Pawn(0, "blue"), 21, 3));
+		blue_moves.add(new MoveMain(new Pawn(1, "blue"), 21, 2));
+		blue_moves.add(new MoveMain(new Pawn(1, "blue"), 23, 2));
+		blue_moves.add(new MoveMain(new Pawn(1, "blue"), 25, 4));
+		blue_moves.add(new EnterPiece(new Pawn(2, "blue")));
+		blue_moves.add(new MoveMain(new Pawn(0, "blue"), 24, 4));
+		blue_moves.add(new MoveMain(new Pawn(0, "blue"), 28, 1));
+		blue_moves.add(new EnterPiece(new Pawn(2, "blue")));
+		blue_moves.add(new MoveMain(new Pawn(0, "blue"), 29, 5));
+		blue_moves.add(new MoveMain(new Pawn(0, "blue"), 0, 20));
+		blue_moves.add(new MoveMain(new Pawn(1, "blue"), 29, 2));
+		blue_moves.add(new MoveMain(new Pawn(1, "blue"), 31, 2));
+		blue_moves.add(new MoveMain(new Pawn(1, "blue"), 33, 10));
+		blue_moves.add(new MoveMain(new Pawn(1, "blue"), 9, 4));
+		blue_moves.add(new MoveHome(new Pawn(1, "blue"), 0, 1));
+		blue_moves.add(new MoveMain(new Pawn(2, "blue"), 17, 6));
+		blue_moves.add(new EnterPiece(new Pawn(3, "blue")));
 
 
 
@@ -777,11 +807,11 @@ public class Game implements IGame {
 		
 		sinit = new State("boards/init.txt",2);
 		states.add(sinit);
-		for (int i = 1; i <= 36; i++){
+		for (int i = 1; i <= 60; i++){
 			states.add(new State("boards/" + i + ".txt", 2));
 		}
 	}
-	
+
 	public static void main(String argv[]){
 		g.start();
 	}
