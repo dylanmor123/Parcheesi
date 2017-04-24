@@ -11,7 +11,7 @@ class Tester {
 	}
     }
 
-    public static void main(String argv[]) throws IOException {
+    public static void main(String argv[]) throws Exception {
     	
 	System.out.println("setting up examples ...");
 	Pawn.createExamples();

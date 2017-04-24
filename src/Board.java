@@ -220,7 +220,7 @@ class Board {
     static HashMap<String, ArrayList<HomeRow>> homerows1;
     static ArrayList<Player> players1;
     
-    public static void createExamples() {
+    public static void createExamples() throws Exception {
 		if (board1 == null) {
 			ArrayList<Pawn> empty_pawns = new ArrayList<Pawn>();
 			spaces1 = new Space[34];

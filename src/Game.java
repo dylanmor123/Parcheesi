@@ -16,6 +16,9 @@ public class Game implements IGame {
 	protected State game_state;
 	protected State prev_state; // for comparison between states for a moving blockade
 	
+	// implementing Game sequence contract
+	private boolean has_registered = false;
+	
 	// for testing - reading rolls from file
 	private BufferedReader br; 
 	
@@ -23,7 +26,7 @@ public class Game implements IGame {
 		this.br = new BufferedReader(new FileReader("rolls.txt"));
 	}
 
-	public void register(IPlayer p) {
+	public void register(IPlayer p) throws Exception{
 		Player player = (Player) p;
 		this.players.add(player);
 		String color = "red";
@@ -33,8 +36,12 @@ public class Game implements IGame {
 		else if(players.size() == 2){
 			color = "blue";
 		}
+		else{
+			color = "yellow";
+		}
 		
 		p.startGame(color);
+		this.has_registered = true;
 	}
 	
 	public void set_state(State s){
@@ -338,6 +345,55 @@ public class Game implements IGame {
 	}
 	
 	
+	
+	private void remove_Player(Player player){
+		String color = player.get_color();
+		Board curr_board = game_state.get_board();
+		ArrayList<HomeRow> homerow = curr_board.get_HomeRow(color);
+		HomeCircle homecircle = curr_board.get_HomeCircle(color);
+		Home home = curr_board.get_Home(color);
+		Space[] spaces = curr_board.get_Spaces();
+		
+		for(Space s : spaces){
+			ArrayList<Pawn> pawns = s.get_pawns();
+			for(Pawn p : pawns){
+				if(p.get_color().equals(color)){
+					s.remove_Pawn(p);
+				}
+			}
+		}
+		
+		ArrayList<Pawn> homecircle_pawns = homecircle.get_pawns();
+		for(Pawn p : homecircle_pawns){
+			if (p.get_color().equals(color)){
+				homecircle.remove_Pawn(p);
+			}
+		}
+		
+		ArrayList<Pawn> home_pawns = home.get_pawns();
+		for(Pawn p : home_pawns){
+			if (p.get_color().equals(color)){
+				homecircle.remove_Pawn(p);
+			}
+		}
+		
+		
+		for (HomeRow h : homerow){
+			ArrayList<Pawn> pawns = h.get_pawns();
+			for(Pawn p : pawns){
+				if(p.get_color().equals(color)){
+					h.remove_Pawn(p);
+				}
+			}
+		}
+		
+		this.players.remove(player);
+		
+		
+	}
+
+	
+	
 	// checks whether a pawn will
 	// be bopped given a space and color
 	private boolean bop(Space s, String color){
@@ -571,11 +627,16 @@ public class Game implements IGame {
 		return moves_remaining;
 	}
 	
-	public void start() {
+	public void start() throws Exception{
 		// for testing purposes
 		// set to true if you want to compare with test boards after every successful move
 		boolean testing = true;
 		int num_moves = 0;
+		
+		// check if players are registered
+		if(!has_registered){
+			throw new Exception("No players registered");
+		}
 		
 		// initialize state
 		Board new_board = new Board(this.players, this.num_pawns);
@@ -648,7 +709,7 @@ public class Game implements IGame {
 					// update_Board returns false if player passed illegal move (cheated)
 					if(!testing){
 						num_players = this.players.size();
-						this.players.remove(curr_player); // remove cheating player
+						this.remove_Player(curr_player); // remove cheating player
 						cheated = true;
 						break;
 					}
@@ -715,7 +776,7 @@ public class Game implements IGame {
 	static State sinit;
 	static ArrayList<State> states = new ArrayList<State>();
 	
-	public static void createExamples() throws IOException{
+	public static void createExamples() throws Exception{
 		g = new Game();
 		
 		Player green = new Player();
@@ -810,10 +871,13 @@ public class Game implements IGame {
 		for (int i = 1; i <= 60; i++){
 			states.add(new State("boards/" + i + ".txt", 2));
 		}
+		
+		//g2.set_state(new State(something.txt));
 	}
 
-	public static void main(String argv[]){
+	public static void main(String argv[]) throws Exception{
 		g.start();
+		//Tester.check(!g2.is_Legal(new MoveHome(something, something, something)), "home row blockade check");
 	}
 	
 }

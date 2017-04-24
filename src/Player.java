@@ -7,6 +7,10 @@ class Player implements IPlayer {
 	// for testing purposes - list of moves in order to make
 	private ArrayList<IMove> moves;
 	
+	
+	// implementing Player sequence contract
+	private boolean has_started = false;
+	
 	// copy constructor
 	public Player(Player p){
 		this.doubles_penalty = p.doubles_penalty;
@@ -31,17 +35,31 @@ class Player implements IPlayer {
 		this.color = color;
 	}
 	
-	public void startGame(String color) {
+	public void startGame(String color) throws Exception{
+		if(!color.equals("red") && !color.equals("blue") && !color.equals("green") && !color.equals("yellow")){
+			throw new Exception("Invalid player color");
+		}
 		this.color = color;
 	}
 	
-	public IMove doMove(Board brd, int[] dice){
+	public IMove doMove(Board brd, int[] dice) throws Exception{
 		// for testing - return first move in list of moves
+		// check if players has started
+		if(!has_started){
+			throw new Exception("Player has not started");
+		}
+		if (dice.length != 2 && dice.length != 4){
+			throw new Exception("Number of dice invalid");
+		}
 		return this.moves.remove(0);
 		
 	}
 	
-	public void DoublesPenalty() {
+	public void DoublesPenalty() throws Exception{
+		// check if players has started
+		if(!has_started){
+			throw new Exception("Player has not started");
+		}
 		this.doubles_penalty = true;
 	}
 	
