@@ -4,10 +4,22 @@ class MoveHome implements IMove {
   int start;
   int distance;
   
-  MoveHome(Pawn pawn, int start, int distance) {
-    this.pawn=pawn;
-    this.start=start;
-    this.distance=distance;
+  private int BOARD_LENGTH = 68;
+  
+  // 0 <= start <= BOARD_LENGTH - 1
+  // distance > 0
+  
+  MoveHome(Pawn pawn, int start, int distance) throws Exception{
+	  if(start < 0 || start >= BOARD_LENGTH){
+			throw new Exception("Invalid move start");
+	  }
+		
+	  if(distance <= 0){
+		  throw new Exception("Invalid move distance");
+	  }
+	  this.pawn=pawn;
+	  this.start=start;
+	  this.distance=distance;
   }
   
   public Pawn get_pawn(){

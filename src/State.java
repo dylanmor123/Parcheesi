@@ -8,6 +8,9 @@ public class State {
 	protected Player curr_player;
 	protected int[] rolls_vals_left = new int[0];
 	
+	// private boolean for sequence contract (add_roll* . remove_roll*)*
+	private boolean has_rolls = false;
+	
 	// copy constructor for state
 	public State(State s){
 		this.curr_b = new Board(s.curr_b);
@@ -16,7 +19,7 @@ public class State {
 	}
 	
 	// construct game state from text file
-	public State(String filepath, int num_players) throws IOException{
+	public State(String filepath, int num_players) throws Exception{
 		BufferedReader br = new BufferedReader(new FileReader(filepath)); 
 	    for(String line; (line = br.readLine()) != null; ) {
 	        if(line.equals("_Player")){
@@ -169,9 +172,17 @@ public class State {
 	
 	public void set_rolls(int[] r){
 		this.rolls_vals_left = r;
+		if(r.length == 0)
+			this.has_rolls = false;
+		else
+			this.has_rolls = true;
 	}
 	
-	public boolean remove_roll(int r){
+	public boolean remove_roll(int r) throws Exception{
+		if(!this.has_rolls){
+			throw new Exception("Invalid roll removals");
+		}
+		
 		ArrayList<Integer> new_rolls = new ArrayList<Integer>();
 		boolean removed = false;
 		for(int i=0; i < rolls_vals_left.length; i++){
@@ -190,7 +201,13 @@ public class State {
 		return removed;
 	}
 	
-	public void add_roll(int r){
+	public void add_roll(int r) throws Exception{
+		this.has_rolls = true;
+		
+		if(r <= 0){
+			throw new Exception("Non-negative roll value added");
+		}
+		
 		int[] new_rolls = new int[this.rolls_vals_left.length+1];
 		for (int i=0; i < rolls_vals_left.length; i++){
 			new_rolls[i] = rolls_vals_left[i];

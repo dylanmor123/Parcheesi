@@ -40,6 +40,7 @@ class Player implements IPlayer {
 			throw new Exception("Invalid player color");
 		}
 		this.color = color;
+		this.has_started = true;
 	}
 	
 	public IMove doMove(Board brd, int[] dice) throws Exception{
@@ -48,9 +49,7 @@ class Player implements IPlayer {
 		if(!has_started){
 			throw new Exception("Player has not started");
 		}
-		if (dice.length != 2 && dice.length != 4){
-			throw new Exception("Number of dice invalid");
-		}
+		
 		return this.moves.remove(0);
 		
 	}

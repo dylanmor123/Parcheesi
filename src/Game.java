@@ -416,7 +416,7 @@ public class Game implements IGame {
 	
 	// alters Board in curr_state with move
 	// checks if move is legal before update
-	private boolean update_Board(EnterPiece m){
+	private boolean update_Board(EnterPiece m) throws Exception{
 		Board b = this.game_state.get_board();
 		if (m == null){
 			return false;
@@ -443,7 +443,7 @@ public class Game implements IGame {
 		return true;
 	}
 	
-	private boolean update_Board(MoveMain m){
+	private boolean update_Board(MoveMain m) throws Exception{
 		Board b = this.game_state.get_board();
 		if (m == null){
 			return false;
@@ -509,7 +509,7 @@ public class Game implements IGame {
 		return true;		
 	}
 	
-	private boolean update_Board(MoveHome m){
+	private boolean update_Board(MoveHome m) throws Exception{
 		Board b = this.game_state.get_board();
 		if (m == null){
 			return false;
@@ -541,7 +541,7 @@ public class Game implements IGame {
 	}
 	
 	
-	private boolean update_Board(IMove move){
+	private boolean update_Board(IMove move) throws Exception{
 		Board b = this.game_state.get_board();
 		if (move == null){
 			  return false;
@@ -586,7 +586,7 @@ public class Game implements IGame {
 	}
 	
 	// returns false if all legal moves have been exhausted by the current player; true otherwise
-	private boolean moves_remaining(){
+	private boolean moves_remaining() throws Exception{
 		Player player = this.game_state.curr_player;
 		String color = player.get_color();
 		boolean moves_remaining = false;
