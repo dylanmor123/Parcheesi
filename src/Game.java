@@ -476,12 +476,17 @@ public class Game implements IGame {
 	
 	// Examples
 	static Game g;
+	static Game g2;
+	static Game g3;
 	
 	static State sinit;
+	
 	static ArrayList<State> states = new ArrayList<State>();
 	
 	public static void createExamples() throws Exception{
 		g = new Game();
+		g2 = new Game();
+		g3 = new Game();
 		
 		Player green = new Player();
 		g.register(green);
@@ -576,12 +581,15 @@ public class Game implements IGame {
 			states.add(new State("boards/" + i + ".txt", 2));
 		}
 		
-		//g2.set_state(new State(something.txt));
+		g2.set_state(new State("boards/init2.txt", 2));
+		g3.set_state(new State("boards/init3.txt", 2));
 	}
 
 	public static void main(String argv[]) throws Exception{
 		g.start();
-		//Tester.check(!g2.is_Legal(new MoveHome(something, something, something)), "home row blockade check");
+		Tester.check(g2.is_Legal(new MoveMain(new Pawn(0, "blue"), 18, 1)), "Enter");
+		Tester.check(!g3.is_Legal(new MoveHome(new Pawn(2, "green"), 0, 5)), "Enter");
+
 	}
 	
 }
