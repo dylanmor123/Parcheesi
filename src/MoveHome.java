@@ -33,4 +33,17 @@ class MoveHome implements IMove {
   public int get_distance(){
 	  return this.distance;
   }
+  
+  @Override
+	public boolean equals(Object m){
+		if(m == null){
+			return false;
+		}
+		if (!MoveHome.class.isAssignableFrom(m.getClass())) {
+			return false;
+		}
+		
+		MoveHome move = (MoveHome) m;
+		return this.pawn.equals(move.pawn) && (this.start == move.start) && (this.distance == move.distance);	
+	}
 }
