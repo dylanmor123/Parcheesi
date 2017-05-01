@@ -133,9 +133,6 @@ class Player implements IPlayer {
 			throw new Exception("Player has not started");
 		}
 		
-		// sort list of rolls - rolls are in ascending order
-		// iterate in reverse to try furthest moves first
-		
 		
 		
 		
