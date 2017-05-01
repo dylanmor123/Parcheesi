@@ -135,9 +135,6 @@ class Player implements IPlayer {
 		
 		// sort list of rolls - rolls are in ascending order
 		// iterate in reverse to try furthest moves first
-		int[] sorted_dice = new int[dice.length];
-		System.arraycopy(dice, 0, sorted_dice, 0, dice.length);
-		Arrays.sort(sorted_dice);
 		
 		
 		
@@ -149,7 +146,11 @@ class Player implements IPlayer {
 			return this.generated_moves.remove(0);
 		}
 		else if(this.strategy.equals("first")){
-			this.curr_state = new State(brd, this, dice);
+			int[] sorted_dice = new int[dice.length];
+			System.arraycopy(dice, 0, sorted_dice, 0, dice.length);
+			Arrays.sort(sorted_dice);
+			
+			this.curr_state = new State(brd, this, sorted_dice);
 			this.prev_state = new State(curr_state);
 			
 			while(RuleChecker.moves_remaining(this, this.curr_state, this.prev_state)){
@@ -162,8 +163,8 @@ class Player implements IPlayer {
 					loc = this.curr_state.get_board().get_Pawn_Location(to_move);
 					
 					// iterate through dice rolls in descending order
-					for(int i = sorted_dice.length - 1; i >= 0; i--){
-						int roll = sorted_dice[i];
+					for(int i = this.curr_state.get_rolls().length - 1; i >= 0; i--){
+						int roll = this.curr_state.get_rolls()[i];
 						if(loc.get_type().equals("home circle")){
 							move = new EnterPiece(to_move);
 						}
@@ -212,8 +213,8 @@ class Player implements IPlayer {
 					loc = this.curr_state.get_board().get_Pawn_Location(to_move);
 					
 					// iterate through dice rolls in descending order
-					for(int i = sorted_dice.length - 1; i >= 0; i--){
-						int roll = sorted_dice[i];
+					for(int i = this.curr_state.get_rolls().length - 1; i >= 0; i--){
+						int roll = this.curr_state.get_rolls()[i];
 						if(loc.get_type().equals("home circle")){
 							move = new EnterPiece(to_move);
 						}

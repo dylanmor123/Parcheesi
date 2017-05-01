@@ -226,6 +226,9 @@ public class RuleChecker {
 		Space curr_space = null;
 		
 		while(spaces_to_check.size() < distance){
+			if(curr_space_index == row_length){
+				break;
+			}
 			curr_space = row.get(curr_space_index);
 			spaces_to_check.add(curr_space);
 			curr_space_index++;
