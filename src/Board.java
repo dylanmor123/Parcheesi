@@ -11,7 +11,15 @@ class Board {
 	public Board(Board b){
 		this.spaces = new Space[b.spaces.length];
 		for (int i = 0; i < b.spaces.length; i++){
-			this.spaces[i] = new Space(b.spaces[i]);
+			if (Entry.class.isAssignableFrom(b.spaces[i].getClass())) {
+				this.spaces[i] = new Entry((Entry) b.spaces[i]);
+			}
+			else if (PreHomeRow.class.isAssignableFrom(b.spaces[i].getClass())) {
+				this.spaces[i] = new PreHomeRow((PreHomeRow) b.spaces[i]);
+			}
+			else{
+				this.spaces[i] = new Space(b.spaces[i]);
+			}	
 		}
 		
 		this.home_circles = new HomeCircle[b.home_circles.length];

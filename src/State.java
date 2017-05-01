@@ -9,13 +9,14 @@ public class State {
 	protected int[] rolls_vals_left = new int[0];
 	
 	// private boolean for sequence contract (add_roll* . remove_roll*)*
-	private boolean has_rolls = false;
+	protected boolean has_rolls = false;
 	
 	// copy constructor for state
 	public State(State s){
 		this.curr_b = new Board(s.curr_b);
 		this.curr_player = new Player(s.curr_player);
 		this.rolls_vals_left = s.rolls_vals_left;
+		this.has_rolls = s.has_rolls;
 	}
 	
 	// construct game state from text file

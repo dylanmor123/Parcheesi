@@ -3,12 +3,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
 
 public class Game implements IGame {
 	protected ArrayList<Player> players = new ArrayList<Player>();
@@ -116,48 +110,6 @@ public class Game implements IGame {
 		return false;
 	}
 	
-	// returns false if all legal moves have been exhausted by the current player; true otherwise
-	private boolean moves_remaining() throws Exception{
-		Player player = this.game_state.curr_player;
-		String color = player.get_color();
-		boolean moves_remaining = false;
-		
-		// check all main pawns for moves
-		Space[] main_spaces = this.game_state.get_board().get_Spaces();
-		for(int i = 0; i < main_spaces.length; i++){
-			Space s = main_spaces[i];
-			for(Pawn p: s.get_pawns()){
-				if(p.get_color().equals(color)){
-					for(int val: this.game_state.rolls_vals_left){
-						moves_remaining = moves_remaining || RuleChecker.is_Legal(new MoveMain(p, i, val), this.game_state, this.prev_state);
-					}
-				}
-			}
-		}
-		
-		// check all home row pawns for moves
-		ArrayList<HomeRow> row = this.game_state.get_board().get_HomeRow(color);
-		for(int i = 0; i < row.size(); i++){
-			HomeRow s = row.get(i);
-			for(Pawn p: s.get_pawns()){
-				if(p.get_color().equals(color)){
-					for(int val: this.game_state.rolls_vals_left){
-						moves_remaining = moves_remaining || RuleChecker.is_Legal(new MoveHome(p, i, val), this.game_state, this.prev_state);
-					}
-				}
-			}
-		}
-		
-		// check all home circle pawns for moves
-		HomeCircle h = this.game_state.get_board().get_HomeCircle(color);
-		for(Pawn p: h.get_pawns()){
-			moves_remaining = moves_remaining || RuleChecker.is_Legal(new EnterPiece(p), this.game_state, this.prev_state);
-		}
-		
-		
-		return moves_remaining;
-	}
-	
 	public void start() throws Exception{
 		// for testing purposes
 		// set to true if you want to compare with test boards after every successful move
@@ -229,7 +181,7 @@ public class Game implements IGame {
 			
 			
 			
-			while(moves_remaining() && !game_over()){
+			while(RuleChecker.moves_remaining(curr_player, this.game_state, this.prev_state) && !game_over()){
 				
 				IMove move = curr_player.doMove(game_state.get_board(), game_state.get_rolls());
 				
@@ -249,7 +201,7 @@ public class Game implements IGame {
 					
 				}
 				
-				this.game_state = BoardUpdater.update_Board(move);
+				this.game_state = BoardUpdater.update_Board(move, this.game_state);
 				
 				num_moves++;
 				if(testing){

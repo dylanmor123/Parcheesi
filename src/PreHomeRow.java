@@ -1,6 +1,10 @@
 import java.util.ArrayList;
 
 public class PreHomeRow extends Space {
+	public PreHomeRow(PreHomeRow p){
+		super(p);
+	}
+	
 	
 	public PreHomeRow(String color, boolean safe, ArrayList<Pawn> pawnsList) {
 		

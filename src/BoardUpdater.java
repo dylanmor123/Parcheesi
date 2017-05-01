@@ -3,12 +3,10 @@ import java.util.ArrayList;
 public class BoardUpdater {
 	// checks whether a pawn will
 	// be bopped given a space and color
-	private static boolean bop(Space s, String color, State given_state){
-		State game
-		
+	private static boolean bop(Space s, String color){
 		if (s.pawns_list.size() == 1){
 			Pawn curr_pawn = s.get_pawns().get(0);
-			if(!curr_pawn.get_color().equals(color)){
+			if(!curr_pawn.get_color().equals(color)){		
 				return true;
 			}
 		}
@@ -30,15 +28,21 @@ public class BoardUpdater {
 		HomeCircle h = b.get_HomeCircle(pawn_color);
 		Entry e = b.get_Entry(pawn_color);
 		boolean bopped = bop(e, pawn_color);
-	
+		
+		if(bopped){
+			Pawn curr_pawn = e.get_pawns().get(0);
+			HomeCircle curr_pawn_home = game_state.get_board().get_HomeCircle(curr_pawn.get_color());
+			e.remove_Pawn(curr_pawn);
+			curr_pawn_home.add_Pawn(curr_pawn);
+			
+			game_state.add_roll(20);
+		}
+		
 		e.add_Pawn(p);
 		h.remove_Pawn(p);
 
 		if (!game_state.remove_roll(5)){
 			game_state.set_rolls(new int[0]);
-		}
-		if(bopped){
-			game_state.add_roll(20);
 		}
 		
 		return game_state;
@@ -95,14 +99,20 @@ public class BoardUpdater {
 		}
 		boolean bopped = bop(ending_space, pawn_color);
 		
+		if(bopped){
+			Pawn curr_pawn = ending_space.get_pawns().get(0);
+			HomeCircle curr_pawn_home = game_state.get_board().get_HomeCircle(curr_pawn.get_color());
+			ending_space.remove_Pawn(curr_pawn);
+			curr_pawn_home.add_Pawn(curr_pawn);
+			
+			game_state.add_roll(20);
+		}
+		
 		ending_space.add_Pawn(p);
 		starting_space.remove_Pawn(p);
 
 		game_state.remove_roll(distance);
 		
-		if(bopped){
-			game_state.add_roll(20);
-		}
 		if(reached_home){
 			game_state.add_roll(10);
 		}
