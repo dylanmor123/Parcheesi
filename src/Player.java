@@ -253,6 +253,7 @@ class Player implements IPlayer {
 	}
 	
 	
+	
 	//--------------------------------------------------------------
 	// Examples for testing
 	// Advance vs. Enter 1
@@ -270,10 +271,75 @@ class Player implements IPlayer {
 	static IMove last3;
 	static IMove first3;
 	
+	// MoveMain vs. MoveMain
+	static State s4;
+	static IMove last4;
+	static IMove first4;
+	
+	// MoveMain vs. MoveMain
+	static State s5;
+	static IMove last5;
+	static IMove first5;
+	
+	// MoveMain vs. MoveMain
+	static State s6;
+	static IMove last6;
+	static IMove first6;
+	
+	// MoveMain vs. MoveMain
+	static State s7;
+	static IMove last7;
+	static IMove first7;
+	
+	// MoveMain vs. MoveMain
+	static State s8;
+	static IMove last8;
+	static IMove first8;
+	
+	// MoveMain vs. MoveMain
+	static State s9;
+	static IMove last9;
+	static IMove first9;
+	
+	// MoveMain vs. MoveMain
+	static State s10;
+	static IMove last10;
+	static IMove first10;
+	
+	// MoveMain vs. MoveMain
+	static State s11;
+	static IMove last11;
+	static IMove first11;
+	
+	// MoveMain vs. MoveMain
+	static State s12;
+	static IMove last12;
+	static IMove first12;
+	
+	// MoveMain vs. MoveMain
+	static State s13;
+	static IMove last13;
+	static IMove first13;
+	
+	// MoveMain vs. MoveMain
+	static State s14;
+	static IMove last14;
+	static IMove first14;
+	
+	// EnterPiece vs. MoveMain
+	static State s15;
+	static IMove last15;
+	static IMove first15;
+	
+	// MoveMain vs. MoveMain
+	static State s16;
+	static IMove last16;
+	static IMove first16;
 	
 	
 	public static void createExamples() throws Exception{
 		int num_players = 2;
+		
 		s1 = new State("boards/1.txt", num_players);
 		last1 = new EnterPiece(new Pawn(3, "green"));
 		first1 = new MoveMain(new Pawn(0, "green"), 0, 5);
@@ -282,10 +348,61 @@ class Player implements IPlayer {
 		last2 = new EnterPiece(new Pawn(0, "green"));
 		first2 = new MoveMain(new Pawn(2, "green"), 27, 5);
 		
-		
 		s3 = new State("boards/57.txt", num_players);
 		last3 = new MoveMain(new Pawn(1, "green"), 25, 6);
-		first3 = new MoveHome(new Pawn(3, "green"), 27, 5);
+		first3 = new MoveHome(new Pawn(3, "green"), 1, 6);
+			
+		s4 = new State("boards/2.txt", num_players);
+		last4 = new MoveMain(new Pawn(0, "green"), 0, 2);
+		first4 = new MoveMain(new Pawn(0, "green"), 0, 2);
+		
+		s5 = new State("boards/3.txt", num_players);
+		last5 = new MoveMain(new Pawn(1, "green"), 0, 2);
+		first5 = new MoveMain(new Pawn(0, "green"), 2, 2);
+		
+		s6 = new State("boards/7.txt", num_players);
+		last6 = new MoveMain(new Pawn(0, "green"), 4, 4);
+		first6 = new MoveMain(new Pawn(0, "green"), 4, 4);
+		
+		s7 = new State("boards/8.txt", num_players);
+		last7 = new EnterPiece(new Pawn(3, "green"));
+		first7 = new MoveMain(new Pawn(0, "green"), 7, 4);
+		
+		s8 = new State("boards/9.txt", num_players);
+		last8 = new MoveMain(new Pawn(2, "green"), 0, 4);
+		first8 = new MoveMain(new Pawn(0, "green"), 7, 4);
+		
+		s9 = new State("boards/11.txt", num_players);
+		last9 = new MoveMain(new Pawn(2, "green"), 4, 4);
+		first9 = new MoveMain(new Pawn(0, "green"), 10, 4);
+		
+		s10 = new State("boards/12.txt", num_players);
+		last10 = new MoveMain(new Pawn(2, "green"), 4, 4);
+		first10 = new MoveMain(new Pawn(0, "green"), 14, 4);
+		
+		s11 = new State("boards/13.txt", num_players);
+		last11 = new MoveMain(new Pawn(2, "green"), 4, 3);
+		first11 = new MoveMain(new Pawn(0, "green"), 14, 3);
+			
+		s12 = new State("boards/25.txt", num_players);
+		last12 = new MoveMain(new Pawn(3, "green"), 0, 6);
+		first12 = new MoveMain(new Pawn(1, "green"), 11, 20);
+		
+		s13 = new State("boards/26.txt", num_players);
+		last13 = new MoveMain(new Pawn(2, "green"), 7, 6);
+		first13 = new MoveMain(new Pawn(3, "green"), 20, 6);
+		
+		s14 = new State("boards/27.txt", num_players);
+		last14 = new MoveMain(new Pawn(2, "green"), 7, 20);
+		first14 = new MoveMain(new Pawn(1, "green"), 11, 20);
+		
+		s15 = new State("boards/35.txt", num_players);
+		last15 = new EnterPiece(new Pawn(0, "green"));
+		first15 = new MoveMain(new Pawn(2, "green"), 27, 5);
+		
+		s16 = new State("boards/39.txt", num_players);
+		last16 = new MoveMain(new Pawn(0, "green"), 7, 5);
+		first16 = new MoveMain(new Pawn(2, "green"), 27, 5);
 	}
 	
 	public static void main(String[] argv) throws Exception{
@@ -297,6 +414,25 @@ class Player implements IPlayer {
 		
 		Tester.check(first1.equals(p_first.doMove(s1.get_board(), s1.get_rolls())), "first - test 1");
 		Tester.check(last1.equals(p_last.doMove(s1.get_board(), s1.get_rolls())), "last - test 1");
+		
+		p_first = new Player("first");
+		p_last = new Player("last");
+		
+		p_first.startGame("green");
+		p_last.startGame("green");
+		
+		Tester.check(first2.equals(p_first.doMove(s2.get_board(), s2.get_rolls())), "first - test 2");
+		Tester.check(last2.equals(p_last.doMove(s2.get_board(), s2.get_rolls())), "last - test 2");
+		
+		p_first = new Player("first");
+		p_last = new Player("last");
+		
+		p_first.startGame("green");
+		p_last.startGame("green");
+		
+		Tester.check(first3.equals(p_first.doMove(s3.get_board(), s3.get_rolls())), "first - test 3");
+		Tester.check(last3.equals(p_last.doMove(s3.get_board(), s3.get_rolls())), "last - test 3");
+		
 	}
 
 }
