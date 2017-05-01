@@ -198,7 +198,11 @@ class Player implements IPlayer {
 			
 		}
 		else if(this.strategy.equals("last")){
-			this.curr_state = new State(brd, this, dice);
+			int[] sorted_dice = new int[dice.length];
+			System.arraycopy(dice, 0, sorted_dice, 0, dice.length);
+			Arrays.sort(sorted_dice);
+			
+			this.curr_state = new State(brd, this, sorted_dice);
 			this.prev_state = new State(curr_state);
 			
 			while(RuleChecker.moves_remaining(this, this.curr_state, this.prev_state)){
@@ -354,7 +358,7 @@ class Player implements IPlayer {
 		first3 = new MoveHome(new Pawn(3, "green"), 1, 6);
 			
 		s4 = new State("boards/2.txt", num_players);
-		last4 = new MoveMain(new Pawn(0, "green"), 0, 2);
+		last4 = new MoveMain(new Pawn(1, "green"), 0, 2);
 		first4 = new MoveMain(new Pawn(0, "green"), 0, 2);
 		
 		s5 = new State("boards/3.txt", num_players);
@@ -362,11 +366,11 @@ class Player implements IPlayer {
 		first5 = new MoveMain(new Pawn(0, "green"), 2, 2);
 		
 		s6 = new State("boards/7.txt", num_players);
-		last6 = new MoveMain(new Pawn(0, "green"), 4, 4);
-		first6 = new MoveMain(new Pawn(0, "green"), 4, 4);
+		last6 = new MoveMain(new Pawn(2, "green"), 0, 3 );
+		first6 = new MoveMain(new Pawn(1, "green"), 4, 4);
 		
 		s7 = new State("boards/8.txt", num_players);
-		last7 = new EnterPiece(new Pawn(3, "green"));
+		last7 = new MoveMain(new Pawn(2, "green"), 0, 4);
 		first7 = new MoveMain(new Pawn(0, "green"), 7, 4);
 		
 		s8 = new State("boards/9.txt", num_players);
@@ -383,10 +387,10 @@ class Player implements IPlayer {
 		
 		s11 = new State("boards/13.txt", num_players);
 		last11 = new MoveMain(new Pawn(2, "green"), 4, 3);
-		first11 = new MoveMain(new Pawn(0, "green"), 14, 3);
+		first11 = new MoveMain(new Pawn(1, "green"), 11, 3);
 			
 		s12 = new State("boards/25.txt", num_players);
-		last12 = new MoveMain(new Pawn(3, "green"), 0, 6);
+		last12 = new MoveMain(new Pawn(3, "green"), 0, 20);
 		first12 = new MoveMain(new Pawn(1, "green"), 11, 20);
 		
 		s13 = new State("boards/26.txt", num_players);
@@ -402,7 +406,7 @@ class Player implements IPlayer {
 		first15 = new MoveMain(new Pawn(2, "green"), 27, 5);
 		
 		s16 = new State("boards/39.txt", num_players);
-		last16 = new MoveMain(new Pawn(0, "green"), 7, 5);
+		last16 = new MoveMain(new Pawn(0, "green"), 6, 5);
 		first16 = new MoveMain(new Pawn(2, "green"), 27, 5);
 	}
 	
@@ -433,6 +437,123 @@ class Player implements IPlayer {
 		
 		Tester.check(first3.equals(p_first.doMove(s3.get_board(), s3.get_rolls())), "first - test 3");
 		Tester.check(last3.equals(p_last.doMove(s3.get_board(), s3.get_rolls())), "last - test 3");
+		
+		p_first = new Player("first");
+		p_last = new Player("last");
+		
+		p_first.startGame("green");
+		p_last.startGame("green");
+		
+		Tester.check(first4.equals(p_first.doMove(s4.get_board(), s4.get_rolls())), "first - test 4");
+		Tester.check(last4.equals(p_last.doMove(s4.get_board(), s4.get_rolls())), "last - test 4");
+		
+		p_first = new Player("first");
+		p_last = new Player("last");
+		
+		p_first.startGame("green");
+		p_last.startGame("green");
+		
+		Tester.check(first5.equals(p_first.doMove(s5.get_board(), s5.get_rolls())), "first - test 5");
+		Tester.check(last5.equals(p_last.doMove(s5.get_board(), s5.get_rolls())), "last - test 5");
+		
+		p_first = new Player("first");
+		p_last = new Player("last");
+		
+		p_first.startGame("green");
+		p_last.startGame("green");
+		
+		Tester.check(first6.equals(p_first.doMove(s6.get_board(), s6.get_rolls())), "first - test 6");
+		Tester.check(last6.equals(p_last.doMove(s6.get_board(), s6.get_rolls())), "last - test 6");
+		
+		p_first = new Player("first");
+		p_last = new Player("last");
+		
+		p_first.startGame("green");
+		p_last.startGame("green");
+		
+		Tester.check(first7.equals(p_first.doMove(s7.get_board(), s7.get_rolls())), "first - test 7");
+		Tester.check(last7.equals(p_last.doMove(s7.get_board(), s7.get_rolls())), "last - test 7");
+		
+		p_first = new Player("first");
+		p_last = new Player("last");
+		
+		p_first.startGame("green");
+		p_last.startGame("green");
+		
+		Tester.check(first8.equals(p_first.doMove(s8.get_board(), s8.get_rolls())), "first - test 8");
+		Tester.check(last8.equals(p_last.doMove(s8.get_board(), s8.get_rolls())), "last - test 8");
+		
+		p_first = new Player("first");
+		p_last = new Player("last");
+		
+		p_first.startGame("green");
+		p_last.startGame("green");
+		
+		Tester.check(first9.equals(p_first.doMove(s9.get_board(), s9.get_rolls())), "first - test 9");
+		Tester.check(last9.equals(p_last.doMove(s9.get_board(), s9.get_rolls())), "last - test 9");
+		
+		p_first = new Player("first");
+		p_last = new Player("last");
+		
+		p_first.startGame("green");
+		p_last.startGame("green");
+		
+		Tester.check(first10.equals(p_first.doMove(s10.get_board(), s10.get_rolls())), "first - test 10");
+		Tester.check(last10.equals(p_last.doMove(s10.get_board(), s10.get_rolls())), "last - test 10");
+		
+		p_first = new Player("first");
+		p_last = new Player("last");
+		
+		p_first.startGame("green");
+		p_last.startGame("green");
+		
+		Tester.check(first11.equals(p_first.doMove(s11.get_board(), s11.get_rolls())), "first - test 11");
+		Tester.check(last11.equals(p_last.doMove(s11.get_board(), s11.get_rolls())), "last - test 11");
+		
+		p_first = new Player("first");
+		p_last = new Player("last");
+		
+		p_first.startGame("green");
+		p_last.startGame("green");
+		
+		Tester.check(first12.equals(p_first.doMove(s12.get_board(), s12.get_rolls())), "first - test 12");
+		Tester.check(last12.equals(p_last.doMove(s12.get_board(), s12.get_rolls())), "last - test 12");
+		
+		p_first = new Player("first");
+		p_last = new Player("last");
+		
+		p_first.startGame("green");
+		p_last.startGame("green");
+		
+		Tester.check(first13.equals(p_first.doMove(s13.get_board(), s13.get_rolls())), "first - test 13");
+		Tester.check(last13.equals(p_last.doMove(s13.get_board(), s13.get_rolls())), "last - test 13");
+		
+		p_first = new Player("first");
+		p_last = new Player("last");
+		
+		p_first.startGame("green");
+		p_last.startGame("green");
+		
+		Tester.check(first14.equals(p_first.doMove(s14.get_board(), s14.get_rolls())), "first - test 14");
+		Tester.check(last14.equals(p_last.doMove(s14.get_board(), s14.get_rolls())), "last - test 14");
+		
+		p_first = new Player("first");
+		p_last = new Player("last");
+		
+		p_first.startGame("green");
+		p_last.startGame("green");
+		
+		Tester.check(first15.equals(p_first.doMove(s15.get_board(), s15.get_rolls())), "first - test 15");
+		Tester.check(last15.equals(p_last.doMove(s15.get_board(), s15.get_rolls())), "last - test 15");
+		
+		p_first = new Player("first");
+		p_last = new Player("last");
+		
+		p_first.startGame("green");
+		p_last.startGame("green");
+		
+		Tester.check(first16.equals(p_first.doMove(s16.get_board(), s16.get_rolls())), "first - test 16");
+		Tester.check(last16.equals(p_last.doMove(s16.get_board(), s16.get_rolls())), "last - test 16");
 		
 	}
 

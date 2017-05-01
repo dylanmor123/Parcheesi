@@ -119,6 +119,10 @@ public class RuleChecker {
 				if(curr_space_index == homerow.size()){
 					curr_space = game_state.get_board().get_Home(pawn_color);
 					spaces_to_check.add(curr_space);
+					//check if move is not done - return false if so
+					if(spaces_to_check.size() < distance){
+						return false;
+					}
 				}
 				else{
 					curr_space = homerow.get(curr_space_index);
