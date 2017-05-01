@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 
 class Player implements IPlayer {
 	protected boolean doubles_penalty; //true if third doubles is rolled
@@ -43,17 +44,6 @@ class Player implements IPlayer {
 		this.has_started = true;
 	}
 	
-	public IMove doMove(Board brd, int[] dice) throws Exception{
-		// for testing - return first move in list of moves
-		// check if players has started
-		if(!has_started){
-			throw new Exception("Player has not started");
-		}
-		
-		return this.moves.remove(0);
-		
-	}
-	
 	public void DoublesPenalty() throws Exception{
 		// check if players has started
 		if(!has_started){
@@ -81,7 +71,78 @@ class Player implements IPlayer {
 	// ordered from furthest along to furthest back
 	private ArrayList<Pawn> get_pawn_order(Board board){
 		// TODO: WRITE METHOD
-		return null;
+		ArrayList<Pawn> pawns = new ArrayList<Pawn>();
+		
+		
+		// search in home row
+		ArrayList<HomeRow> row = board.get_HomeRow(this.color);
+		for(int i = row.size() - 1; i >= 0; i--){
+			HomeRow s = row.get(i);
+			if(s.get_pawns().size() > 0 && s.get_pawns().get(0).get_color().equals(this.color)){
+				pawns.addAll(s.get_pawns());
+			}
+		}
+		
+		// search in main ring
+		// find entry index
+		Entry e = board.get_Entry(this.color);
+		Space[] spaces = board.get_Spaces();
+		int entry_index = -1;
+		for(int k = 0; k < spaces.length; k++){
+			if(e.equals(spaces[k])){
+				entry_index = k;
+				break;
+			}
+		}
+		// k is index of entry in array of spaces
+		
+		for(int j = (((entry_index - 1) % spaces.length) + spaces.length) % spaces.length; j != entry_index; j = (j - 1) % spaces.length){
+			Space s = spaces[j];
+			if(s.get_pawns().size() > 0 && s.get_pawns().get(0).get_color().equals(color)){
+				pawns.addAll(s.get_pawns());
+			}
+		}
+		
+		// add pawns from entry
+		pawns.addAll(e.get_pawns());
+		
+		return pawns;
+	}
+	
+	public IMove doMove(Board brd, int[] dice) throws Exception{
+		// for testing - return first move in list of moves
+		// check if players has started
+		if(!has_started){
+			throw new Exception("Player has not started");
+		}
+		
+		// sort list of rolls - rolls are in ascending order
+		// iterate in reverse to try furthest moves first
+		int[] sorted_dice = new int[dice.length];
+		System.arraycopy(dice, 0, sorted_dice, 0, dice.length);
+		Arrays.sort(sorted_dice);
+		
+		ArrayList<Pawn> ordered_pawns = this.get_pawn_order(brd);
+		IMove move = null;
+		
+		if(this.moves.size() != 0){
+			return this.moves.remove(0);
+		}
+		else if(this.strategy.equals("first")){
+			PawnLocation loc = null;
+			for(Pawn to_move: ordered_pawns){
+				loc = brd.get_Pawn_Location(to_move);
+				
+				for(int i = sorted_dice.length - 1; i >= 0; i--){
+					if(loc.get_type().equals("home_circle")){
+						move = new EnterPiece(to_move);
+						if(RulesChecker.isLegal(move, brd)
+					}
+				}
+			}
+		}
+		
+		
 	}
 	
 	
@@ -89,7 +150,6 @@ class Player implements IPlayer {
 	// Examples for testing
 	// Advance vs. Enter 1
 	static State s1;
-	static ArrayList<Pawn> order1;
 	static IMove last1;
 	static IMove first1;
 	
@@ -116,7 +176,7 @@ class Player implements IPlayer {
 		first1 = new MoveMain(new Pawn(2, "green"), 27, 5);
 		
 		
-		s2 = new State("boards/35.txt", num_players);
+		s3 = new State("boards/57.txt", num_players);
 		last1 = new MoveMain(new Pawn(1, "green"), 25, 6);
 		first1 = new MoveHome(new Pawn(3, "green"), 27, 5);
 	}
