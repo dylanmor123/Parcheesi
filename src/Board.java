@@ -134,9 +134,33 @@ class Board {
 		return null;
 	}
 	
-	public Space get_Space_by_Pawn(Pawn p){
+	public PawnLocation get_Pawn_Location(Pawn p){
 		//TODO: WRITE METHOD
-		return null;
+		// check in spaces
+		for(int i = 0; i < this.spaces.length; i++){
+			Space s = this.spaces[i];
+			if(s.get_pawns() != null && s.get_pawns().contains(p)){
+				return new PawnLocation("main", i);
+			}
+		}
+		
+		// check in home row
+		ArrayList<HomeRow> hr = this.get_HomeRow(p.get_color());
+		for(int i = 0; i < hr.size(); i++){
+			HomeRow h = hr.get(i);
+			if(h.get_pawns() != null && h.get_pawns().contains(p)){
+				return new PawnLocation("home row", i);
+			}
+		}
+		
+		// check in home circle
+		HomeCircle hc = this.get_HomeCircle(p.get_color());
+		if(hc.get_pawns() != null && hc.get_pawns().contains(p)){
+			return new PawnLocation("home circle", -1);
+		}
+		
+		// if not in any of these places, must be in home
+		return new PawnLocation("home", -1);
 	}
 	
 	@Override

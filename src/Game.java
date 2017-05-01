@@ -95,179 +95,6 @@ public class Game implements IGame {
 		
 		
 	}
-
-	
-	
-	// checks whether a pawn will
-	// be bopped given a space and color
-	private boolean bop(Space s, String color){
-		if (s.pawns_list.size() == 1){
-			Pawn curr_pawn = s.get_pawns().get(0);
-			if(!curr_pawn.get_color().equals(color)){
-				HomeCircle curr_pawn_home = this.game_state.get_board().get_HomeCircle(curr_pawn.get_color());
-				s.remove_Pawn(curr_pawn);
-				curr_pawn_home.add_Pawn(curr_pawn);
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	
-	
-	
-	
-	
-	// alters Board in curr_state with move
-	// checks if move is legal before update
-	private boolean update_Board(EnterPiece m) throws Exception{
-		Board b = this.game_state.get_board();
-		if (m == null){
-			return false;
-		}
-		if (!RuleChecker.is_Legal(m, this.game_state, this.prev_state)){
-			return false;
-		}
-		
-		Pawn p = m.get_pawn();
-		String pawn_color = p.get_color();		   
-		HomeCircle h = b.get_HomeCircle(pawn_color);
-		Entry e = b.get_Entry(pawn_color);
-		boolean bopped = bop(e, pawn_color);
-	
-		e.add_Pawn(p);
-		h.remove_Pawn(p);
-
-		if (!this.game_state.remove_roll(5)){
-			this.game_state.set_rolls(new int[0]);
-		}
-		if(bopped){
-			this.game_state.add_roll(20);
-		}
-		return true;
-	}
-	
-	private boolean update_Board(MoveMain m) throws Exception{
-		Board b = this.game_state.get_board();
-		if (m == null){
-			return false;
-		}
-		if (!RuleChecker.is_Legal(m, this.game_state, this.prev_state)){
-			return false;
-		}
-		
-		Pawn p = m.get_pawn();
-		String pawn_color = p.get_color();	
-		int start = m.get_start();
-		int distance = m.get_distance();
-		Space[] spaces = this.game_state.get_board().get_Spaces();
-		int space_length = spaces.length;
-		Space starting_space = spaces[start];
-		Space ending_space = null;
-		int curr_space_index = start;
-		
-		boolean in_home_row = false; // true if list of spaces includes home row
-		boolean reached_home = false; // true if list of spaces includes home
-		ArrayList<HomeRow> homerow = null;
-		
-		for(int i = 0; i <= distance; i++){
-			if(!in_home_row){
-				ending_space = spaces[curr_space_index];
-				
-				if (pawn_color.equals(ending_space.get_color()) && PreHomeRow.class.isAssignableFrom(ending_space.getClass())){
-					homerow = this.game_state.get_board().get_HomeRow(pawn_color);
-					in_home_row = true;
-					curr_space_index = 0;
-					
-				}
-				else{
-					curr_space_index = (curr_space_index + 1) % space_length; // next space on board; could wrap around
-				}
-			}
-			else if(!reached_home){
-				if(curr_space_index == homerow.size()){
-					Home home = this.game_state.get_board().get_Home(pawn_color);
-					ending_space = home;
-					reached_home = true;
-				}
-				else{
-					ending_space = homerow.get(curr_space_index);
-					curr_space_index++;
-				}
-				
-			}
-		}
-		boolean bopped = bop(ending_space, pawn_color);
-		
-		ending_space.add_Pawn(p);
-		starting_space.remove_Pawn(p);
-
-		this.game_state.remove_roll(distance);
-		
-		if(bopped){
-			this.game_state.add_roll(20);
-		}
-		if(reached_home){
-			this.game_state.add_roll(10);
-		}
-		return true;		
-	}
-	
-	private boolean update_Board(MoveHome m) throws Exception{
-		Board b = this.game_state.get_board();
-		if (m == null){
-			return false;
-		}
-		if (!RuleChecker.is_Legal(m, this.game_state, this.prev_state)){
-			return false;
-		}
-		
-		Pawn p = m.get_pawn();
-		String pawn_color = p.get_color();	
-		int start = m.get_start();
-		int distance = m.get_distance();
-		ArrayList<HomeRow> homerow = this.game_state.get_board().get_HomeRow(pawn_color);
-		Space starting_space = homerow.get(start);
-		Space ending_space = null;
-		if(start + distance < 7){
-			ending_space = homerow.get(start+distance);
-		}
-		else{
-			ending_space = this.game_state.get_board().get_Home(pawn_color);
-			this.game_state.add_roll(10);
-		}
-		ending_space.add_Pawn(p);
-		starting_space.remove_Pawn(p);
-		this.game_state.remove_roll(distance);
-
-		
-		return true;		
-	}
-	
-	
-	private boolean update_Board(IMove move) throws Exception{
-		Board b = this.game_state.get_board();
-		if (move == null){
-			  return false;
-		  }
-		if (!RuleChecker.is_Legal(move, this.game_state, this.prev_state)){
-			return false;
-		}
-		
-		if (EnterPiece.class.isAssignableFrom(move.getClass())) {
-			EnterPiece m = (EnterPiece) move;
-			return update_Board(m);
-		  }
-		
-		else if(MoveMain.class.isAssignableFrom(move.getClass())){
-			MoveMain m = (MoveMain) move;
-			return update_Board(m);
-		  }
-		else{
-			MoveHome m = (MoveHome) move;
-			return update_Board(m);
-		}
-	}
 	
 	private int roll_die(boolean from_file) throws NumberFormatException, IOException{
 		if(from_file){
@@ -406,8 +233,7 @@ public class Game implements IGame {
 				
 				IMove move = curr_player.doMove(game_state.get_board(), game_state.get_rolls());
 				
-				if(!update_Board(move)){
-					System.out.println("Illegal move attempted");
+				if(!RuleChecker.is_Legal(move, this.game_state, this.prev_state)){
 					
 					
 					// update_Board returns false if player passed illegal move (cheated)
@@ -423,7 +249,8 @@ public class Game implements IGame {
 					
 				}
 				
-				System.out.println("Move processed");
+				this.game_state = BoardUpdater.update_Board(move);
+				
 				num_moves++;
 				if(testing){
 					State curr_state = Game.states.get(num_moves);
@@ -587,8 +414,8 @@ public class Game implements IGame {
 
 	public static void main(String argv[]) throws Exception{
 		g.start();
-		Tester.check(g2.is_Legal(new MoveMain(new Pawn(0, "blue"), 18, 1)), "Enter");
-		Tester.check(!g3.is_Legal(new MoveHome(new Pawn(2, "green"), 0, 5)), "Enter");
+		Tester.check(RuleChecker.is_Legal(new MoveMain(new Pawn(0, "blue"), 18, 1), g2.game_state, g2.game_state), "move in front of blockade test");
+		Tester.check(!RuleChecker.is_Legal(new MoveHome(new Pawn(2, "green"), 0, 5), g3.game_state, g3.game_state), "blockade home row test");
 
 	}
 	
