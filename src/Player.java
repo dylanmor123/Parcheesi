@@ -6,7 +6,7 @@ class Player implements IPlayer {
 	private String color;
 	
 	// for testing purposes - list of moves in order to make
-	private ArrayList<IMove> test_moves;
+	private ArrayList<IMove> test_moves = new ArrayList<IMove>();
 	
 	
 	// implementing Player sequence contract
@@ -57,7 +57,7 @@ class Player implements IPlayer {
 	}
 	
 	public ArrayList<IMove> get_moves(){
-		return this.moves;
+		return this.test_moves;
 	}
 	
 	// Assignment 6 - Implementing player strategies
@@ -113,7 +113,15 @@ class Player implements IPlayer {
 		}
 		
 		// add pawns from entry
-		pawns.addAll(e.get_pawns());
+		if(e.get_pawns().size() > 0 && e.get_pawns().get(0).get_color().equals(color)){
+			pawns.addAll(e.get_pawns());
+		}
+		
+		// add pawns from home_circle
+		HomeCircle hc = board.get_HomeCircle(color);
+		if(hc.get_pawns().size() > 0 && hc.get_pawns().get(0).get_color().equals(color)){
+			pawns.addAll(hc.get_pawns());
+		}
 		
 		return pawns;
 	}
@@ -131,8 +139,8 @@ class Player implements IPlayer {
 		System.arraycopy(dice, 0, sorted_dice, 0, dice.length);
 		Arrays.sort(sorted_dice);
 		
-		ArrayList<Pawn> ordered_pawns = this.get_pawn_order(brd);
-		IMove move = null;
+		
+		
 		
 		if(this.test_moves.size() != 0){
 			return this.test_moves.remove(0);
@@ -144,28 +152,101 @@ class Player implements IPlayer {
 			this.curr_state = new State(brd, this, dice);
 			this.prev_state = new State(curr_state);
 			
-			PawnLocation loc = null;
-			for(Pawn to_move: ordered_pawns){
-				loc = brd.get_Pawn_Location(to_move);
+			while(RuleChecker.moves_remaining(this, this.curr_state, this.prev_state)){
+				PawnLocation loc = null;
+				ArrayList<Pawn> ordered_pawns = this.get_pawn_order(this.curr_state.get_board());
+				boolean made_move = false;
+				IMove move = null;
 				
-				// iterate through dice rolls in descending order
-				for(int i = sorted_dice.length - 1; i >= 0; i--){
-					int roll = sorted_dice[i];
-					if(loc.get_type().equals("home circle")){
-						move = new EnterPiece(to_move);
+				for(Pawn to_move: ordered_pawns){
+					loc = this.curr_state.get_board().get_Pawn_Location(to_move);
+					
+					// iterate through dice rolls in descending order
+					for(int i = sorted_dice.length - 1; i >= 0; i--){
+						int roll = sorted_dice[i];
+						if(loc.get_type().equals("home circle")){
+							move = new EnterPiece(to_move);
+						}
+						else if(loc.get_type().equals("main")){
+							move = new MoveMain(to_move, loc.get_index(), roll);
+						}
+						else if(loc.get_type().equals("home row")){
+							move = new MoveHome(to_move, loc.get_index(), roll);
+						}
+						else{
+							break; // pawn is in home; no need to try and move
+						}
+						
+						// see if move is legal; if so, update on player-side and add to list of moves to make
+						if(RuleChecker.is_Legal(move, this.curr_state, this.prev_state)){
+							this.generated_moves.add(move);	
+							this.curr_state = BoardUpdater.update_Board(move, this.curr_state);
+							made_move = true;
+							break;
+						}
 					}
-					else if(loc.get_type().equals("main")){
-						move = new MoveMain(to_move, loc.get_index(), roll);
-					}
-					else if(loc.get_type().equals("home row")){
-						move = new MoveHome(to_move, loc.get_index(), roll);
-					}
-					else{
-						break; // pawn is in home; no need to try and move
+					
+					if(made_move){
+						made_move = false;
+						break;
 					}
 				}
 			}
+			
+			return this.generated_moves.remove(0);
+			
 		}
+		else if(this.strategy.equals("last")){
+			this.curr_state = new State(brd, this, dice);
+			this.prev_state = new State(curr_state);
+			
+			while(RuleChecker.moves_remaining(this, this.curr_state, this.prev_state)){
+				PawnLocation loc = null;
+				ArrayList<Pawn> ordered_pawns = this.get_pawn_order(this.curr_state.get_board());
+				boolean made_move = false;
+				IMove move = null;
+				
+				// start from back of list of ordered pawns
+				for(int j = ordered_pawns.size() - 1; j >= 0; j--){
+					Pawn to_move = ordered_pawns.get(j);
+					loc = this.curr_state.get_board().get_Pawn_Location(to_move);
+					
+					// iterate through dice rolls in descending order
+					for(int i = sorted_dice.length - 1; i >= 0; i--){
+						int roll = sorted_dice[i];
+						if(loc.get_type().equals("home circle")){
+							move = new EnterPiece(to_move);
+						}
+						else if(loc.get_type().equals("main")){
+							move = new MoveMain(to_move, loc.get_index(), roll);
+						}
+						else if(loc.get_type().equals("home row")){
+							move = new MoveHome(to_move, loc.get_index(), roll);
+						}
+						else{
+							break; // pawn is in home; no need to try and move
+						}
+						
+						// see if move is legal; if so, update on player-side and add to list of moves to make
+						if(RuleChecker.is_Legal(move, this.curr_state, this.prev_state)){
+							this.generated_moves.add(move);	
+							this.curr_state = BoardUpdater.update_Board(move, this.curr_state);
+							made_move = true;
+							break;
+						}
+					}
+					
+					if(made_move){
+						made_move = false;
+						break;
+					}
+				}
+			}
+			
+			return this.generated_moves.remove(0);
+		}
+		
+		
 		return null;
 		
 		
@@ -198,13 +279,24 @@ class Player implements IPlayer {
 		first1 = new MoveMain(new Pawn(0, "green"), 0, 5);
 		
 		s2 = new State("boards/35.txt", num_players);
-		last1 = new EnterPiece(new Pawn(0, "green"));
-		first1 = new MoveMain(new Pawn(2, "green"), 27, 5);
+		last2 = new EnterPiece(new Pawn(0, "green"));
+		first2 = new MoveMain(new Pawn(2, "green"), 27, 5);
 		
 		
 		s3 = new State("boards/57.txt", num_players);
-		last1 = new MoveMain(new Pawn(1, "green"), 25, 6);
-		first1 = new MoveHome(new Pawn(3, "green"), 27, 5);
+		last3 = new MoveMain(new Pawn(1, "green"), 25, 6);
+		first3 = new MoveHome(new Pawn(3, "green"), 27, 5);
+	}
+	
+	public static void main(String[] argv) throws Exception{
+		Player p_first = new Player("first");
+		Player p_last = new Player("last");
+		
+		p_first.startGame("green");
+		p_last.startGame("green");
+		
+		Tester.check(first1.equals(p_first.doMove(s1.get_board(), s1.get_rolls())), "first - test 1");
+		Tester.check(last1.equals(p_last.doMove(s1.get_board(), s1.get_rolls())), "last - test 1");
 	}
 
 }

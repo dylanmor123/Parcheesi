@@ -32,6 +32,7 @@ public class State {
 	        	line = br.readLine();
 	        	while(!line.equals("_Board")){
 	        		this.add_roll(Integer.parseInt(line));
+	        		
 	        		line = br.readLine();
 	        	}
 	        }
@@ -149,6 +150,9 @@ public class State {
 		this.curr_b = b;
 		this.curr_player = p;
 		this.rolls_vals_left = rolls;
+		if(rolls.length > 0){
+			this.has_rolls = true;
+		}
 	}
 	
 	public Board get_board(){
