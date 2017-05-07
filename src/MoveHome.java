@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.Arrays;
+
 // represents a move that starts on one of the home rows
 class MoveHome implements IMove {
   Pawn pawn;
@@ -45,5 +48,122 @@ class MoveHome implements IMove {
 		
 		MoveHome move = (MoveHome) m;
 		return this.pawn.equals(move.pawn) && (this.start == move.start) && (this.distance == move.distance);	
+	}
+  
+  public boolean is_Legal(State game_state, State prev_state){
+		Pawn pawn = this.get_pawn();
+		int start = this.get_start();
+		int distance = this.get_distance();
+		Player player = (Player) game_state.get_curr_player();
+		Board b = game_state.get_board();
+		
+		// check if player color matches pawn color
+		String player_color = player.get_color();
+		String pawn_color = pawn.get_color();
+		if(! pawn_color.equals(player_color) ){
+			return false;
+		}
+		
+		// Check if pawn is in space defined by start
+		ArrayList<HomeRow> row = b.get_HomeRow(pawn_color);
+		int row_length = row.size();
+		if(start < 0 || start >= row_length){
+			return false;
+		}
+		HomeRow hr = row.get(start);
+		ArrayList<Pawn> in_space = hr.get_pawns();
+		if(! in_space.contains(pawn)){
+			return false;
+		}
+		
+		// Check if move is too long
+		int end = start + distance;
+		if(end >= row_length + 1){
+			return false;
+		}
+		
+		// Check if pawn can be moved distance tiles without conflict
+		// Construct list of spaces to check for blockade
+		ArrayList<Space> spaces_to_check = new ArrayList<Space>();
+		int curr_space_index = start + 1;
+		Space curr_space = null;
+		
+		while(spaces_to_check.size() < distance){
+			if(curr_space_index == row_length){
+				break;
+			}
+			curr_space = row.get(curr_space_index);
+			spaces_to_check.add(curr_space);
+			curr_space_index++;
+		}
+		
+		// check for blockades
+		ArrayList<Pawn> curr_pawns = null;
+		for(Space checked_space : spaces_to_check){
+			curr_pawns = checked_space.get_pawns();
+			if(curr_pawns.size() == 2){
+				return false;
+			}
+		}
+		
+		// check if move would cause a blockade that appears in the previous game state
+		Space end_space = spaces_to_check.get(spaces_to_check.size() - 1);
+		ArrayList<Pawn> end_pawns = end_space.get_pawns();
+		
+		if(!Home.class.isAssignableFrom(end_space.getClass()) && (end_pawns.size() == 1) && end_pawns.get(0).get_color().equals(pawn_color)){
+			ArrayList<Pawn> blockade = new ArrayList<Pawn>();
+			blockade.add(pawn);
+			blockade.add(end_pawns.get(0));
+			
+			Board prev_board = prev_state.get_board();
+			ArrayList<Space> prev_space_queue = new ArrayList<Space>(Arrays.asList(prev_board.get_Spaces()));
+			prev_space_queue.addAll(prev_board.get_HomeRow(pawn_color));
+			
+			for(Space s2: prev_space_queue){
+				if(s2.get_pawns().size() == 2){
+					ArrayList<Pawn> candidate = s2.get_pawns();
+					if(blockade.containsAll(candidate)){
+						return false;
+					}
+				}
+			}
+		}
+		
+		// Check if distance appears in rolls
+		int[] rolls = game_state.get_rolls();
+		for(int r : rolls){
+			if(r == distance){
+				return true;
+			}
+		}
+		return false;
+		
+	}
+  
+  public State update_Board(State given_state) throws Exception{
+		State game_state = new State(given_state);
+		
+		Board b = game_state.get_board();
+		
+		Pawn p = this.get_pawn();
+		String pawn_color = p.get_color();	
+		int start = this.get_start();
+		int distance = this.get_distance();
+		ArrayList<HomeRow> homerow = game_state.get_board().get_HomeRow(pawn_color);
+		Space starting_space = homerow.get(start);
+		Space ending_space = null;
+		if(start + distance < 7){
+			ending_space = homerow.get(start+distance);
+		}
+		else{
+			ending_space = game_state.get_board().get_Home(pawn_color);
+			game_state.add_roll(10);
+		}
+		ending_space.add_Pawn(p);
+		starting_space.remove_Pawn(p);
+		game_state.remove_roll(distance);
+
+		
+		return game_state;		
 	}
 }

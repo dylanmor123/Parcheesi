@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Arrays;
 
 // represents a move that starts on the main ring
@@ -50,5 +51,194 @@ class MoveMain implements IMove {
 		
 		MoveMain move = (MoveMain) m;
 		return this.pawn.equals(move.pawn) && (this.start == move.start) && (this.distance == move.distance);	
+	}
+  	
+  	public boolean is_Legal(State game_state, State prev_state){
+		Pawn pawn = this.get_pawn();
+		int start = this.get_start();
+		int distance = this.get_distance();
+		Player player = (Player) game_state.get_curr_player();
+		Board b = game_state.get_board();
+		
+		// check if player color matches pawn color
+		String player_color = player.get_color();
+		String pawn_color = pawn.get_color();
+		if(! pawn_color.equals(player_color) ){
+			return false;
+		}
+		
+		// Check if pawn is in space defined by start
+		Space[] spaces = b.get_Spaces();
+		int space_length = spaces.length;
+		if(start < 0 || start >= space_length){
+			return false;
+		}
+		Space s = spaces[start];
+		ArrayList<Pawn> in_space = s.get_pawns();
+		if(! in_space.contains(pawn)){
+			return false;
+		}
+		
+		// Check if pawn can be moved distance tiles without conflict
+		// Construct list of spaces to check for blockade
+		ArrayList<Space> spaces_to_check = new ArrayList<Space>();
+		int curr_space_index = (start + 1) % space_length; // next space on board; could wrap around
+		boolean in_home_row = false; // true if list of spaces includes home row
+		boolean reached_home = false; // true if list of spaces includes home
+		Space curr_space = null;
+		ArrayList<HomeRow> homerow = null;
+		
+		while(spaces_to_check.size() < distance){
+			if(!in_home_row){
+				curr_space = spaces[curr_space_index];
+				spaces_to_check.add(curr_space);
+				
+				if (pawn_color.equals(curr_space.get_color()) && curr_space instanceof PreHomeRow){
+					homerow = game_state.get_board().get_HomeRow(pawn_color);
+					in_home_row = true;
+					curr_space_index = 0;
+					
+				}
+				else{
+					curr_space_index = (curr_space_index + 1) % space_length; // next space on board; could wrap around
+				}
+			}
+			else if(!reached_home){
+				if(curr_space_index == homerow.size()){
+					curr_space = game_state.get_board().get_Home(pawn_color);
+					spaces_to_check.add(curr_space);
+					//check if move is not done - return false if so
+					if(spaces_to_check.size() < distance){
+						return false;
+					}
+				}
+				else{
+					curr_space = homerow.get(curr_space_index);
+					spaces_to_check.add(curr_space);
+					curr_space_index++;
+				}
+				
+			}
+			else{
+				return false; // the move goes beyond the home space and is invalid
+			}
+		}
+		
+		// check for blockades
+		ArrayList<Pawn> curr_pawns = null;
+		for(Space checked_space : spaces_to_check){
+			curr_pawns = checked_space.get_pawns();
+			if(curr_pawns.size() == 2){
+				return false;
+			}
+		}
+		
+		// check end space
+		Space end_space = spaces_to_check.get(spaces_to_check.size() - 1);
+		// check for opposing piece on safe space
+		ArrayList<Pawn> end_pawns = end_space.get_pawns();
+		if(end_pawns.size() != 0){
+			// check for opposing piece on safe space
+			if(!end_pawns.get(0).get_color().equals(pawn_color) && end_space.get_safe()){
+				return false;
+			}
+		}
+		
+		// check if move would cause a blockade that appears in the previous game state
+		if((end_pawns.size() == 1) && end_pawns.get(0).get_color().equals(pawn_color)){
+			ArrayList<Pawn> blockade = new ArrayList<Pawn>();
+			blockade.add(pawn);
+			blockade.add(end_pawns.get(0));
+			
+			Board prev_board = prev_state.get_board();
+			ArrayList<Space> prev_space_queue = new ArrayList<Space>(Arrays.asList(prev_board.get_Spaces()));
+			
+			for(Space s2: prev_space_queue){
+				if(s2.get_pawns().size() == 2){
+					ArrayList<Pawn> candidate = s2.get_pawns();
+					if(blockade.containsAll(candidate)){
+						return false;
+					}
+				}
+			}
+		}
+		
+		// Check if distance appears in rolls
+		int[] rolls = game_state.get_rolls();
+		for(int r : rolls){
+			if(r == distance){
+				return true;
+			}
+		}
+		return false;
+		
+	}
+  	
+  	public State update_Board(State given_state) throws Exception{
+		State game_state = new State(given_state);
+		
+		Board b = game_state.get_board();
+		
+		Pawn p = this.get_pawn();
+		String pawn_color = p.get_color();	
+		int start = this.get_start();
+		int distance = this.get_distance();
+		Space[] spaces = game_state.get_board().get_Spaces();
+		int space_length = spaces.length;
+		Space starting_space = spaces[start];
+		Space ending_space = null;
+		int curr_space_index = start;
+		
+		boolean in_home_row = false; // true if list of spaces includes home row
+		boolean reached_home = false; // true if list of spaces includes home
+		ArrayList<HomeRow> homerow = null;
+		
+		for(int i = 0; i <= distance; i++){
+			if(!in_home_row){
+				ending_space = spaces[curr_space_index];
+				
+				if (pawn_color.equals(ending_space.get_color()) && PreHomeRow.class.isAssignableFrom(ending_space.getClass())){
+					homerow = game_state.get_board().get_HomeRow(pawn_color);
+					in_home_row = true;
+					curr_space_index = 0;
+					
+				}
+				else{
+					curr_space_index = (curr_space_index + 1) % space_length; // next space on board; could wrap around
+				}
+			}
+			else if(!reached_home){
+				if(curr_space_index == homerow.size()){
+					Home home = game_state.get_board().get_Home(pawn_color);
+					ending_space = home;
+					reached_home = true;
+				}
+				else{
+					ending_space = homerow.get(curr_space_index);
+					curr_space_index++;
+				}
+				
+			}
+		}
+		boolean bopped = ending_space.bop(pawn_color);
+		
+		if(bopped){
+			Pawn curr_pawn = ending_space.get_pawns().get(0);
+			HomeCircle curr_pawn_home = game_state.get_board().get_HomeCircle(curr_pawn.get_color());
+			ending_space.remove_Pawn(curr_pawn);
+			curr_pawn_home.add_Pawn(curr_pawn);
+			
+			game_state.add_roll(20);
+		}
+		
+		ending_space.add_Pawn(p);
+		starting_space.remove_Pawn(p);
+
+		game_state.remove_roll(distance);
+		
+		if(reached_home){
+			game_state.add_roll(10);
+		}
+		return game_state;		
 	}
 }

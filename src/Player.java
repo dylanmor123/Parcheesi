@@ -176,9 +176,9 @@ class Player implements IPlayer {
 						}
 						
 						// see if move is legal; if so, update on player-side and add to list of moves to make
-						if(RuleChecker.is_Legal(move, this.curr_state, this.prev_state)){
+						if(move.is_Legal(this.curr_state, this.prev_state)){
 							this.generated_moves.add(move);	
-							this.curr_state = BoardUpdater.update_Board(move, this.curr_state);
+							this.curr_state = move.update_Board(this.curr_state);
 							made_move = true;
 							break;
 						}
@@ -230,9 +230,9 @@ class Player implements IPlayer {
 						}
 						
 						// see if move is legal; if so, update on player-side and add to list of moves to make
-						if(RuleChecker.is_Legal(move, this.curr_state, this.prev_state)){
+						if(move.is_Legal(this.curr_state, this.prev_state)){
 							this.generated_moves.add(move);	
-							this.curr_state = BoardUpdater.update_Board(move, this.curr_state);
+							this.curr_state = move.update_Board(this.curr_state);
 							made_move = true;
 							break;
 						}
@@ -253,7 +253,6 @@ class Player implements IPlayer {
 		
 		
 	}
-	
 	
 	
 	//--------------------------------------------------------------

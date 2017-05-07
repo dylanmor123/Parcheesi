@@ -185,7 +185,7 @@ public class Game implements IGame {
 				
 				IMove move = curr_player.doMove(game_state.get_board(), game_state.get_rolls());
 				
-				if(!RuleChecker.is_Legal(move, this.game_state, this.prev_state)){
+				if(!move.is_Legal(this.game_state, this.prev_state)){
 					
 					
 					// update_Board returns false if player passed illegal move (cheated)
@@ -201,7 +201,7 @@ public class Game implements IGame {
 					
 				}
 				
-				this.game_state = BoardUpdater.update_Board(move, this.game_state);
+				this.game_state = move.update_Board(this.game_state);
 				
 				num_moves++;
 				if(testing){
@@ -366,8 +366,8 @@ public class Game implements IGame {
 
 	public static void main(String argv[]) throws Exception{
 		g.start();
-		Tester.check(RuleChecker.is_Legal(new MoveMain(new Pawn(0, "blue"), 18, 1), g2.game_state, g2.game_state), "move in front of blockade test");
-		Tester.check(!RuleChecker.is_Legal(new MoveHome(new Pawn(2, "green"), 0, 5), g3.game_state, g3.game_state), "blockade home row test");
+		Tester.check(new MoveMain(new Pawn(0, "blue"), 18, 1).is_Legal(g2.game_state, g2.game_state), "move in front of blockade test");
+		Tester.check(!(new MoveHome(new Pawn(2, "green"), 0, 5).is_Legal(g3.game_state, g3.game_state)), "blockade home row test");
 
 	}
 	

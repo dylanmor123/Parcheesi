@@ -67,6 +67,16 @@ public class Space {
 		  return same_pawns && same_color && (this.safe == space.safe);
 	}
 	
+	public boolean bop(String color){
+		if (this.pawns_list.size() == 1){
+			Pawn curr_pawn = this.get_pawns().get(0);
+			if(!curr_pawn.get_color().equals(color)){		
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	static Space s1;
 	static Space s2;
 	static Space s3;
