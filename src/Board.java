@@ -1,6 +1,14 @@
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
 class Board {
 	protected Space[] spaces;
 	protected HomeCircle[] home_circles;
@@ -245,6 +253,109 @@ class Board {
 		}
 		
 		return null; // no pawns in vulnerable spaces on the board
+	}
+	
+	public String BoardtoXML() throws ParserConfigurationException, TransformerException{
+        DocumentBuilderFactory dbFactory =
+        DocumentBuilderFactory.newInstance();
+        DocumentBuilder dBuilder = 
+           dbFactory.newDocumentBuilder();
+        Document doc = dBuilder.newDocument();
+        
+        //create root Board Element
+        Element rootElement = doc.createElement("board");
+        doc.appendChild(rootElement);
+        
+        //create start Element within board for homecircles
+        Element start = doc.createElement("start");
+        for(HomeCircle hc : this.home_circles){
+        	for(Pawn p : hc.get_pawns()){
+                Element pawn = doc.createElement("pawn");
+                Element color = doc.createElement("color");
+                Element id = doc.createElement("id");
+                color.appendChild(doc.createTextNode(p.get_color()));
+                id.appendChild(doc.createTextNode(Integer.toString(p.get_id())));
+                pawn.appendChild(color);
+                pawn.appendChild(id);
+        		start.appendChild(pawn);
+        	}
+        }
+             
+        rootElement.appendChild(start);
+
+        //create main element within board for main ring spaces
+        Element main = doc.createElement("main");
+    	for(int i = 0; i < this.spaces.length; i++){
+    		Space s = this.spaces[i];
+        	for(Pawn p : s.get_pawns()){
+        		Element piece_loc = doc.createElement("piece-loc");
+                Element pawn = doc.createElement("pawn");
+                Element color = doc.createElement("color");
+                Element id = doc.createElement("id");
+                Element loc = doc.createElement("loc");
+                
+                int new_index = (((i + 5) % this.spaces.length) + this.spaces.length) % this.spaces.length;
+                
+                color.appendChild(doc.createTextNode(p.get_color()));
+                id.appendChild(doc.createTextNode(Integer.toString(p.get_id())));
+                loc.appendChild(doc.createTextNode(Integer.toString(new_index)));
+                pawn.appendChild(color);
+                pawn.appendChild(id);
+        		piece_loc.appendChild(pawn);
+        		piece_loc.appendChild(loc);
+        		main.appendChild(piece_loc);
+        	}
+    	}
+        rootElement.appendChild(main);
+        
+        //create home-rows element within board for home-row spaces
+        Element homerows = doc.createElement("home-rows");
+        for(ArrayList<HomeRow> home_row : this.home_rows.values()){
+        	for(int i = 0; i < home_row.size(); i++){
+        		HomeRow hr = home_row.get(i);
+            	for(Pawn p : hr.get_pawns()){
+            		Element piece_loc = doc.createElement("piece-loc");
+                    Element pawn = doc.createElement("pawn");
+                    Element color = doc.createElement("color");
+                    Element id = doc.createElement("id");
+                    Element loc = doc.createElement("loc");
+                    
+                    color.appendChild(doc.createTextNode(p.get_color()));
+                    id.appendChild(doc.createTextNode(Integer.toString(p.get_id())));
+                    loc.appendChild(doc.createTextNode(Integer.toString(i)));
+                    pawn.appendChild(color);
+                    pawn.appendChild(id);
+            		piece_loc.appendChild(pawn);
+            		piece_loc.appendChild(loc);
+            		homerows.appendChild(piece_loc);
+            	}
+            }
+        }
+        
+        
+        rootElement.appendChild(homerows);
+        
+        //create home element within board for home spaces
+        Element home = doc.createElement("home");
+        for(Home h : this.home_spaces){
+        	for(Pawn p : h.get_pawns()){
+                Element pawn = doc.createElement("pawn");
+                Element color = doc.createElement("color");
+                Element id = doc.createElement("id");
+                color.appendChild(doc.createTextNode(p.get_color()));
+                id.appendChild(doc.createTextNode(Integer.toString(p.get_id())));
+                pawn.appendChild(color);
+                pawn.appendChild(id);
+        		home.appendChild(pawn);
+        	}
+        }
+        
+        rootElement.appendChild(home);
+        
+        return XMLUtils.XMLtoString(doc);
+        
+        
+        
 	}
 	
 	// ------------------------------------------------------------------
