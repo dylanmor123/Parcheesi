@@ -26,6 +26,11 @@ class Tester {
 	Board.main(argv);
 	Player.main(argv);
 	System.out.println("testing with simulated game ...");
+	
+	State s = new State("boards/12.txt", 2);
+	Board b = s.get_board();
+	System.out.println(b.BoardtoXML());
+	
 	Game.main(argv);
 	
 	System.out.println("faulty tests: " + faults); 
