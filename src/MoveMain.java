@@ -1,6 +1,14 @@
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
 // represents a move that starts on the main ring
 // (but does not have to end up there)
 
@@ -240,5 +248,40 @@ class MoveMain implements IMove {
 			game_state.add_roll(10);
 		}
 		return game_state;		
+	}
+  	
+	public String MainMovetoXML() throws ParserConfigurationException, TransformerException{
+        DocumentBuilderFactory dbFactory =
+        DocumentBuilderFactory.newInstance();
+        DocumentBuilder dBuilder = 
+           dbFactory.newDocumentBuilder();
+        Document doc = dBuilder.newDocument();
+        
+        //create root Move Element
+        Element rootElement = doc.createElement("move-piece-main");
+        doc.appendChild(rootElement);
+        
+       // <move-piece-main> <pawn> <color> green </color> <id> 0 </id> </pawn> <start> 5 </start> 
+       // <distance> 3 </distance> </move-piece-main> </moves>
+        
+        //create Element for a main move 
+        Element pawn = doc.createElement("pawn");
+        Element color = doc.createElement("color");
+        Element id = doc.createElement("id");
+        Element start = doc.createElement("start");
+        Element distance = doc.createElement("distance");
+        color.appendChild(doc.createTextNode(this.pawn.get_color()));
+        id.appendChild(doc.createTextNode(Integer.toString(this.pawn.get_id())));
+        pawn.appendChild(color);
+        pawn.appendChild(id);
+        start.appendChild(doc.createTextNode(Integer.toString(this.get_start())));
+        distance.appendChild(doc.createTextNode(Integer.toString(this.get_distance())));
+		rootElement.appendChild(pawn);
+		rootElement.appendChild(start);
+		rootElement.appendChild(distance);
+		
+        return XMLUtils.XMLtoString(doc);
+
+        
 	}
 }

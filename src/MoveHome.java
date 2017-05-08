@@ -1,6 +1,14 @@
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
 // represents a move that starts on one of the home rows
 class MoveHome implements IMove {
   Pawn pawn;
@@ -165,5 +173,38 @@ class MoveHome implements IMove {
 
 		
 		return game_state;		
+	}
+  
+	public String HomeMovetoXML() throws ParserConfigurationException, TransformerException{
+        DocumentBuilderFactory dbFactory =
+        DocumentBuilderFactory.newInstance();
+        DocumentBuilder dBuilder = 
+           dbFactory.newDocumentBuilder();
+        Document doc = dBuilder.newDocument();
+        
+        //create root Move Element
+        Element rootElement = doc.createElement("move-piece-home");
+        doc.appendChild(rootElement);
+        
+        
+        //create Element for a Home move 
+        Element pawn = doc.createElement("pawn");
+        Element color = doc.createElement("color");
+        Element id = doc.createElement("id");
+        Element start = doc.createElement("start");
+        Element distance = doc.createElement("distance");
+        color.appendChild(doc.createTextNode(this.pawn.get_color()));
+        id.appendChild(doc.createTextNode(Integer.toString(this.pawn.get_id())));
+        pawn.appendChild(color);
+        pawn.appendChild(id);
+        start.appendChild(doc.createTextNode(Integer.toString(this.get_start())));
+        distance.appendChild(doc.createTextNode(Integer.toString(this.get_distance())));
+		rootElement.appendChild(pawn);
+		rootElement.appendChild(start);
+		rootElement.appendChild(distance);
+		
+        return XMLUtils.XMLtoString(doc);
+
+        
 	}
 }
