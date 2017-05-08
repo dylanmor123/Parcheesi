@@ -296,7 +296,7 @@ class Board {
 		return null; // no pawns in vulnerable spaces on the board
 	}
 	
-	public String BoardtoXML() throws ParserConfigurationException, TransformerException{
+	public Document BoardtoXML() throws ParserConfigurationException, TransformerException{
         DocumentBuilderFactory dbFactory =
         DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder = 
@@ -393,7 +393,7 @@ class Board {
         
         rootElement.appendChild(home);
         
-        return XMLUtils.XMLtoString(doc);
+        return doc;
         
         
         

@@ -32,7 +32,7 @@ public class XMLUtils {
 		res = res.replaceAll(">", "> ");
 		res = res.replaceAll("([^ ])</", "$1 </");
 		
-		return res;
+		return res.substring(54);
 		
 	}
 	
