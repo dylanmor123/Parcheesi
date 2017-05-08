@@ -111,7 +111,7 @@ class EnterPiece implements IMove {
 		return game_state;
 	}
 	
-	public Document EnterPiecetoXMLDoc() throws ParserConfigurationException, TransformerException{
+	public Document toXMLDoc() throws ParserConfigurationException, TransformerException{
         DocumentBuilderFactory dbFactory =
         DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder = 

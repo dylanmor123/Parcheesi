@@ -251,7 +251,7 @@ class MoveMain implements IMove {
 	}
   	
 	
-	public Document MainMovetoXMLDoc() throws ParserConfigurationException, TransformerException{
+	public Document toXMLDoc() throws ParserConfigurationException, TransformerException{
         DocumentBuilderFactory dbFactory =
         DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder = 
