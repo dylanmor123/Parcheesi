@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -8,6 +9,9 @@ import javax.xml.transform.TransformerException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 class Board {
 	protected Space[] spaces;
@@ -102,6 +106,43 @@ class Board {
 		}
 		
 		
+	}
+	
+	
+	//constructor based on list of players. Called in game.start()
+	public String Board(String XMLString) throws SAXException, IOException, ParserConfigurationException{
+		Document doc =  XMLUtils.StringtoXML(XMLString);
+		ArrayList<String> color_list = new ArrayList<String>();
+		color_list.add("red");
+		color_list.add("blue");
+		color_list.add("green");
+		color_list.add("yellow");
+		
+		for(int i = 0; i < color_list.size(); i++){
+		}
+		this.home_circles = new HomeCircle[color_list.size()];
+		
+		//home_circles[i] = new HomeCircle(color_list.get(i), false, pawn_list);
+
+		//this.home_spaces = new Home[color_list.size()];
+		//this.home_rows = new HashMap<String, ArrayList<HomeRow>>();
+		
+		Node root = doc.getFirstChild();
+		NodeList all_spaces = root.getChildNodes();
+		Node start = all_spaces.item(0);
+		Node main = all_spaces.item(1);
+		Node homerows = all_spaces.item(2);
+		Node home = all_spaces.item(3);
+
+		String s = new String();
+		NodeList start_pawns = start.getChildNodes();
+		for(int i = 0; i < start_pawns.getLength(); i++){
+			s += start_pawns.item(i).getNodeName();
+		}
+		
+		return start_pawns.item(0).getFirstChild().getNodeName();
+
+
 	}
 	
 	public Board(Space[] spaces, HomeCircle[] home_circles, 
