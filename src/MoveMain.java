@@ -250,7 +250,8 @@ class MoveMain implements IMove {
 		return game_state;		
 	}
   	
-	public String MainMovetoXML() throws ParserConfigurationException, TransformerException{
+	
+	public Document MainMovetoXMLDoc() throws ParserConfigurationException, TransformerException{
         DocumentBuilderFactory dbFactory =
         DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder = 
@@ -280,7 +281,7 @@ class MoveMain implements IMove {
 		rootElement.appendChild(start);
 		rootElement.appendChild(distance);
 		
-        return XMLUtils.XMLtoString(doc);
+        return doc;
 
         
 	}

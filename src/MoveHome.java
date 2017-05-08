@@ -174,8 +174,8 @@ class MoveHome implements IMove {
 		
 		return game_state;		
 	}
-  
-	public String HomeMovetoXML() throws ParserConfigurationException, TransformerException{
+	
+	public Document HomeMovetoXMLDoc() throws ParserConfigurationException, TransformerException{
         DocumentBuilderFactory dbFactory =
         DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder = 
@@ -203,7 +203,7 @@ class MoveHome implements IMove {
 		rootElement.appendChild(start);
 		rootElement.appendChild(distance);
 		
-        return XMLUtils.XMLtoString(doc);
+        return doc;
 
         
 	}

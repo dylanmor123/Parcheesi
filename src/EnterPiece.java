@@ -110,8 +110,8 @@ class EnterPiece implements IMove {
 		
 		return game_state;
 	}
-  
-	public String EnterPiecetoXML() throws ParserConfigurationException, TransformerException{
+	
+	public Document EnterPiecetoXMLDoc() throws ParserConfigurationException, TransformerException{
         DocumentBuilderFactory dbFactory =
         DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder = 
@@ -133,8 +133,7 @@ class EnterPiece implements IMove {
         pawn.appendChild(id);
 		rootElement.appendChild(pawn);
 		
-        return XMLUtils.XMLtoString(doc);
-
+        return doc;
         
 	}
 
