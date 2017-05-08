@@ -1,5 +1,13 @@
 import java.util.ArrayList;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
 // represents a move where a player enters a piece
 class EnterPiece implements IMove {
   private Pawn pawn;
@@ -101,6 +109,32 @@ class EnterPiece implements IMove {
 		}
 		
 		return game_state;
+	}
+	
+	public Document EnterPiecetoXMLDoc() throws ParserConfigurationException, TransformerException{
+        DocumentBuilderFactory dbFactory =
+        DocumentBuilderFactory.newInstance();
+        DocumentBuilder dBuilder = 
+           dbFactory.newDocumentBuilder();
+        Document doc = dBuilder.newDocument();
+        
+        //create root Move Element
+        Element rootElement = doc.createElement("enter-piece");
+        doc.appendChild(rootElement);
+        
+        
+        //create Element for an Enter move 
+        Element pawn = doc.createElement("pawn");
+        Element color = doc.createElement("color");
+        Element id = doc.createElement("id");
+        color.appendChild(doc.createTextNode(this.pawn.get_color()));
+        id.appendChild(doc.createTextNode(Integer.toString(this.pawn.get_id())));
+        pawn.appendChild(color);
+        pawn.appendChild(id);
+		rootElement.appendChild(pawn);
+		
+        return doc;
+        
 	}
 
 }

@@ -1,6 +1,14 @@
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
 class Player implements IPlayer {
 	protected boolean doubles_penalty; //true if third doubles is rolled
 	private String color;
@@ -252,6 +260,61 @@ class Player implements IPlayer {
 		return null;
 		
 		
+	}
+	
+	public String MovestoXML() throws ParserConfigurationException, TransformerException{
+        DocumentBuilderFactory dbFactory =
+        DocumentBuilderFactory.newInstance();
+        DocumentBuilder dBuilder = 
+           dbFactory.newDocumentBuilder();
+        Document doc = dBuilder.newDocument();
+        
+        //create root Move Element
+        Element rootElement = doc.createElement("moves");
+        doc.appendChild(rootElement);
+        
+        //<enter-piece> pawn  </enter-piece>
+        //<move-piece-main> pawn  start  distance  </move-piece-main>
+        //<move-piece-home> pawn  start  distance  </move-piece-home>
+        
+        //Append all enter, main, and home moves to root "moves"
+		if(this.test_moves.size() != 0){
+			for(IMove test_move: this.test_moves){
+				if (test_move instanceof EnterPiece){
+					EnterPiece move = (EnterPiece) test_move;
+					rootElement.appendChild(move.EnterPiecetoXMLDoc());
+				}
+				else if (test_move instanceof MoveMain){
+					MoveMain move = (MoveMain) test_move;
+					rootElement.appendChild(move.MainMovetoXMLDoc());
+				}
+				else if (test_move instanceof MoveHome){
+					MoveHome move = (MoveHome) test_move;
+					rootElement.appendChild(move.HomeMovetoXMLDoc());
+				}
+			}
+		}
+		
+		else if (this.generated_moves.size() != 0){
+			for(IMove generated_move: this.generated_moves){
+				if (generated_move instanceof EnterPiece){
+					EnterPiece move = (EnterPiece) generated_move;
+					rootElement.appendChild(move.EnterPiecetoXMLDoc());
+				}
+				else if (generated_move instanceof MoveMain){
+					MoveMain move = (MoveMain) generated_move;
+					rootElement.appendChild(move.MainMovetoXMLDoc());
+				}
+				else if (generated_move instanceof MoveHome){
+					MoveHome move = (MoveHome) generated_move;
+					rootElement.appendChild(move.HomeMovetoXMLDoc());
+				}
+			}
+		}
+
+        return XMLUtils.XMLtoString(doc);
+
+        
 	}
 	
 	
