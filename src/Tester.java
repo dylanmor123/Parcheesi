@@ -38,7 +38,7 @@ class Tester {
 	
 
 	
-	Game.main(argv);
+//	Game.main(argv);
 	
 	System.out.println("faulty tests: " + faults); 
 	System.exit(0);

@@ -17,6 +17,15 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 public class XMLUtils {
+	public static Document newDocument() throws ParserConfigurationException{
+		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+        Document doc = dBuilder.newDocument();
+        
+        return doc;
+	}
+	
+	
 	public static String XMLtoString(Document doc) throws TransformerException{
 		DOMSource domSource = new DOMSource(doc);
 		StringWriter writer = new StringWriter();
@@ -33,7 +42,6 @@ public class XMLUtils {
 		res = res.replaceAll("([^ ])</", "$1 </");
 		
 		return res;
-		
 	}
 	
 	public static Document StringtoXML(String s) throws SAXException, IOException, ParserConfigurationException{

@@ -36,6 +36,10 @@ class MoveMain implements IMove {
 	this.distance=distance;
   }
   
+  MoveMain(Document d){
+	  
+  }
+  
   public Pawn get_pawn(){
 	  return this.pawn;
   }
