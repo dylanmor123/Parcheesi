@@ -29,7 +29,8 @@ public class JUnitTests{
 		Board board = state.get_board();
 		String xml = XMLUtils.XMLtoString(board.BoardtoXML());
 		Board xml_board = new Board(xml);
-		
+		System.out.println(XMLUtils.XMLtoString(xml_board.BoardtoXML()));
+		System.out.println(xml);
 		assertTrue(board.equals(xml_board));
 		
 	}
