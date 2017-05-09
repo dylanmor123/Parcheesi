@@ -34,9 +34,7 @@ public class NPlayer implements IPlayer{
 	
 	private String write_startGame_XML(String color) throws Exception{
 		// construct start-game XML request
-		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-        Document start_doc = dBuilder.newDocument();
+        Document start_doc = XMLUtils.newDocument();
         
         Element root = start_doc.createElement("start-game");
 		root.appendChild(start_doc.createTextNode(color));
@@ -152,6 +150,41 @@ public class NPlayer implements IPlayer{
 		}
 		
 		return (IMove[]) out_moves.toArray();
+	}
+	
+	private String write_DoublesPenalty_XML() throws TransformerException, ParserConfigurationException{
+		// construct doubles-penalty XML request
+        Document doubles_doc = XMLUtils.newDocument();
+        
+        Element root = doubles_doc.createElement("doubles-penalty");
+		doubles_doc.appendChild(root);
+		
+		return XMLUtils.XMLtoString(doubles_doc);
+	}
+	
+	public void DoublesPenalty() throws Exception{
+		String request = this.write_DoublesPenalty_XML();
+		System.out.println(request);
+		
+		// parse response from client player
+		String result;
+		while(true){
+			if((result = this.input.readLine()) != null){
+				// if there's something to read, check if it's a valid response
+				try{
+					Document x = XMLUtils.StringtoXML(result);
+					Element response_root = x.getDocumentElement();
+					if(!response_root.getTagName().equals("void")){
+						throw new Exception();
+					}
+					break;
+				}
+				catch (Exception e){
+					throw new Exception("sequence contract violation - expected valid void response");
+				}
+				
+			}
+		}
 	}
 	
 
