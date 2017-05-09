@@ -8,6 +8,8 @@ import javax.xml.transform.TransformerException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 // represents a move that starts on the main ring
 // (but does not have to end up there)
@@ -37,6 +39,16 @@ class MoveMain implements IMove {
   }
   
   MoveMain(Document d){
+	  Node root = d.getFirstChild();
+	  NodeList move_piece = root.getChildNodes();
+	  Node pawn = move_piece.item(0);
+	  Node start = move_piece.item(1);
+	  Node distance = move_piece.item(2);
+	  String pawn_color = pawn.getFirstChild().getTextContent();
+	  int pawn_id = Integer.parseInt(pawn.getLastChild().getTextContent());
+	  this.start = Integer.parseInt(start.getTextContent());
+	  this.distance = Integer.parseInt(distance.getTextContent());
+	  this.pawn = new Pawn(pawn_id, pawn_color);
 	  
   }
   
