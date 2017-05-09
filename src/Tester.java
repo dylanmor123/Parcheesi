@@ -18,14 +18,14 @@ class Tester {
 	System.out.println("setting up examples ...");
 	Pawn.createExamples();
 	Space.createExamples();
-	Board.createExamples();
+//	Board.createExamples();
 	Player.createExamples();
 	Game.createExamples();
 
 	System.out.println("testing ...");
 	Pawn.main(argv);
 	Space.main(argv);
-	Board.main(argv);
+//	Board.main(argv);
 	Player.main(argv);
 	System.out.println("testing with simulated game ...");
 	

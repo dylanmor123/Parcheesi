@@ -3,7 +3,7 @@ import java.util.Arrays;
 
 public class RuleChecker {	
 	// returns false if all legal moves have been exhausted by the current player; true otherwise
-	public static boolean moves_remaining(Player player, State game_state, State prev_state) throws Exception{
+	public static boolean moves_remaining(IPlayer player, State game_state, State prev_state) throws Exception{
 		String color = player.get_color();
 		boolean moves_remaining = false;
 		

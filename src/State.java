@@ -5,7 +5,7 @@ import java.util.HashMap;
 
 public class State {
 	protected Board curr_b;
-	protected Player curr_player;
+	protected IPlayer curr_player;
 	protected int[] rolls_vals_left = new int[0];
 	
 	// private boolean for sequence contract (add_roll* . remove_roll*)*
@@ -14,7 +14,12 @@ public class State {
 	// copy constructor for state
 	public State(State s){
 		this.curr_b = new Board(s.curr_b);
-		this.curr_player = new Player(s.curr_player);
+		if (s.curr_player instanceof NPlayer){
+			this.curr_player = new NPlayer((NPlayer) s.curr_player);
+		}
+		else{
+			this.curr_player = new Player((Player) s.curr_player);
+		}
 		this.rolls_vals_left = s.rolls_vals_left;
 		this.has_rolls = s.has_rolls;
 	}
@@ -159,7 +164,7 @@ public class State {
 		return this.curr_b;
 	}
 	
-	public Player get_curr_player(){
+	public IPlayer get_curr_player(){
 		return this.curr_player;
 	}
 	
@@ -171,7 +176,7 @@ public class State {
 		this.curr_b = b;
 	}
 	
-	public void set_curr_player(Player p){
+	public void set_curr_player(IPlayer p){
 		this.curr_player = p;
 	}
 	

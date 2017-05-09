@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class Game implements IGame {
-	protected ArrayList<Player> players = new ArrayList<Player>();
+	protected ArrayList<NPlayer> players = new ArrayList<NPlayer>();
 	protected int num_pawns = 4; //number of pawns per player
 	protected State game_state;
 	protected State prev_state; // for comparison between states for a moving blockade
@@ -21,11 +21,11 @@ public class Game implements IGame {
 	}
 
 	public void register(IPlayer p) throws Exception{
-		Player player = (Player) p;
+		NPlayer player = (NPlayer) p;
 		this.players.add(player);
-		String color = "red";
+		String color = "green";
 		if(players.size() == 1){
-			color = "green";
+			color = "red";
 		}
 		else if(players.size() == 2){
 			color = "blue";
@@ -44,7 +44,7 @@ public class Game implements IGame {
 	
 	
 	
-	private void remove_Player(Player player){
+	private void remove_Player(NPlayer player){
 		String color = player.get_color();
 		Board curr_board = game_state.get_board();
 		ArrayList<HomeRow> homerow = curr_board.get_HomeRow(color);
@@ -99,7 +99,7 @@ public class Game implements IGame {
 	
 	// returns true if somebody has won game; false otherwise
 	private boolean game_over(){
-		for(Player p : this.players){
+		for(NPlayer p : this.players){
 			String color = p.get_color();
 			Home h = this.game_state.get_board().get_Home(color);
 			
@@ -123,9 +123,9 @@ public class Game implements IGame {
 		
 		// initialize state
 		Board new_board = new Board(this.players, this.num_pawns);
-		Player curr_player = this.players.get(0);
+		NPlayer curr_player = this.players.get(0);
 		int[] rolls = new int[0];
-		this.game_state = new State(new_board, curr_player, rolls);
+		this.game_state = new State(new_board, curr_player.toPlayer(), rolls);
 		this.prev_state = new State(this.game_state);
 		
 		// loop through players until winner
@@ -141,7 +141,7 @@ public class Game implements IGame {
 		
 		while(!game_over()){
 			// add two rolls
-			curr_player = this.game_state.get_curr_player();
+			curr_player = (NPlayer) this.game_state.get_curr_player();
 			int roll1, roll2;
 			try {
 				roll1 = roll_die(testing);
@@ -179,34 +179,28 @@ public class Game implements IGame {
 				}
 			}
 			
-			
-			
-			while(RuleChecker.moves_remaining(curr_player, this.game_state, this.prev_state) && !game_over()){
+			if(RuleChecker.moves_remaining(curr_player, this.game_state, this.prev_state) && !game_over()){
+				IMove[] moves = curr_player.doMove(game_state.get_board(), game_state.get_rolls());
 				
-				IMove move = curr_player.doMove(game_state.get_board(), game_state.get_rolls());
-				
-				if(!move.is_Legal(this.game_state, this.prev_state)){
-					
-					
-					// update_Board returns false if player passed illegal move (cheated)
-					if(!testing){
+				for(IMove move : moves){
+					if(!move.is_Legal(this.game_state, this.prev_state)){	
 						num_players = this.players.size();
 						this.remove_Player(curr_player); // remove cheating player
 						cheated = true;
 						break;
 					}
-					else{
-						continue;
+					this.game_state = move.update_Board(this.game_state);
+					
+					if(game_over()){
+						break;
 					}
+					
+					num_moves++;
 					
 				}
 				
-				this.game_state = move.update_Board(this.game_state);
-				
-				num_moves++;
-				if(testing){
-					State curr_state = Game.states.get(num_moves);
-					Tester.check(curr_state.equals(this.game_state), num_moves + " move test");
+				if(game_over()){
+					break;
 				}
 			}
 			
@@ -234,17 +228,6 @@ public class Game implements IGame {
 			int[] rolls_left = new int[0];
 			this.game_state.set_rolls(rolls_left);
 			this.prev_state = new State(this.game_state);
-			
-			
-			if(testing){
-				boolean out_of_moves = true; //true if all players are out of preset moves
-				for(Player p : this.players){
-					out_of_moves = out_of_moves && (p.get_moves().size() == 0);
-				}
-				if(out_of_moves){
-					break;
-				}
-			}
 			
 		}
 		

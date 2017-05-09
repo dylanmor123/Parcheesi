@@ -26,10 +26,31 @@ public class NPlayer implements IPlayer{
 	private PrintStream output;
 	private BufferedReader input;
 	
-	public NPlayer() throws IOException{
-		this.socket = (new ServerSocket(8000)).accept();
+	public NPlayer(int port) throws IOException{
+		this.bind(port);
+	}
+	
+	public NPlayer(String color) throws IOException{
+		this.color = color;
+	}
+	
+	public NPlayer(NPlayer p){
+		this.name = p.name;
+		this.color = p.color;
+	}
+	
+	public Player toPlayer(){
+		return new Player(color, false);
+	}
+	
+	public void bind(int port) throws IOException{
+		this.socket = (new ServerSocket(port)).accept();
 		this.input = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
 		this.output = new PrintStream(this.socket.getOutputStream());
+	}
+	
+	public String get_color(){
+		return this.color;
 	}
 	
 	private String write_startGame_XML(String color) throws Exception{

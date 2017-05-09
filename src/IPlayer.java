@@ -11,4 +11,9 @@ interface IPlayer {
   // inform the player that they have suffered
   // a doubles penalty
   void DoublesPenalty() throws Exception;
+  
+  
+  
+  // added for our convenience
+  String get_color();
 }
