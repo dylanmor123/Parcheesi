@@ -22,6 +22,16 @@ public class JUnitTests{
 		EnterPiece legal_entry_move3 = new EnterPiece(new Pawn(0, "blue"));
 		assertTrue(legal_entry_move3.is_Legal(legal_entry_state3, legal_entry_state3));
 	}
-	
+	// XML Board Constructor tests
+	@Test
+	public void test_XML_Board_Constructor() throws Exception{
+		State state = new State("boards/13.txt", 2);
+		Board board = state.get_board();
+		String xml = XMLUtils.XMLtoString(board.BoardtoXML());
+		Board xml_board = new Board(xml);
+		
+		assertTrue(board.equals(xml_board));
+		
+	}
 	
 }

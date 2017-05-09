@@ -1,6 +1,8 @@
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -109,40 +111,174 @@ class Board {
 	}
 	
 	
-	//constructor based on list of players. Called in game.start()
-	public String Board(String XMLString) throws SAXException, IOException, ParserConfigurationException{
-		Document doc =  XMLUtils.StringtoXML(XMLString);
-		ArrayList<String> color_list = new ArrayList<String>();
-		color_list.add("red");
-		color_list.add("blue");
-		color_list.add("green");
-		color_list.add("yellow");
-		
-		for(int i = 0; i < color_list.size(); i++){
-		}
-		this.home_circles = new HomeCircle[color_list.size()];
-		
-		//home_circles[i] = new HomeCircle(color_list.get(i), false, pawn_list);
+	//constructor from XML string
+	public Board(String XMLString) throws SAXException, IOException, ParserConfigurationException{
+		Document doc =  XMLUtils.StringtoXML(XMLString);		
+		this.home_circles = new HomeCircle[4];
+		this.home_spaces = new Home[4];
+		this.home_rows = new HashMap<String, ArrayList<HomeRow>>();
+		this.spaces = new Space[68];
 
-		//this.home_spaces = new Home[color_list.size()];
-		//this.home_rows = new HashMap<String, ArrayList<HomeRow>>();
-		
+
 		Node root = doc.getFirstChild();
 		NodeList all_spaces = root.getChildNodes();
-		Node start = all_spaces.item(0);
+		Node Start = all_spaces.item(0);
 		Node main = all_spaces.item(1);
 		Node homerows = all_spaces.item(2);
 		Node home = all_spaces.item(3);
 
-		String s = new String();
-		NodeList start_pawns = start.getChildNodes();
+		NodeList start_pawns = Start.getChildNodes();
+		NodeList home_pawns = home.getChildNodes();
+		NodeList homerow_pawns = homerows.getChildNodes();
+		NodeList main_pawns = main.getChildNodes();
+
+		ArrayList<Pawn> green_start_pawns = new ArrayList<Pawn>();
+		ArrayList<Pawn> red_start_pawns = new ArrayList<Pawn>();
+		ArrayList<Pawn> yellow_start_pawns = new ArrayList<Pawn>();
+		ArrayList<Pawn> blue_start_pawns = new ArrayList<Pawn>();
+		
+		
+		//Add all pawns in the starting spaces to their respective Home Circles
 		for(int i = 0; i < start_pawns.getLength(); i++){
-			s += start_pawns.item(i).getNodeName();
+			String pawn_color = start_pawns.item(i).getFirstChild().getTextContent();
+			int pawn_id = Integer.parseInt(start_pawns.item(i).getLastChild().getTextContent());
+			Pawn pawn = new Pawn(pawn_id, pawn_color);
+			if(pawn_color.equals("green")){
+				green_start_pawns.add(pawn);
+			}
+			
+			else if(pawn_color.equals("red")){
+				red_start_pawns.add(pawn);
+			}
+			
+			else if(pawn_color.equals("yellow")){
+				yellow_start_pawns.add(pawn);
+			}
+			
+			else if(pawn_color.equals("blue")){
+				blue_start_pawns.add(pawn);
+			}
 		}
 		
-		return start_pawns.item(0).getFirstChild().getNodeName();
+		home_circles[0] = new HomeCircle("green", false, green_start_pawns);
+		home_circles[1] = new HomeCircle("red", false, red_start_pawns);
+		home_circles[2] = new HomeCircle("yellow", false, yellow_start_pawns);
+		home_circles[3] = new HomeCircle("blue", false, blue_start_pawns);
+		
+		
+		
+		ArrayList<Pawn> green_home_pawns = new ArrayList<Pawn>();
+		ArrayList<Pawn> red_home_pawns = new ArrayList<Pawn>();
+		ArrayList<Pawn> yellow_home_pawns = new ArrayList<Pawn>();
+		ArrayList<Pawn> blue_home_pawns = new ArrayList<Pawn>();
+		
+		
+		//Add all pawns in the home spaces to their respective Homes
+		for(int i = 0; i < home_pawns.getLength(); i++){
+			String pawn_color = home_pawns.item(i).getFirstChild().getTextContent();
+			int pawn_id = Integer.parseInt(home_pawns.item(i).getLastChild().getTextContent());
+			Pawn pawn = new Pawn(pawn_id, pawn_color);
+			if(pawn_color == "green"){
+				green_home_pawns.add(pawn);
+			}
+			
+			else if(pawn_color == "red"){
+				red_home_pawns.add(pawn);
+			}
+			
+			else if(pawn_color == "yellow"){
+				yellow_home_pawns.add(pawn);
+			}
+			
+			else if(pawn_color == "blue"){
+				blue_home_pawns.add(pawn);
+			}
+		}
+		
+		home_spaces[0] = new Home("green", false, green_home_pawns);
+		home_spaces[1] = new Home("red", false, red_home_pawns);
+		home_spaces[2] = new Home("yellow", false, yellow_home_pawns);
+		home_spaces[3] = new Home("blue", false, blue_home_pawns);
 
+		// initialize main ring spaces
+		// 17 spaces per player
+		List<String> color_list = Arrays.asList("green", "red", "blue", "yellow");
+		for(int i = 0; i < color_list.size(); i++){
+			int start = i * 17;
+			// entry space
+			this.spaces[start] = new Entry(color_list.get(i), true, new ArrayList<Pawn>());
+			
+			// 6 unsafe spaces
+			for(int j = 1; j < 7; j++){
+				this.spaces[start + j] = new Space(null, false, new ArrayList<Pawn>());
+			}
+			
+			// 1 safe space
+			this.spaces[start + 7] = new Space(null, true, new ArrayList<Pawn>());
+			
+			// 4 unsafe spaces
+			for(int j = 8; j < 12; j++){
+				this.spaces[start + j] = new Space(null, false, new ArrayList<Pawn>());
+			}
+			
+			// 1 pre-home row space
+			this.spaces[start + 12] = new PreHomeRow(color_list.get((i + 1) % 4), true, new ArrayList<Pawn>());
+			
+			// 4 unsafe spaces
+			for(int j = 13; j < 17; j++){
+				this.spaces[start + j] = new Space(null, false, new ArrayList<Pawn>());
+			} 
+		}
+		
+		for(int i = 0; i < main_pawns.getLength(); i++){
+			String pawn_color = main_pawns.item(i).getFirstChild().getFirstChild().getTextContent();
+			int pawn_id = Integer.parseInt(main_pawns.item(i).getFirstChild().getLastChild().getTextContent());
+			int loc = Integer.parseInt(main_pawns.item(i).getLastChild().getTextContent());
+			Pawn pawn = new Pawn(pawn_id, pawn_color);
+	        int new_index = (((loc - 5) % this.spaces.length) + this.spaces.length) % this.spaces.length;
+	        spaces[new_index].add_Pawn(pawn);
+		}
+		
+		// Create Home Rows
+		ArrayList<HomeRow> green_homerow = new ArrayList<HomeRow>();
+		ArrayList<HomeRow> red_homerow = new ArrayList<HomeRow>();
+		ArrayList<HomeRow> yellow_homerow = new ArrayList<HomeRow>();
+		ArrayList<HomeRow> blue_homerow = new ArrayList<HomeRow>();
 
+		for(int k = 0; k < 7; k++){
+			green_homerow.add(new HomeRow("green", false, new ArrayList<Pawn>()));
+			red_homerow.add(new HomeRow("red", false, new ArrayList<Pawn>()));
+			yellow_homerow.add(new HomeRow("yellow", false, new ArrayList<Pawn>()));
+			blue_homerow.add(new HomeRow("blue", false, new ArrayList<Pawn>()));
+		}
+		
+		//add pawns to each respective home row
+		for(int i = 0; i < homerow_pawns.getLength(); i++){
+			String pawn_color = homerow_pawns.item(i).getFirstChild().getFirstChild().getTextContent();
+			int pawn_id = Integer.parseInt(homerow_pawns.item(i).getFirstChild().getLastChild().getTextContent());
+			int loc = Integer.parseInt(homerow_pawns.item(i).getLastChild().getTextContent());
+			Pawn pawn = new Pawn(pawn_id, pawn_color);
+			if(pawn_color == "green"){
+				green_homerow.get(loc).add_Pawn(pawn);
+			}
+
+			else if(pawn_color == "red"){
+				red_homerow.get(loc).add_Pawn(pawn);
+			}
+			
+			else if(pawn_color == "yellow"){
+				yellow_homerow.get(loc).add_Pawn(pawn);
+			}
+			
+			else if(pawn_color == "blue"){
+				blue_homerow.get(loc).add_Pawn(pawn);
+			}
+		}
+		
+		home_rows.put("green", green_homerow);
+		home_rows.put("red", red_homerow);
+		home_rows.put("yellow", yellow_homerow);
+		home_rows.put("blue", blue_homerow);
 	}
 	
 	public Board(Space[] spaces, HomeCircle[] home_circles, 
