@@ -7,6 +7,7 @@ import javax.xml.transform.TransformerException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 // represents a move where a player enters a piece
 class EnterPiece implements IMove {
@@ -18,6 +19,11 @@ class EnterPiece implements IMove {
     this.pawn=pawn;
   }
   public EnterPiece(Document d){
+	  Node root = d.getFirstChild();
+	  Node pawn = root.getFirstChild();
+	  String pawn_color = pawn.getFirstChild().getTextContent();
+	  int pawn_id = Integer.parseInt(pawn.getLastChild().getTextContent());
+	  this.pawn = new Pawn(pawn_id, pawn_color);
 	  
   }
   

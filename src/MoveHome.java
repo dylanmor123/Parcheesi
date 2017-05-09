@@ -8,6 +8,8 @@ import javax.xml.transform.TransformerException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 // represents a move that starts on one of the home rows
 class MoveHome implements IMove {
@@ -34,6 +36,18 @@ class MoveHome implements IMove {
   }
   
   MoveHome(Document d){
+	  
+	  Node root = d.getFirstChild();
+	  NodeList move_piece_home = root.getChildNodes();
+	  Node pawn = move_piece_home.item(0);
+	  Node start = move_piece_home.item(1);
+	  Node distance = move_piece_home.item(2);
+	  String pawn_color = pawn.getFirstChild().getTextContent();
+	  int pawn_id = Integer.parseInt(pawn.getLastChild().getTextContent());
+	  this.start = Integer.parseInt(start.getTextContent());
+	  this.distance = Integer.parseInt(distance.getTextContent());
+	  this.pawn = new Pawn(pawn_id, pawn_color);
+	  
 	  
   }
   
