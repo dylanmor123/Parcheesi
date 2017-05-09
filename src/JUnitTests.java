@@ -25,12 +25,10 @@ public class JUnitTests{
 	// XML Board Constructor tests
 	@Test
 	public void test_XML_Board_Constructor() throws Exception{
-		State state = new State("boards/13.txt", 2);
+		State state = new State("boards/Dylansboardtest.txt", 4);
 		Board board = state.get_board();
 		String xml = XMLUtils.XMLtoString(board.BoardtoXML());
 		Board xml_board = new Board(xml);
-		System.out.println(XMLUtils.XMLtoString(xml_board.BoardtoXML()));
-		System.out.println(xml);
 		assertTrue(board.equals(xml_board));
 		
 	}

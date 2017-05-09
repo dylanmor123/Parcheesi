@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -373,7 +374,10 @@ class Board {
 		}
 		
 		// check if home_rows are equal
-		same_board = same_board && this.home_rows.equals(board.home_rows);
+		Set<String> colors = this.home_rows.keySet();
+		for (String color : colors) {
+		    same_board = same_board && this.home_rows.get(color).equals(board.home_rows.get(color));
+		}
 		
 		//check if spaces are equal
 		for(int i = 0; i < this.spaces.length; i++){
@@ -381,14 +385,27 @@ class Board {
 		}
 		
 		//check if home_circles are equal
+		int num_same_home_circles = 0;
 		for(int i = 0; i < this.home_circles.length; i++){
-			same_board = same_board && this.home_circles[i].equals(board.home_circles[i]);
+			for(int j = 0; j < board.home_circles.length; j++){
+				if(this.home_circles[i].equals(board.home_circles[j])){
+					num_same_home_circles++;
+				};
+			}
 		}
+		same_board = same_board && (num_same_home_circles == 4);
+		
 
 		//check if home_spaces are equal
+		int num_same_homes = 0;
 		for(int i = 0; i < this.home_spaces.length; i++){
-			same_board = same_board && this.home_spaces[i].equals(board.home_spaces[i]);
+			for(int j = 0; j < board.home_spaces.length; j++){
+				if(this.home_spaces[i].equals(board.home_spaces[j])){
+					num_same_homes++;
+				};
+			}
 		}
+		same_board = same_board && (num_same_homes == 4);
 		
 		return same_board;
 	}
