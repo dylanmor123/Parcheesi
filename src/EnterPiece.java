@@ -17,6 +17,9 @@ class EnterPiece implements IMove {
   EnterPiece(Pawn pawn) {
     this.pawn=pawn;
   }
+  public EnterPiece(Document d){
+	  
+  }
   
   @Override
 	public boolean equals(Object m){

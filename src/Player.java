@@ -44,12 +44,14 @@ class Player implements IPlayer {
 		this.color = color;
 	}
 	
-	public void startGame(String color) throws Exception{
+	public String startGame(String color) throws Exception{
 		if(!color.equals("red") && !color.equals("blue") && !color.equals("green") && !color.equals("yellow")){
 			throw new Exception("Invalid player color");
 		}
 		this.color = color;
 		this.has_started = true;
+		
+		return "hello";
 	}
 	
 	public void DoublesPenalty() throws Exception{
@@ -134,23 +136,14 @@ class Player implements IPlayer {
 		return pawns;
 	}
 	
-	public IMove doMove(Board brd, int[] dice) throws Exception{
+	public IMove[] doMove(Board brd, int[] dice) throws Exception{
 		// for testing - return first move in list of moves
 		// check if players has started
 		if(!has_started){
 			throw new Exception("Player has not started");
 		}
 		
-		
-		
-		
-		if(this.test_moves.size() != 0){
-			return this.test_moves.remove(0);
-		}
-		else if(this.generated_moves.size() != 0){
-			return this.generated_moves.remove(0);
-		}
-		else if(this.strategy.equals("first")){
+		if(this.strategy.equals("first")){
 			int[] sorted_dice = new int[dice.length];
 			System.arraycopy(dice, 0, sorted_dice, 0, dice.length);
 			Arrays.sort(sorted_dice);
@@ -199,7 +192,7 @@ class Player implements IPlayer {
 				}
 			}
 			
-			return this.generated_moves.remove(0);
+			return (IMove[]) this.generated_moves.toArray();
 			
 		}
 		else if(this.strategy.equals("last")){
@@ -253,7 +246,7 @@ class Player implements IPlayer {
 				}
 			}
 			
-			return this.generated_moves.remove(0);
+			return (IMove[]) this.generated_moves.toArray();
 		}
 		
 		

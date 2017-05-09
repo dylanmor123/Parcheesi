@@ -33,6 +33,10 @@ class MoveHome implements IMove {
 	  this.distance=distance;
   }
   
+  MoveHome(Document d){
+	  
+  }
+  
   public Pawn get_pawn(){
 	  return this.pawn;
   }
