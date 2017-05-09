@@ -1,3 +1,5 @@
+import static org.junit.Assert.assertEquals;
+
 import java.io.IOException;
 
 class Tester {
@@ -29,8 +31,11 @@ class Tester {
 	
 	State s = new State("boards/12.txt", 2);
 	Board b = s.get_board();
-	System.out.println(XMLUtils.XMLtoString(b.BoardtoXML()));
-	System.out.println(b.Board("<board><start><pawn><color>yellow</color><id>3</id></pawn><pawn><color>yellow</color><id>1</id></pawn><pawn><color>yellow</color><id>0</id></pawn><pawn><color>red</color><id>2</id></pawn><pawn><color>red</color><id>1</id></pawn><pawn><color>red</color><id>0</id></pawn><pawn><color>blue</color><id>3</id></pawn><pawn><color>blue</color><id>2</id></pawn><pawn><color>blue</color><id>1</id></pawn></start><main><piece-loc><pawn><color>yellow</color><id>2</id></pawn><loc>63</loc></piece-loc><piece-loc><pawn><color>green</color><id>2</id></pawn><loc>47</loc></piece-loc><piece-loc><pawn><color>green</color><id>1</id></pawn><loc>47</loc></piece-loc><piece-loc><pawn><color>green</color><id>3</id></pawn><loc>30</loc></piece-loc><piece-loc><pawn><color>green</color><id>0</id></pawn><loc>28</loc></piece-loc><piece-loc><pawn><color>red</color><id>3</id></pawn><loc>26</loc></piece-loc><piece-loc><pawn><color>blue</color><id>0</id></pawn><loc>17</loc></piece-loc></main><home-rows /><home /></board>"));
+	String xml = XMLUtils.XMLtoString(b.BoardtoXML());
+	System.out.println(xml);
+	Board xml_board = new Board(xml);
+	System.out.println(XMLUtils.XMLtoString(xml_board.BoardtoXML()));
+	
 
 	
 //	Game.main(argv);
