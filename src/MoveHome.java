@@ -80,7 +80,7 @@ class MoveHome implements IMove {
 		Pawn pawn = this.get_pawn();
 		int start = this.get_start();
 		int distance = this.get_distance();
-		Player player = (Player) game_state.get_curr_player();
+		IPlayer player = game_state.get_curr_player();
 		Board b = game_state.get_board();
 		
 		// check if player color matches pawn color
@@ -133,23 +133,25 @@ class MoveHome implements IMove {
 		}
 		
 		// check if move would cause a blockade that appears in the previous game state
-		Space end_space = spaces_to_check.get(spaces_to_check.size() - 1);
-		ArrayList<Pawn> end_pawns = end_space.get_pawns();
-		
-		if(!Home.class.isAssignableFrom(end_space.getClass()) && (end_pawns.size() == 1) && end_pawns.get(0).get_color().equals(pawn_color)){
-			ArrayList<Pawn> blockade = new ArrayList<Pawn>();
-			blockade.add(pawn);
-			blockade.add(end_pawns.get(0));
+		if(spaces_to_check.size() != 0){
+			Space end_space = spaces_to_check.get(spaces_to_check.size() - 1);
+			ArrayList<Pawn> end_pawns = end_space.get_pawns();
 			
-			Board prev_board = prev_state.get_board();
-			ArrayList<Space> prev_space_queue = new ArrayList<Space>(Arrays.asList(prev_board.get_Spaces()));
-			prev_space_queue.addAll(prev_board.get_HomeRow(pawn_color));
-			
-			for(Space s2: prev_space_queue){
-				if(s2.get_pawns().size() == 2){
-					ArrayList<Pawn> candidate = s2.get_pawns();
-					if(blockade.containsAll(candidate)){
-						return false;
+			if(!Home.class.isAssignableFrom(end_space.getClass()) && (end_pawns.size() == 1) && end_pawns.get(0).get_color().equals(pawn_color)){
+				ArrayList<Pawn> blockade = new ArrayList<Pawn>();
+				blockade.add(pawn);
+				blockade.add(end_pawns.get(0));
+				
+				Board prev_board = prev_state.get_board();
+				ArrayList<Space> prev_space_queue = new ArrayList<Space>(Arrays.asList(prev_board.get_Spaces()));
+				prev_space_queue.addAll(prev_board.get_HomeRow(pawn_color));
+				
+				for(Space s2: prev_space_queue){
+					if(s2.get_pawns().size() == 2){
+						ArrayList<Pawn> candidate = s2.get_pawns();
+						if(blockade.containsAll(candidate)){
+							return false;
+						}
 					}
 				}
 			}

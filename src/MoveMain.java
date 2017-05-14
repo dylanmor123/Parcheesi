@@ -46,7 +46,7 @@ class MoveMain implements IMove {
 	  Node distance = move_piece.item(2);
 	  String pawn_color = pawn.getFirstChild().getTextContent();
 	  int pawn_id = Integer.parseInt(pawn.getLastChild().getTextContent());
-	  this.start = Integer.parseInt(start.getTextContent());
+	  this.start = (((Integer.parseInt(start.getTextContent()) - 5) % this.BOARD_LENGTH) + this.BOARD_LENGTH) % this.BOARD_LENGTH;
 	  this.distance = Integer.parseInt(distance.getTextContent());
 	  this.pawn = new Pawn(pawn_id, pawn_color);
 	  
@@ -81,7 +81,7 @@ class MoveMain implements IMove {
 		Pawn pawn = this.get_pawn();
 		int start = this.get_start();
 		int distance = this.get_distance();
-		Player player = (Player) game_state.get_curr_player();
+		IPlayer player = game_state.get_curr_player();
 		Board b = game_state.get_board();
 		
 		// check if player color matches pawn color
@@ -129,11 +129,12 @@ class MoveMain implements IMove {
 			}
 			else if(!reached_home){
 				if(curr_space_index == homerow.size()){
-					curr_space = game_state.get_board().get_Home(pawn_color);
-					spaces_to_check.add(curr_space);
 					//check if move is not done - return false if so
-					if(spaces_to_check.size() < distance){
+					if(spaces_to_check.size() < distance - 1){
 						return false;
+					}
+					else{
+						break;
 					}
 				}
 				else{
@@ -291,7 +292,8 @@ class MoveMain implements IMove {
         id.appendChild(doc.createTextNode(Integer.toString(this.pawn.get_id())));
         pawn.appendChild(color);
         pawn.appendChild(id);
-        start.appendChild(doc.createTextNode(Integer.toString(this.get_start())));
+        int new_start = (((this.get_start() + 5) % this.BOARD_LENGTH) + this.BOARD_LENGTH) % this.BOARD_LENGTH;
+        start.appendChild(doc.createTextNode(Integer.toString(new_start)));
         distance.appendChild(doc.createTextNode(Integer.toString(this.get_distance())));
 		rootElement.appendChild(pawn);
 		rootElement.appendChild(start);

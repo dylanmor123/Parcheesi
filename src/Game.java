@@ -11,26 +11,22 @@ public class Game implements IGame {
 	protected State prev_state; // for comparison between states for a moving blockade
 	
 	// implementing Game sequence contract
-	private boolean has_registered = false;
+	private boolean has_registered = false; 
 	
-	// for testing - reading rolls from file
-	private BufferedReader br; 
-	
-	public Game() throws FileNotFoundException{
-		this.br = new BufferedReader(new FileReader("rolls.txt"));
+	public Game(){
 	}
 
 	public void register(IPlayer p) throws Exception{
 		NPlayer player = (NPlayer) p;
 		this.players.add(player);
 		String color = "green";
-		if(players.size() == 1){
+		if(players.size() == 2){
 			color = "red";
 		}
-		else if(players.size() == 2){
+		else if(players.size() == 3){
 			color = "blue";
 		}
-		else{
+		else if(players.size() == 4){
 			color = "yellow";
 		}
 		
@@ -54,32 +50,36 @@ public class Game implements IGame {
 		
 		for(Space s : spaces){
 			ArrayList<Pawn> pawns = s.get_pawns();
-			for(Pawn p : pawns){
-				if(p.get_color().equals(color)){
+			if(pawns.get(0).get_color().equals(color)){
+				ArrayList<Pawn> pawns_copy = new ArrayList<Pawn>(pawns);
+				for(Pawn p : pawns_copy){
 					s.remove_Pawn(p);
 				}
 			}
 		}
 		
 		ArrayList<Pawn> homecircle_pawns = homecircle.get_pawns();
-		for(Pawn p : homecircle_pawns){
-			if (p.get_color().equals(color)){
+		if(homecircle_pawns.get(0).get_color().equals(color)){
+			ArrayList<Pawn> homecircle_pawns_copy = new ArrayList<Pawn>(homecircle_pawns);
+			for(Pawn p : homecircle_pawns_copy){
 				homecircle.remove_Pawn(p);
 			}
 		}
 		
 		ArrayList<Pawn> home_pawns = home.get_pawns();
-		for(Pawn p : home_pawns){
-			if (p.get_color().equals(color)){
-				homecircle.remove_Pawn(p);
+		if(home_pawns.get(0).get_color().equals(color)){
+			ArrayList<Pawn> home_pawns_copy = new ArrayList<Pawn>(home_pawns);
+			for(Pawn p : home_pawns_copy){
+				home.remove_Pawn(p);
 			}
 		}
 		
 		
 		for (HomeRow h : homerow){
 			ArrayList<Pawn> pawns = h.get_pawns();
-			for(Pawn p : pawns){
-				if(p.get_color().equals(color)){
+			if(pawns.get(0).get_color().equals(color)){
+				ArrayList<Pawn> pawns_copy = new ArrayList<Pawn>(pawns);
+				for(Pawn p : pawns_copy){
 					h.remove_Pawn(p);
 				}
 			}
@@ -90,10 +90,7 @@ public class Game implements IGame {
 		
 	}
 	
-	private int roll_die(boolean from_file) throws NumberFormatException, IOException{
-		if(from_file){
-			return Integer.parseInt(br.readLine());
-		}
+	private int roll_die(){
 		return 1 + (int)(Math.random() * 6);
 	}
 	
@@ -113,13 +110,14 @@ public class Game implements IGame {
 	public void start() throws Exception{
 		// for testing purposes
 		// set to true if you want to compare with test boards after every successful move
-		boolean testing = true;
 		int num_moves = 0;
 		
 		// check if players are registered
 		if(!has_registered){
 			throw new Exception("No players registered");
 		}
+		
+		System.out.println("Starting game");
 		
 		// initialize state
 		Board new_board = new Board(this.players, this.num_pawns);
@@ -141,18 +139,21 @@ public class Game implements IGame {
 		
 		while(!game_over()){
 			// add two rolls
-			curr_player = (NPlayer) this.game_state.get_curr_player();
+			curr_player = this.players.get(player_index);
 			int roll1, roll2;
 			try {
-				roll1 = roll_die(testing);
-				roll2 = roll_die(testing);
+				roll1 = roll_die();
+				roll2 = roll_die();
 			} catch (Exception e){
 				System.out.println("Error");
 				return;
 			}
 			game_state.add_roll(roll1);
 			game_state.add_roll(roll2);
+			System.out.println("Rolls: " + roll1 + ", " + roll2);
+			
 			if (roll1 == roll2){
+				System.out.println("Doubles rolled");
 				int roll1c = 7 - roll1;
 				int roll2c = 7 - roll2;
 				game_state.add_roll(roll1c);
@@ -162,6 +163,7 @@ public class Game implements IGame {
 				
 				if(num_doubles == 3){
 					//penalize the current player
+					System.out.println("doubles penalty");
 					Pawn removed = this.game_state.get_board().remove_furthest(curr_player.get_color());
 					
 					if(removed != null){

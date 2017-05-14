@@ -88,12 +88,14 @@ public class NPlayer implements IPlayer{
 					break;
 				}
 				catch (Exception e){
+					System.out.println(e);
 					throw new Exception("sequence contract violation - expected valid name response");
 				}
 				
 			}
 		}
 		this.name = name;
+		this.color = color;
 		return name;
 	}
 	
@@ -101,14 +103,15 @@ public class NPlayer implements IPlayer{
 		// construct do-move XML request
         Document doMove_doc = XMLUtils.newDocument();
         
-        Element root = doMove_doc.createElement("do-move");
+        Node root = doMove_doc.createElement("do-move");
 		doMove_doc.appendChild(root);
 		
-		Element b_node = board.BoardtoXML().getDocumentElement();
-		Element d_node = doMove_doc.createElement("dice");
+		Node b_node = doMove_doc.importNode(board.BoardtoXML().getDocumentElement(), true);
+		Node d_node = doMove_doc.createElement("dice");
 		for(int d : dice){
 			Element die = doMove_doc.createElement("die");
 			die.appendChild(doMove_doc.createTextNode(Integer.toString(d)));
+			d_node.appendChild(die);
 		}
 		
 		root.appendChild(b_node);
@@ -143,6 +146,7 @@ public class NPlayer implements IPlayer{
 						//make new doc for conversion purposes
 						Document move_doc = XMLUtils.newDocument();
 						Node move = moves.item(i);
+						move = move_doc.importNode(move, true);
 						move_doc.appendChild(move);
 						
 						if(move.getNodeName().equals("enter-piece")){
@@ -164,13 +168,17 @@ public class NPlayer implements IPlayer{
 					break;
 				}
 				catch (Exception e){
+					System.out.println(e);
 					throw new Exception("sequence contract violation - expected valid moves response");
 				}
 				
 			}
 		}
 		
-		return (IMove[]) out_moves.toArray();
+		IMove[] results = new IMove[out_moves.size()];
+		out_moves.toArray(results);
+		
+		return results;	
 	}
 	
 	private String write_DoublesPenalty_XML() throws TransformerException, ParserConfigurationException{
@@ -201,6 +209,7 @@ public class NPlayer implements IPlayer{
 					break;
 				}
 				catch (Exception e){
+					System.out.println(e);
 					throw new Exception("sequence contract violation - expected valid void response");
 				}
 				

@@ -4,6 +4,13 @@ import org.w3c.dom.Document;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
+import java.net.Inet4Address;
+import java.net.Socket;
+import java.util.Arrays;
+
 public class JUnitTests{
 	// rules checker tests
 	@Test
@@ -24,6 +31,7 @@ public class JUnitTests{
 		EnterPiece legal_entry_move3 = new EnterPiece(new Pawn(0, "blue"));
 		assertTrue(legal_entry_move3.is_Legal(legal_entry_state3, legal_entry_state3));
 	}
+	
 	// XML Board Constructor tests
 	@Test
 	public void test_XML_Board_Constructor() throws Exception{
@@ -70,5 +78,26 @@ public class JUnitTests{
 		assertTrue(home_move.equals(new_home_move));
 		
 	}
+	
+	// NPlayer networking test
+	// must run ClientTest in separate process to succeed
+//	@Test
+//	public void test_NPlayer_Listen() throws Exception{
+//		NPlayer nplayer = new NPlayer("green");
+//		nplayer.bind(8000);
+//		State test_state = new State("boards/12.txt", 2);
+//		
+//		String name = "johnnie vassar";
+//		IMove[] moves = new IMove[3];
+//		moves[0] = new MoveHome(new Pawn(0, "green"), 1, 4);
+//		moves[1] = new MoveMain(new Pawn(0, "green"), 12, 8);
+//		moves[2] = new EnterPiece(new Pawn(0, "green"));
+//		
+//		assertEquals(name, nplayer.startGame("green"));
+//		assertTrue(Arrays.asList(moves).containsAll(Arrays.asList(nplayer.doMove(test_state.get_board(), test_state.get_rolls()))));
+//		nplayer.DoublesPenalty();
+//	}
+	
+	
 	
 }

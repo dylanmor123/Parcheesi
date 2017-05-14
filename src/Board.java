@@ -179,19 +179,19 @@ class Board {
 			String pawn_color = home_pawns.item(i).getFirstChild().getTextContent();
 			int pawn_id = Integer.parseInt(home_pawns.item(i).getLastChild().getTextContent());
 			Pawn pawn = new Pawn(pawn_id, pawn_color);
-			if(pawn_color == "green"){
+			if(pawn_color.equals("green")){
 				green_home_pawns.add(pawn);
 			}
 			
-			else if(pawn_color == "red"){
+			else if(pawn_color.equals("red")){
 				red_home_pawns.add(pawn);
 			}
 			
-			else if(pawn_color == "yellow"){
+			else if(pawn_color.equals("yellow")){
 				yellow_home_pawns.add(pawn);
 			}
 			
-			else if(pawn_color == "blue"){
+			else if(pawn_color.equals("blue")){
 				blue_home_pawns.add(pawn);
 			}
 		}
@@ -259,19 +259,19 @@ class Board {
 			int pawn_id = Integer.parseInt(homerow_pawns.item(i).getFirstChild().getLastChild().getTextContent());
 			int loc = Integer.parseInt(homerow_pawns.item(i).getLastChild().getTextContent());
 			Pawn pawn = new Pawn(pawn_id, pawn_color);
-			if(pawn_color == "green"){
+			if(pawn_color.equals("green")){
 				green_homerow.get(loc).add_Pawn(pawn);
 			}
 
-			else if(pawn_color == "red"){
+			else if(pawn_color.equals("red")){
 				red_homerow.get(loc).add_Pawn(pawn);
 			}
 			
-			else if(pawn_color == "yellow"){
+			else if(pawn_color.equals("yellow")){
 				yellow_homerow.get(loc).add_Pawn(pawn);
 			}
 			
-			else if(pawn_color == "blue"){
+			else if(pawn_color.equals("blue")){
 				blue_homerow.get(loc).add_Pawn(pawn);
 			}
 		}

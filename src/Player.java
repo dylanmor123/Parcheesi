@@ -60,7 +60,7 @@ class Player implements IPlayer {
 		this.color = color;
 		this.has_started = true;
 		
-		return "maurice";
+		return this.name;
 	}
 	
 	public void DoublesPenalty() throws Exception{
@@ -87,10 +87,11 @@ class Player implements IPlayer {
 	private State curr_state;
 	private State prev_state;
 	
-	
-	public Player(String strat){
+	private String name;
+	public Player(String strat, String name){
 		this.strategy = strat;
 		this.doubles_penalty = false;
+		this.name = name;
 	}
 	// method that returns a list of pawns, in the order that they appear on the board
 	// ordered from furthest along to furthest back
@@ -121,7 +122,7 @@ class Player implements IPlayer {
 		}
 		// k is index of entry in array of spaces
 		
-		for(int j = (((entry_index - 1) % spaces.length) + spaces.length) % spaces.length; j != entry_index; j = (j - 1) % spaces.length){
+		for(int j = (((entry_index - 1) % spaces.length) + spaces.length) % spaces.length; j != entry_index; j = (((j - 1) % spaces.length) + spaces.length) % spaces.length){
 			Space s = spaces[j];
 			if(s.get_pawns().size() > 0 && s.get_pawns().get(0).get_color().equals(color)){
 				pawns.addAll(s.get_pawns());
@@ -256,131 +257,12 @@ class Player implements IPlayer {
 		}
 		
 		
-		return (IMove[]) generated_moves.toArray();
+		IMove[] results = new IMove[generated_moves.size()];
+		generated_moves.toArray(results);
+		
+		return results;
 		
 		
-	}
-	
-	public String MovestoXMLString(ArrayList<IMove> generated_moves) throws ParserConfigurationException, TransformerException{
-        DocumentBuilderFactory dbFactory =
-        DocumentBuilderFactory.newInstance();
-        DocumentBuilder dBuilder = 
-           dbFactory.newDocumentBuilder();
-        Document doc = dBuilder.newDocument();
-        
-        //create root Move Element
-        Element rootElement = doc.createElement("moves");
-        doc.appendChild(rootElement);
-        
-        //<enter-piece> pawn  </enter-piece>
-        //<move-piece-main> pawn  start  distance  </move-piece-main>
-        //<move-piece-home> pawn  start  distance  </move-piece-home>
-        
-        
-        //Append all enter, main, and home moves to root "moves"
-		if (generated_moves.size() != 0){
-			for(IMove generated_move: generated_moves){
-				rootElement.appendChild(generated_move.toXMLDoc());
-			}
-		}
-
-        return XMLUtils.XMLtoString(doc);
-        
-	}
-	
-	// Assignment 7
-	// Networking
-	// Give player a socket and have it listen and return appropriate responses
-	private Socket socket;
-	private PrintStream output;
-	private BufferedReader input;
-	
-	private String startGame_response(Element request_root) throws Exception{
-		String color = request_root.getTextContent();
-		
-		String name = this.startGame(color);
-		Document doc = XMLUtils.newDocument();
-		Element root = doc.createElement("name");
-		root.appendChild(doc.createTextNode(name));
-		doc.appendChild(root);
-		
-		return XMLUtils.XMLtoString(doc);
-	}
-	
-	private String doMove_response(Element request_root) throws Exception{
-		Node board_node = request_root.getFirstChild();
-		Node dice_node = request_root.getLastChild();
-		
-		Document board_doc = XMLUtils.newDocument();
-		board_doc.appendChild(board_node);
-		Board board = new Board(XMLUtils.XMLtoString(board_doc));
-		
-		NodeList dice_list = dice_node.getChildNodes();
-		int[] dice = new int[dice_list.getLength()];
-		for(int i = 0; i < dice.length; i++){
-			Node die = dice_list.item(i);
-			dice[i] = Integer.parseInt(die.getTextContent());
-		}
-		
-		// get result of doMove
-		IMove[] moves = this.doMove(board, dice);
-		
-		Document response_doc = XMLUtils.newDocument();
-		
-        Element root = response_doc.createElement("moves");
-        response_doc.appendChild(root);
-        
-        
-        //Append all enter, main, and home moves to root "moves"
-		if (moves.length != 0){
-			for(IMove move: moves){
-				root.appendChild(move.toXMLDoc());
-			}
-		}
-		
-        return XMLUtils.XMLtoString(response_doc);
-		
-	}
-	
-	public void listen(String address, int port) throws Exception{
-		// listen to local machine port
-		this.socket = new Socket(address, port);
-		this.input = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
-		this.output = new PrintStream(this.socket.getOutputStream());
-		
-		// listen for requests through sockets
-		String request;
-		String response;
-		while(true){
-			if((request = this.input.readLine()) != null){
-				try{
-					Document x = XMLUtils.StringtoXML(request);
-					Element request_root = x.getDocumentElement();
-					String method_name = request_root.getTagName();
-					if(method_name.equals("start-game")){
-						response = this.startGame_response(request_root);
-					}
-					else if(method_name.equals("do-move")){
-						response = this.doMove_response(request_root);
-					}
-					else if(method_name.equals("doubles-penalty")){
-						Document response_doc = XMLUtils.newDocument();
-						response_doc.appendChild(response_doc.createElement("void"));
-						response = XMLUtils.XMLtoString(response_doc);
-					}
-					else{
-						throw new Exception();
-					}
-					
-					System.out.println(response);
-					output.println(response);
-				}
-				catch (Exception e){
-					throw new Exception("contract violation - expected valid method call");
-				}
-				
-			}
-		}
 	}
 	
 	
@@ -533,153 +415,6 @@ class Player implements IPlayer {
 		s16 = new State("boards/39.txt", num_players);
 		last16 = new MoveMain(new Pawn(0, "green"), 6, 5);
 		first16 = new MoveMain(new Pawn(2, "green"), 27, 5);
-	}
-	
-	public static void main(String[] argv) throws Exception{
-		Player p_first = new Player("first");
-		Player p_last = new Player("last");
-		
-		p_first.startGame("green");
-		p_last.startGame("green");
-		
-		Tester.check(first1.equals(p_first.doMove(s1.get_board(), s1.get_rolls())), "first - test 1");
-		Tester.check(last1.equals(p_last.doMove(s1.get_board(), s1.get_rolls())), "last - test 1");
-		
-		p_first = new Player("first");
-		p_last = new Player("last");
-		
-		p_first.startGame("green");
-		p_last.startGame("green");
-		
-		Tester.check(first2.equals(p_first.doMove(s2.get_board(), s2.get_rolls())), "first - test 2");
-		Tester.check(last2.equals(p_last.doMove(s2.get_board(), s2.get_rolls())), "last - test 2");
-		
-		p_first = new Player("first");
-		p_last = new Player("last");
-		
-		p_first.startGame("green");
-		p_last.startGame("green");
-		
-		Tester.check(first3.equals(p_first.doMove(s3.get_board(), s3.get_rolls())), "first - test 3");
-		Tester.check(last3.equals(p_last.doMove(s3.get_board(), s3.get_rolls())), "last - test 3");
-		
-		p_first = new Player("first");
-		p_last = new Player("last");
-		
-		p_first.startGame("green");
-		p_last.startGame("green");
-		
-		Tester.check(first4.equals(p_first.doMove(s4.get_board(), s4.get_rolls())), "first - test 4");
-		Tester.check(last4.equals(p_last.doMove(s4.get_board(), s4.get_rolls())), "last - test 4");
-		
-		p_first = new Player("first");
-		p_last = new Player("last");
-		
-		p_first.startGame("green");
-		p_last.startGame("green");
-		
-		Tester.check(first5.equals(p_first.doMove(s5.get_board(), s5.get_rolls())), "first - test 5");
-		Tester.check(last5.equals(p_last.doMove(s5.get_board(), s5.get_rolls())), "last - test 5");
-		
-		p_first = new Player("first");
-		p_last = new Player("last");
-		
-		p_first.startGame("green");
-		p_last.startGame("green");
-		
-		Tester.check(first6.equals(p_first.doMove(s6.get_board(), s6.get_rolls())), "first - test 6");
-		Tester.check(last6.equals(p_last.doMove(s6.get_board(), s6.get_rolls())), "last - test 6");
-		
-		p_first = new Player("first");
-		p_last = new Player("last");
-		
-		p_first.startGame("green");
-		p_last.startGame("green");
-		
-		Tester.check(first7.equals(p_first.doMove(s7.get_board(), s7.get_rolls())), "first - test 7");
-		Tester.check(last7.equals(p_last.doMove(s7.get_board(), s7.get_rolls())), "last - test 7");
-		
-		p_first = new Player("first");
-		p_last = new Player("last");
-		
-		p_first.startGame("green");
-		p_last.startGame("green");
-		
-		Tester.check(first8.equals(p_first.doMove(s8.get_board(), s8.get_rolls())), "first - test 8");
-		Tester.check(last8.equals(p_last.doMove(s8.get_board(), s8.get_rolls())), "last - test 8");
-		
-		p_first = new Player("first");
-		p_last = new Player("last");
-		
-		p_first.startGame("green");
-		p_last.startGame("green");
-		
-		Tester.check(first9.equals(p_first.doMove(s9.get_board(), s9.get_rolls())), "first - test 9");
-		Tester.check(last9.equals(p_last.doMove(s9.get_board(), s9.get_rolls())), "last - test 9");
-		
-		p_first = new Player("first");
-		p_last = new Player("last");
-		
-		p_first.startGame("green");
-		p_last.startGame("green");
-		
-		Tester.check(first10.equals(p_first.doMove(s10.get_board(), s10.get_rolls())), "first - test 10");
-		Tester.check(last10.equals(p_last.doMove(s10.get_board(), s10.get_rolls())), "last - test 10");
-		
-		p_first = new Player("first");
-		p_last = new Player("last");
-		
-		p_first.startGame("green");
-		p_last.startGame("green");
-		
-		Tester.check(first11.equals(p_first.doMove(s11.get_board(), s11.get_rolls())), "first - test 11");
-		Tester.check(last11.equals(p_last.doMove(s11.get_board(), s11.get_rolls())), "last - test 11");
-		
-		p_first = new Player("first");
-		p_last = new Player("last");
-		
-		p_first.startGame("green");
-		p_last.startGame("green");
-		
-		Tester.check(first12.equals(p_first.doMove(s12.get_board(), s12.get_rolls())), "first - test 12");
-		Tester.check(last12.equals(p_last.doMove(s12.get_board(), s12.get_rolls())), "last - test 12");
-		
-		p_first = new Player("first");
-		p_last = new Player("last");
-		
-		p_first.startGame("green");
-		p_last.startGame("green");
-		
-		Tester.check(first13.equals(p_first.doMove(s13.get_board(), s13.get_rolls())), "first - test 13");
-		Tester.check(last13.equals(p_last.doMove(s13.get_board(), s13.get_rolls())), "last - test 13");
-		
-		p_first = new Player("first");
-		p_last = new Player("last");
-		
-		p_first.startGame("green");
-		p_last.startGame("green");
-		
-		Tester.check(first14.equals(p_first.doMove(s14.get_board(), s14.get_rolls())), "first - test 14");
-		Tester.check(last14.equals(p_last.doMove(s14.get_board(), s14.get_rolls())), "last - test 14");
-		
-		p_first = new Player("first");
-		p_last = new Player("last");
-		
-		p_first.startGame("green");
-		p_last.startGame("green");
-		
-		Tester.check(first15.equals(p_first.doMove(s15.get_board(), s15.get_rolls())), "first - test 15");
-		Tester.check(last15.equals(p_last.doMove(s15.get_board(), s15.get_rolls())), "last - test 15");
-		
-		p_first = new Player("first");
-		p_last = new Player("last");
-		
-		p_first.startGame("green");
-		p_last.startGame("green");
-		
-		Tester.check(first16.equals(p_first.doMove(s16.get_board(), s16.get_rolls())), "first - test 16");
-		Tester.check(last16.equals(p_last.doMove(s16.get_board(), s16.get_rolls())), "last - test 16");
-		
 	}
 
 }

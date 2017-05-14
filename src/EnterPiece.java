@@ -42,7 +42,7 @@ class EnterPiece implements IMove {
   
   public boolean is_Legal(State game_state, State prev_state){
 		Pawn pawn = this.get_pawn();
-		Player player = (Player) game_state.get_curr_player();
+		IPlayer player = game_state.get_curr_player();
 		Board b = game_state.get_board();
 		
 		// check if player color matches pawn color
