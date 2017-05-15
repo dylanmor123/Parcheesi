@@ -134,6 +134,7 @@ public class NPlayer implements IPlayer{
 			if((result = this.input.readLine()) != null){
 				// if there's something to read, check if it's a valid response
 				try{
+					System.out.println(result);
 					Document x = XMLUtils.StringtoXML(result);
 					Element response_root = x.getDocumentElement();
 					if(!response_root.getTagName().equals("moves")){

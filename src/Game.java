@@ -108,8 +108,11 @@ public class Game implements IGame {
 	}
 	
 	public void start() throws Exception{
-		// for testing purposes
-		// set to true if you want to compare with test boards after every successful move
+		// Assignment 8 GUI
+		AdminFrame frame = new AdminFrame();
+		
+		
+		
 		int num_moves = 0;
 		
 		// check if players are registered
@@ -118,6 +121,8 @@ public class Game implements IGame {
 		}
 		
 		System.out.println("Starting game");
+		frame.setVisible(true);
+		
 		
 		// initialize state
 		Board new_board = new Board(this.players, this.num_pawns);
@@ -125,6 +130,7 @@ public class Game implements IGame {
 		int[] rolls = new int[0];
 		this.game_state = new State(new_board, curr_player.toPlayer(), rolls);
 		this.prev_state = new State(this.game_state);
+		frame.update_pawn_positions(game_state.get_board());
 		
 		// loop through players until winner
 		// generate dice rolls
@@ -140,6 +146,7 @@ public class Game implements IGame {
 		while(!game_over()){
 			// add two rolls
 			curr_player = this.players.get(player_index);
+			frame.set_status_label(curr_player.get_color() + " player moving");
 			int roll1, roll2;
 			try {
 				roll1 = roll_die();
@@ -193,6 +200,8 @@ public class Game implements IGame {
 					}
 					this.game_state = move.update_Board(this.game_state);
 					
+					frame.update_pawn_positions(game_state.get_board());
+					
 					if(game_over()){
 						break;
 					}
@@ -235,6 +244,7 @@ public class Game implements IGame {
 		
 		// Broken out of loop -> current player wins
 		System.out.println(curr_player.get_color() + " player wins!");
+		frame.set_status_label(curr_player.get_color() + " player wins!");
 		
 	}
 	
