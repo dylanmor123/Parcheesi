@@ -17,6 +17,9 @@ public class State {
 		if (s.curr_player instanceof NPlayer){
 			this.curr_player = new NPlayer((NPlayer) s.curr_player);
 		}
+		else if(s.curr_player instanceof HPlayer){
+			this.curr_player = new HPlayer((HPlayer) s.curr_player);
+		}
 		else{
 			this.curr_player = new Player((Player) s.curr_player);
 		}
@@ -151,7 +154,7 @@ public class State {
 	    }
 	}
 	
-	public State(Board b, Player p, int[] rolls){
+	public State(Board b, IPlayer p, int[] rolls){
 		this.curr_b = b;
 		this.curr_player = p;
 		this.rolls_vals_left = rolls;

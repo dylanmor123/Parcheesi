@@ -39,6 +39,9 @@ public class AdminFrame extends JFrame {
 	/**
 	 * Create the frame.
 	 */
+	
+	
+	
 	public AdminFrame() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 718, 305);
@@ -182,10 +185,10 @@ public class AdminFrame extends JFrame {
 				l.setText("Pawn " + (p.get_id() + 1) + ": Home");
 			}
 			else if(loc.get_type().equals("main")){
-				l.setText("Pawn " + (p.get_id() + 1) + ": Main " + loc.get_index());
+				l.setText("Pawn " + (p.get_id() + 1) + ": Main " + (loc.get_index() + 1));
 			}
 			else{
-				l.setText("Pawn " + (p.get_id() + 1) + ": Home Row " + loc.get_index());
+				l.setText("Pawn " + (p.get_id() + 1) + ": Home Row " + (loc.get_index() + 1));
 			}
 		}
 	

@@ -10,9 +10,9 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class PlayerWrapper {
-	private Player player;
+	private IPlayer player;
 	
-	public PlayerWrapper(Player p){
+	public PlayerWrapper(IPlayer p){
 		this.player = p;
 	}
 	
@@ -82,7 +82,7 @@ public class PlayerWrapper {
 		while(true){
 			if((request = this.input.readLine()) != null){
 				// wait a little while, to see what's going on
-				TimeUnit.SECONDS.sleep(5);
+				TimeUnit.SECONDS.sleep(1);
 				try{
 					Document x = XMLUtils.StringtoXML(request);
 					Element request_root = x.getDocumentElement();

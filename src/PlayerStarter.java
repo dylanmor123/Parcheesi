@@ -11,8 +11,16 @@ public class PlayerStarter {
 		String name = argv[1];
 		String strat = argv[2];
 		
-		Player p = new Player(strat, name);
-		PlayerWrapper wrap = new PlayerWrapper(p);
+		PlayerWrapper wrap;
+		
+		if(strat.equals("human")){
+			HPlayer p = new HPlayer(name);
+			wrap = new PlayerWrapper(p);
+		}
+		else{
+			Player p = new Player(strat, name);
+			wrap = new PlayerWrapper(p);
+		}
 		
 		wrap.listen(address, port);
 	}
