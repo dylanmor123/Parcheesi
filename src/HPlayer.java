@@ -83,8 +83,14 @@ public class HPlayer implements IPlayer, ActionListener{
 		String button_name = e.getActionCommand();
 		
 		if(button_name.equals("Make Move")){
-			int id = Integer.parseInt((String) this.frame.get_Pawn_Spinner().getModel().getValue()) - 1;
-			int distance = Integer.parseInt((String) this.frame.get_Roll_Spinner().getModel().getValue());
+			int id_index = this.frame.get_Pawn_Spinner().getSelectedIndex();
+			int distance_index = this.frame.get_Roll_Spinner().getSelectedIndex();
+			
+			if(id_index == -1 || distance_index == -1){
+				return;
+			}
+			int id = Integer.parseInt((String) this.frame.get_Pawn_Spinner().getModel().getElementAt(id_index)) - 1;
+			int distance = Integer.parseInt((String) this.frame.get_Roll_Spinner().getModel().getElementAt(distance_index));
 			
 			// construct move
 			Board b = this.curr_state.get_board();

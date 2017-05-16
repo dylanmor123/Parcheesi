@@ -37,18 +37,19 @@ public class HPlayerFrame extends JFrame{
 	private JLabel lblMainEntry;
 	
 	private JLabel lblRolls;
-	private JSpinner spinner;
-	private JSpinner spinnerRollChoice;
 	private JButton btnMakeMove;
 	private JButton btnUndoMoves;
 	
 	private JLabel lblIllegal;
 	
-	public JSpinner get_Pawn_Spinner(){
+	private JList spinner;
+	private JList spinnerRollChoice;
+	
+	public JList get_Pawn_Spinner(){
 		return this.spinner;
 	}
 	
-	public JSpinner get_Roll_Spinner(){
+	public JList get_Roll_Spinner(){
 		return this.spinnerRollChoice;
 	}
 	
@@ -67,7 +68,7 @@ public class HPlayerFrame extends JFrame{
 		contentPane.setToolTipText("");
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
-		contentPane.setLayout(new MigLayout("", "[133px][57.00px][133.00px][57px][133.00px][57px][133.00px]", "[20px][38px][20px][20px][20px][][][][][][][][][][][61.00][grow]"));
+		contentPane.setLayout(new MigLayout("", "[133px][57.00px][133.00px,grow][57px][133.00px,grow][57px][133.00px]", "[20px][38px][20px][20px][20px][][][][][][][][][][][61.00,grow][grow]"));
 		
 		JLabel lblTitle = new JLabel("Parcheesi");
 		lblTitle.setFont(new Font("Tahoma", Font.BOLD, 18));
@@ -223,21 +224,32 @@ public class HPlayerFrame extends JFrame{
 		JLabel lblPawn = new JLabel("Pawn:");
 		contentPane.add(lblPawn, "cell 1 15,alignx right");
 		
-		spinner = new JSpinner();
+		spinner = new JList();
 		spinner.setEnabled(false);
-		spinner.setModel(new SpinnerListModel(new String[] {"1", "2", "3", "4"}));
-		contentPane.add(spinner, "cell 2 15,growx");
+		spinner.setVisibleRowCount(1);
+		spinner.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		spinner.setModel(new AbstractListModel() {
+			String[] values = new String[] {"1", "2", "3", "4"};
+			public int getSize() {
+				return values.length;
+			}
+			public Object getElementAt(int index) {
+				return values[index];
+			}
+		});
+		contentPane.add(spinner, "cell 2 15,grow");
 		
 		JLabel lblRoll = new JLabel("Roll:");
 		contentPane.add(lblRoll, "cell 3 15,alignx right");
 		
-		spinnerRollChoice = new JSpinner();
-		spinnerRollChoice.setEnabled(false);
-		spinnerRollChoice.setModel(new SpinnerListModel(new String[] {"  "}));
-		contentPane.add(spinnerRollChoice, "cell 4 15,growx");
+		spinnerRollChoice = new JList();
+		spinnerRollChoice.setVisibleRowCount(1);
+		spinnerRollChoice.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		contentPane.add(spinnerRollChoice, "cell 4 15,grow");
 		
 		btnMakeMove = new JButton("Make Move");
 		btnMakeMove.addActionListener(listener);
+		
 		btnMakeMove.setEnabled(false);
 		contentPane.add(btnMakeMove, "cell 6 15,growx");
 		
@@ -307,11 +319,19 @@ public class HPlayerFrame extends JFrame{
 			}
 		}
 		else{
-			for_spinner = new String[]{" "};
+			for_spinner = new String[]{};
 		}
 		
 		
-		spinnerRollChoice.setModel(new SpinnerListModel(for_spinner));
+		spinnerRollChoice.setModel(new AbstractListModel() {
+			String[] values = for_spinner;
+			public int getSize() {
+				return values.length;
+			}
+			public Object getElementAt(int index) {
+				return values[index];
+			}
+		});
 		
 	}
 	
