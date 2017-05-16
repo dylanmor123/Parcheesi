@@ -67,7 +67,7 @@ public class HPlayerFrame extends JFrame{
 		contentPane.setToolTipText("");
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
-		contentPane.setLayout(new MigLayout("", "[133px][57.00px][133.00px][57px][133.00px,grow][57px][133.00px]", "[20px][38px][20px][20px][20px][][][][][][][][][][][61.00][grow]"));
+		contentPane.setLayout(new MigLayout("", "[133px][57.00px][133.00px][57px][133.00px][57px][133.00px]", "[20px][38px][20px][20px][20px][][][][][][][][][][][61.00][grow]"));
 		
 		JLabel lblTitle = new JLabel("Parcheesi");
 		lblTitle.setFont(new Font("Tahoma", Font.BOLD, 18));
@@ -197,6 +197,10 @@ public class HPlayerFrame extends JFrame{
 		lblHomeRowEntry.setFont(new Font("Tahoma", Font.ITALIC, 16));
 		contentPane.add(lblHomeRowEntry, "cell 4 10 3 1,growx");
 		
+		JLabel lblpawnInSafe = new JLabel("*Pawn in safe space*");
+		lblpawnInSafe.setFont(new Font("Tahoma", Font.ITALIC, 16));
+		contentPane.add(lblpawnInSafe, "cell 0 11 4 1,alignx center");
+		
 		lblMainEntry = new JLabel("Your main ring entry space:");
 		lblMainEntry.setFont(new Font("Tahoma", Font.ITALIC, 16));
 		contentPane.add(lblMainEntry, "cell 4 11 3 1,growx");
@@ -259,20 +263,24 @@ public class HPlayerFrame extends JFrame{
 		for(int i = 0; i < 16; i++){
 			Pawn p = pawns[i];
 			JLabel l = (JLabel) this.contentPane.getComponent(START_INDEX + i);
-			
+			String s;
 			PawnLocation loc = board.get_Pawn_Location(p);
 			if(loc.get_type().equals("home circle")){
-				l.setText("Pawn " + (p.get_id() + 1) + ": Home Circle");
+				s =  "Home Circle";
 			}
 			else if(loc.get_type().equals("home")){
-				l.setText("Pawn " + (p.get_id() + 1) + ": Home");
+				s = "Home";
 			}
 			else if(loc.get_type().equals("main")){
-				l.setText("Pawn " + (p.get_id() + 1) + ": Main " + (loc.get_index() + 1));
+				s = "Main " + (loc.get_index() + 1);
 			}
 			else{
-				l.setText("Pawn " + (p.get_id() + 1) + ": Home Row " + (loc.get_index() + 1));
+				s = "Home Row " + (loc.get_index() + 1);
 			}
+			if(loc.get_safe()){
+				s = "*" + s + "*";
+			}
+			l.setText("Pawn " + (p.get_id() + 1) + ": " + s);
 		}
 	
 	}

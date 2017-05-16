@@ -176,20 +176,24 @@ public class AdminFrame extends JFrame {
 		for(int i = 0; i < 16; i++){
 			Pawn p = pawns[i];
 			JLabel l = (JLabel) this.contentPane.getComponent(START_INDEX + i);
-			
+			String s;
 			PawnLocation loc = board.get_Pawn_Location(p);
 			if(loc.get_type().equals("home circle")){
-				l.setText("Pawn " + (p.get_id() + 1) + ": Home Circle");
+				s =  "Home Circle";
 			}
 			else if(loc.get_type().equals("home")){
-				l.setText("Pawn " + (p.get_id() + 1) + ": Home");
+				s = "Home";
 			}
 			else if(loc.get_type().equals("main")){
-				l.setText("Pawn " + (p.get_id() + 1) + ": Main " + (loc.get_index() + 1));
+				s = "Main " + (loc.get_index() + 1);
 			}
 			else{
-				l.setText("Pawn " + (p.get_id() + 1) + ": Home Row " + (loc.get_index() + 1));
+				s = "Home Row " + (loc.get_index() + 1);
 			}
+			if(loc.get_safe()){
+				s = "*" + s + "*";
+			}
+			l.setText("Pawn " + (p.get_id() + 1) + ": " + s);
 		}
 	
 	}

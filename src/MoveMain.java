@@ -106,11 +106,22 @@ class MoveMain implements IMove {
 		// Check if pawn can be moved distance tiles without conflict
 		// Construct list of spaces to check for blockade
 		ArrayList<Space> spaces_to_check = new ArrayList<Space>();
-		int curr_space_index = (start + 1) % space_length; // next space on board; could wrap around
-		boolean in_home_row = false; // true if list of spaces includes home row
+		int curr_space_index;
+		boolean in_home_row;
+		ArrayList<HomeRow> homerow = null;
+		
+		if(s instanceof PreHomeRow){
+			curr_space_index = 0; // index of first space in home row
+			in_home_row = true;
+			homerow = game_state.get_board().get_HomeRow(pawn_color);
+		}
+		else{
+			curr_space_index = (start + 1) % space_length; // next space on board; could wrap around
+			in_home_row = false; // true if list of spaces includes home row
+		}
+		
 		boolean reached_home = false; // true if list of spaces includes home
 		Space curr_space = null;
-		ArrayList<HomeRow> homerow = null;
 		
 		while(spaces_to_check.size() < distance){
 			if(!in_home_row){

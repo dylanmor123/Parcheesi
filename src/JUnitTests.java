@@ -30,6 +30,14 @@ public class JUnitTests{
 		State legal_entry_state3 = new State("boards/2-3_enter.txt", 2);
 		EnterPiece legal_entry_move3 = new EnterPiece(new Pawn(0, "blue"));
 		assertTrue(legal_entry_move3.is_Legal(legal_entry_state3, legal_entry_state3));
+		
+		
+		
+		// testing MoveMain rules
+		// Case: entry into home row from adjoining space with nearby blockade
+		State pre_homerow_nearby_blockade = new State("boards/main_adjacent_home_row_blockade_nearby.txt", 2);
+		MoveMain legal_main_move1 = new MoveMain(new Pawn(0, "green"), 29, 2);
+		assertTrue(legal_main_move1.is_Legal(pre_homerow_nearby_blockade, pre_homerow_nearby_blockade));
 	}
 	
 	// XML Board Constructor tests
