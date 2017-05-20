@@ -110,7 +110,7 @@ class MoveMain implements IMove {
 		boolean in_home_row;
 		ArrayList<HomeRow> homerow = null;
 		
-		if(s instanceof PreHomeRow){
+		if(s instanceof PreHomeRow && s.get_color().equals(pawn_color)){
 			curr_space_index = 0; // index of first space in home row
 			in_home_row = true;
 			homerow = game_state.get_board().get_HomeRow(pawn_color);

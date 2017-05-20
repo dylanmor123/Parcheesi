@@ -38,6 +38,27 @@ public class JUnitTests{
 		State pre_homerow_nearby_blockade = new State("boards/main_adjacent_home_row_blockade_nearby.txt", 2);
 		MoveMain legal_main_move1 = new MoveMain(new Pawn(0, "green"), 29, 2);
 		assertTrue(legal_main_move1.is_Legal(pre_homerow_nearby_blockade, pre_homerow_nearby_blockade));
+		
+		
+		// testing MoveHome rules
+	}
+	
+	// board updater tests
+	@Test
+	public void test_board_updater() throws Exception{
+		
+	}
+	
+	// remove furthest pawn tests
+	@Test
+	public void test_remove_furthest_pawn(){
+		
+	}
+	
+	// player move selection tests
+	@Test
+	public void test_best_player(){
+		
 	}
 	
 	// XML Board Constructor tests
@@ -86,26 +107,4 @@ public class JUnitTests{
 		assertTrue(home_move.equals(new_home_move));
 		
 	}
-	
-	// NPlayer networking test
-	// must run ClientTest in separate process to succeed
-//	@Test
-//	public void test_NPlayer_Listen() throws Exception{
-//		NPlayer nplayer = new NPlayer("green");
-//		nplayer.bind(8000);
-//		State test_state = new State("boards/12.txt", 2);
-//		
-//		String name = "johnnie vassar";
-//		IMove[] moves = new IMove[3];
-//		moves[0] = new MoveHome(new Pawn(0, "green"), 1, 4);
-//		moves[1] = new MoveMain(new Pawn(0, "green"), 12, 8);
-//		moves[2] = new EnterPiece(new Pawn(0, "green"));
-//		
-//		assertEquals(name, nplayer.startGame("green"));
-//		assertTrue(Arrays.asList(moves).containsAll(Arrays.asList(nplayer.doMove(test_state.get_board(), test_state.get_rolls()))));
-//		nplayer.DoublesPenalty();
-//	}
-	
-	
-	
 }

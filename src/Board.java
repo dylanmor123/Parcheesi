@@ -1,8 +1,11 @@
+import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Scanner;
 import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -550,6 +553,34 @@ class Board {
         
         
         
+	}
+	
+	// returns true if all pawns of given color are out of home circle
+	public boolean all_pawns_out(String color){
+		return (this.get_HomeCircle(color).get_pawns().size()) == 0;
+	}
+	
+	// writes board image to png file
+	public void to_PNG(String outfilename) throws Exception{
+		// write board to xml file
+		PrintWriter out = new PrintWriter(outfilename + ".xml");
+		String xml = XMLUtils.XMLtoString(this.BoardtoXML());
+		out.print(xml);
+		out.close();
+		
+		// start process to generate image
+		String[] command = new String[]{"\"C:\\Program Files\\Racket\\Racket.exe\"", "from_findler/show-board.rkt", "--png", outfilename + ".png ", outfilename + ".xml"};
+		
+		try {
+			Process process = Runtime.getRuntime().exec(command);
+		    // prints out any message that are usually displayed in the console
+		    Scanner scanner = new Scanner(process.getErrorStream());
+		    while (scanner.hasNext()) {
+		        System.out.println(scanner.nextLine());
+		    }
+		}catch(IOException e1) {
+		    e1.printStackTrace();
+		}
 	}
 	
 	// ------------------------------------------------------------------

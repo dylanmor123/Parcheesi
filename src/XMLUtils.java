@@ -40,20 +40,15 @@ public class XMLUtils {
 		String res = writer.toString().substring(54);
 		
 		res = res.replaceAll("<([^<]*)/>", "<$1></$1>");
-		res = res.replaceAll(">", "> ");
-		res = res.replaceAll("([^ ])</", "$1 </");
 		
 		return res;
 	}
 	
 	public static Document StringtoXML(String s) throws SAXException, IOException, ParserConfigurationException{
 		// massaging input from format we use to format we need
-		String fixed = s.replaceAll("([^ ]) </", "$1</");
-		fixed = fixed.replaceAll("> ", ">");
-		
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();  
 	    DocumentBuilder builder = factory.newDocumentBuilder();
-	    Document document = builder.parse( new InputSource( new StringReader( fixed ) ) );
+	    Document document = builder.parse( new InputSource( new StringReader( s ) ) );
 	    
 	    return document;
 	}

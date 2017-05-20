@@ -157,9 +157,8 @@ public class Game implements IGame {
 			}
 			game_state.add_roll(roll1);
 			game_state.add_roll(roll2);
-			System.out.println("Rolls: " + roll1 + ", " + roll2);
 			
-			if (roll1 == roll2){
+			if (roll1 == roll2 && this.game_state.get_board().all_pawns_out(curr_player.get_color())){
 				System.out.println("Doubles rolled");
 				int roll1c = 7 - roll1;
 				int roll2c = 7 - roll2;

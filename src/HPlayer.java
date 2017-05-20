@@ -20,7 +20,7 @@ public class HPlayer implements IPlayer, ActionListener{
 		this.color = h.color;
 	}
 	
-	public HPlayer(String name){
+	public HPlayer(String name) throws Exception{
 		this.name = name;
 		this.doubles_penalty = false;
 		this.frame = new HPlayerFrame(this);
@@ -49,14 +49,14 @@ public class HPlayer implements IPlayer, ActionListener{
 		
 		
 		// update GUI
-		this.frame.ready_for_move();
+		this.frame.update_board(brd);
 		this.frame.update_rolls(dice);
+		this.frame.ready_for_move();
+		
 		
 		// wait for all legal moves to be made
 		this.curr_state = new State(brd, this, dice);
 		this.prev_state = new State(curr_state);
-		
-		this.frame.update_pawn_positions(brd);
 		
 		while(RuleChecker.moves_remaining(this, curr_state, prev_state)){
 			Thread.sleep(1000);
@@ -70,6 +70,7 @@ public class HPlayer implements IPlayer, ActionListener{
 		
 		// update GUI for end of turn
 		this.frame.move_over();
+		this.frame.set_state("start");
 		
 		return results;
 		
@@ -124,7 +125,8 @@ public class HPlayer implements IPlayer, ActionListener{
 				try {
 					State new_state = possible_move.update_Board(this.curr_state);
 					this.curr_state = new State(new_state);
-					this.frame.update_pawn_positions(new_state.get_board());
+					this.frame.set_state("curr");
+					this.frame.update_board(new_state.get_board());
 					this.frame.update_rolls(new_state.get_rolls());
 					this.generated_moves.add(possible_move);
 					this.frame.get_Illegal().setText("");
@@ -137,10 +139,15 @@ public class HPlayer implements IPlayer, ActionListener{
 			}
 		}
 		else if(button_name.equals("Undo Moves")){
-			this.generated_moves = new ArrayList<IMove>();
-			this.curr_state = new State(this.prev_state);
-			this.frame.update_pawn_positions(this.curr_state.get_board());
-			this.frame.update_rolls(this.curr_state.get_rolls());
+			try {
+				this.generated_moves = new ArrayList<IMove>();
+				this.curr_state = new State(this.prev_state);
+				this.frame.set_state("start");
+				this.frame.update_board(this.curr_state.get_board());
+				this.frame.update_rolls(this.curr_state.get_rolls());
+			} catch (Exception e1) {
+				return;
+			}
 		}
 	}
 	
