@@ -49,7 +49,7 @@ public class HPlayer implements IPlayer, ActionListener{
 		
 		
 		// update GUI
-		this.frame.update_board(brd);
+		this.frame.update_board(brd, this.color);
 		this.frame.update_rolls(dice);
 		this.frame.ready_for_move();
 		
@@ -124,10 +124,10 @@ public class HPlayer implements IPlayer, ActionListener{
 			if(possible_move.is_Legal(this.curr_state, this.prev_state)){
 				try {
 					State new_state = possible_move.update_Board(this.curr_state);
-					this.curr_state = new State(new_state);
 					this.frame.set_state("curr");
-					this.frame.update_board(new_state.get_board());
+					this.frame.update_board(new_state.get_board(), this.color);
 					this.frame.update_rolls(new_state.get_rolls());
+					this.curr_state = new State(new_state);
 					this.generated_moves.add(possible_move);
 					this.frame.get_Illegal().setText("");
 				} catch (Exception e1) {
@@ -143,7 +143,7 @@ public class HPlayer implements IPlayer, ActionListener{
 				this.generated_moves = new ArrayList<IMove>();
 				this.curr_state = new State(this.prev_state);
 				this.frame.set_state("start");
-				this.frame.update_board(this.curr_state.get_board());
+				this.frame.update_board(this.curr_state.get_board(), this.color);
 				this.frame.update_rolls(this.curr_state.get_rolls());
 			} catch (Exception e1) {
 				return;

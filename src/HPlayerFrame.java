@@ -40,6 +40,11 @@ public class HPlayerFrame extends JFrame{
 	private JList spinnerRollChoice;
 	private JLabel lblBoardImage;
 	
+	private JLabel lblPawn_1;
+	private JLabel lblPawn_2;
+	private JLabel lblPawn_3;
+	private JLabel lblPawn_4;
+	
 	public JList get_Pawn_Spinner(){
 		return this.spinner;
 	}
@@ -79,7 +84,31 @@ public class HPlayerFrame extends JFrame{
 		
 		lblBoardImage = new JLabel("");
 		lblBoardImage.setIcon(new ImageIcon(ImageIO.read(new File("img/base.png"))));
-		contentPane.add(lblBoardImage, "cell 0 1 7 10,alignx center,aligny center");
+		contentPane.add(lblBoardImage, "cell 0 1 5 10,alignx center,aligny center");
+		
+		JLabel lblYourPawns = new JLabel("Your Pawns");
+		lblYourPawns.setFont(new Font("Tahoma", Font.BOLD, 16));
+		contentPane.add(lblYourPawns, "cell 5 1 2 1,alignx center,aligny bottom");
+		
+		lblPawn_1 = new JLabel("Pawn 1:");
+		contentPane.add(lblPawn_1, "cell 5 2 2 1");
+		
+		lblPawn_2 = new JLabel("Pawn 2:");
+		contentPane.add(lblPawn_2, "cell 5 3 2 1");
+		
+		lblPawn_3 = new JLabel("Pawn 3:");
+		contentPane.add(lblPawn_3, "cell 5 4 2 1");
+		
+		lblPawn_4 = new JLabel("Pawn 4:");
+		contentPane.add(lblPawn_4, "cell 5 5 2 1");
+		
+		JLabel lblPawnIndicesBegin = new JLabel("Pawn indices begin from ");
+		lblPawnIndicesBegin.setFont(new Font("Tahoma", Font.ITALIC, 16));
+		contentPane.add(lblPawnIndicesBegin, "cell 5 7 2 1,aligny top");
+		
+		JLabel lblYourEntrySpace = new JLabel("your entry space ");
+		lblYourEntrySpace.setFont(new Font("Tahoma", Font.ITALIC, 16));
+		contentPane.add(lblYourEntrySpace, "cell 5 8 2 1");
 		
 		lblStatus = new JLabel("");
 		contentPane.add(lblStatus, "cell 2 13");
@@ -150,11 +179,52 @@ public class HPlayerFrame extends JFrame{
 		lblStatus.setText(status);
 	}
 	
-	public void update_board(Board board) throws Exception{
+	public void update_board(Board board, String color) throws Exception{
 		String outname = "img/" + this.state;
 		board.to_PNG(outname);
 		
 		lblBoardImage.setIcon(new ImageIcon(ImageIO.read(new File(outname + ".png"))));
+		
+		// update pawn positions
+		int START_INDEX = 3;
+		int BOARD_LENGTH = 68;
+		int MAIN_ENTRY;
+		
+		if(color.equals("green")){
+			MAIN_ENTRY = 0;
+		}
+		else if(color.equals("red")){
+			MAIN_ENTRY = 17;
+		}
+		else if(color.equals("blue")){
+			MAIN_ENTRY = 34;
+		}
+		else{
+			MAIN_ENTRY = 51;
+		}
+		
+		
+		Pawn[] pawns = {new Pawn(0, color), new Pawn(1, color), new Pawn(2, color), new Pawn(3, color)};
+	
+		for(int i = 0; i < 4; i++){
+			Pawn p = pawns[i];
+			JLabel l = (JLabel) this.contentPane.getComponent(START_INDEX + i);
+			String s;
+			PawnLocation loc = board.get_Pawn_Location(p);
+			if(loc.get_type().equals("home circle")){
+				s =  "Home Circle";
+			}
+			else if(loc.get_type().equals("home")){
+				s = "Home";
+			}
+			else if(loc.get_type().equals("main")){
+				s = "Main " + (((loc.get_index() + 1 - MAIN_ENTRY) % BOARD_LENGTH) + BOARD_LENGTH) % BOARD_LENGTH;
+			}
+			else{
+				s = "Home Row " + (loc.get_index() + 1);
+			}
+			l.setText("Pawn " + (p.get_id() + 1) + ": " + s);
+		}
 	
 	}
 	
