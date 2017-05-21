@@ -45,6 +45,8 @@ public class HPlayerFrame extends JFrame{
 	private JLabel lblPawn_3;
 	private JLabel lblPawn_4;
 	
+	private JLabel lblYourPawns;
+	
 	public JList get_Pawn_Spinner(){
 		return this.spinner;
 	}
@@ -86,7 +88,7 @@ public class HPlayerFrame extends JFrame{
 		lblBoardImage.setIcon(new ImageIcon(ImageIO.read(new File("img/base.png"))));
 		contentPane.add(lblBoardImage, "cell 0 1 5 10,alignx center,aligny center");
 		
-		JLabel lblYourPawns = new JLabel("Your Pawns");
+		lblYourPawns = new JLabel("Your Pawns");
 		lblYourPawns.setFont(new Font("Tahoma", Font.BOLD, 16));
 		contentPane.add(lblYourPawns, "cell 5 1 2 1,alignx center,aligny bottom");
 		
@@ -155,7 +157,8 @@ public class HPlayerFrame extends JFrame{
 		
 		spinnerRollChoice = new JList();
 		spinnerRollChoice.setVisibleRowCount(1);
-		spinnerRollChoice.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		spinnerRollChoice.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		spinnerRollChoice.setSelectedIndices(new int[]{});
 		contentPane.add(spinnerRollChoice, "cell 4 15,grow");
 		
 		btnMakeMove = new JButton("Make Move");
@@ -269,6 +272,9 @@ public class HPlayerFrame extends JFrame{
 	public void startGame(String color) throws Exception{
 		// update GUI
 		this.setVisible(true);
+		
+		// set label with color
+		this.lblYourPawns.setText("Your Pawns - " + color);
 		
 		//set status to waiting
 		this.set_status_label("Waiting for turn");

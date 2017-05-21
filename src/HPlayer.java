@@ -1,6 +1,7 @@
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.List;
 
 public class HPlayer implements IPlayer, ActionListener{
 	private String name;
@@ -85,18 +86,29 @@ public class HPlayer implements IPlayer, ActionListener{
 		
 		if(button_name.equals("Make Move")){
 			int id_index = this.frame.get_Pawn_Spinner().getSelectedIndex();
-			int distance_index = this.frame.get_Roll_Spinner().getSelectedIndex();
+			List<String> distances = this.frame.get_Roll_Spinner().getSelectedValuesList();
 			
-			if(id_index == -1 || distance_index == -1){
+			if(id_index == -1 || distances.size() == 0){
 				return;
 			}
 			int id = Integer.parseInt((String) this.frame.get_Pawn_Spinner().getModel().getElementAt(id_index)) - 1;
-			int distance = Integer.parseInt((String) this.frame.get_Roll_Spinner().getModel().getElementAt(distance_index));
 			
 			// construct move
 			Board b = this.curr_state.get_board();
 			Pawn p = new Pawn(id, this.color);
 			PawnLocation loc = b.get_Pawn_Location(p);
+			
+			// handling multiple values summed together on entry
+			int distance = 0;
+			if(distances.size() >= 2){
+				if(!loc.get_type().equals("home circle")){
+					this.frame.get_Illegal().setText("Too many rolls chosen. Try again.");
+					return;
+				}
+			}
+			for(String d : distances){
+				distance += Integer.parseInt(d);
+			}
 			
 			IMove possible_move;
 			if(loc.get_type().equals("home circle")){
@@ -122,16 +134,21 @@ public class HPlayer implements IPlayer, ActionListener{
 			
 			// if move is legal, do it and update GUI
 			if(possible_move.is_Legal(this.curr_state, this.prev_state)){
-				try {
-					State new_state = possible_move.update_Board(this.curr_state);
-					this.frame.set_state("curr");
-					this.frame.update_board(new_state.get_board(), this.color);
-					this.frame.update_rolls(new_state.get_rolls());
-					this.curr_state = new State(new_state);
-					this.generated_moves.add(possible_move);
-					this.frame.get_Illegal().setText("");
-				} catch (Exception e1) {
-					return;
+				if(possible_move instanceof EnterPiece && distance != 5){
+					this.frame.get_Illegal().setText("Rolls do not sum to 5. Try again.");
+				}
+				else{
+					try {
+						State new_state = possible_move.update_Board(this.curr_state);
+						this.frame.set_state("curr");
+						this.frame.update_board(new_state.get_board(), this.color);
+						this.frame.update_rolls(new_state.get_rolls());
+						this.curr_state = new State(new_state);
+						this.generated_moves.add(possible_move);
+						this.frame.get_Illegal().setText("");
+					} catch (Exception e1) {
+						return;
+					}
 				}
 			}
 			else{
