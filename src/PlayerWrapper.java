@@ -1,6 +1,7 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.net.ConnectException;
 import java.net.Socket;
 import java.util.concurrent.TimeUnit;
 
@@ -70,9 +71,31 @@ public class PlayerWrapper {
 		
 	}
 	
+	private Socket wait_for_connection(String address, int port, int timeoutSecs) throws Exception{
+		int num_tries = 0;
+		Socket to_return = null;
+		while(num_tries < timeoutSecs && to_return == null){
+			try{
+				to_return = new Socket(address, port);
+			}
+			catch(Exception e){
+				TimeUnit.SECONDS.sleep(1);
+				to_return = null;
+				continue;
+			}			
+		}
+		
+		if(to_return == null){
+			throw new ConnectException();
+		}
+		else{
+			return to_return;
+		}
+	}
+	
 	public void listen(String address, int port) throws Exception{
 		// listen to local machine port
-		this.socket = new Socket(address, port);
+		this.socket = wait_for_connection(address, port, 120);
 		this.input = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
 		this.output = new PrintStream(this.socket.getOutputStream());
 		
