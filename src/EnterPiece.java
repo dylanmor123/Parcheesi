@@ -101,6 +101,10 @@ class EnterPiece implements IMove {
 		Entry e = b.get_Entry(pawn_color);
 		boolean bopped = e.bop(pawn_color);
 		
+		if (!game_state.remove_roll(5)){
+			game_state.set_rolls(new int[0]);
+		}
+		
 		if(bopped){
 			Pawn curr_pawn = e.get_pawns().get(0);
 			HomeCircle curr_pawn_home = game_state.get_board().get_HomeCircle(curr_pawn.get_color());
@@ -112,10 +116,6 @@ class EnterPiece implements IMove {
 		
 		e.add_Pawn(p);
 		h.remove_Pawn(p);
-
-		if (!game_state.remove_roll(5)){
-			game_state.set_rolls(new int[0]);
-		}
 		
 		return game_state;
 	}

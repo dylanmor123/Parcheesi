@@ -396,7 +396,7 @@ class Board {
 				};
 			}
 		}
-		same_board = same_board && (num_same_home_circles == 4);
+		same_board = same_board && (num_same_home_circles == this.home_circles.length);
 		
 
 		//check if home_spaces are equal
@@ -408,7 +408,7 @@ class Board {
 				};
 			}
 		}
-		same_board = same_board && (num_same_homes == 4);
+		same_board = same_board && (num_same_homes == this.home_spaces.length);
 		
 		return same_board;
 	}

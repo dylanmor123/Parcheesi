@@ -46,6 +46,12 @@ public class JUnitTests{
 	// board updater tests
 	@Test
 	public void test_board_updater() throws Exception{
+		// enter piece bop should give bonus 20 roll
+		State pre_enter_bop = new State("boards/two_die_enter_bop.txt", 2);
+		EnterPiece move1 = new EnterPiece(new Pawn(0, "green"));
+		State post_enter_bop_real = new State("boards/two_die_enter_bop_post.txt", 2);
+		State post_enter_bop = move1.update_Board(pre_enter_bop);
+		assertTrue(post_enter_bop_real.equals(post_enter_bop));
 		
 	}
 	
@@ -53,6 +59,17 @@ public class JUnitTests{
 	@Test
 	public void test_remove_furthest_pawn(){
 		
+	}
+	
+	// moves remaining tests
+	@Test
+	public void test_moves_remaining() throws Exception{
+		// bonus move after bop
+		State prev_state1 = new State("boards/moves_remaining_test_1.txt", 2);
+		MoveMain move1 = new MoveMain(new Pawn(0, "blue"), 24, 3);
+		State curr_state1 = move1.update_Board(prev_state1);
+		IPlayer player1 = new Player("blue", false);
+		assertTrue(RuleChecker.moves_remaining(player1, curr_state1, prev_state1));
 	}
 	
 	// player move selection tests
