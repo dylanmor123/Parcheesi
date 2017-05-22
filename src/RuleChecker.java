@@ -16,7 +16,8 @@ public class RuleChecker {
 		
 		// iterate over first moves
 		for(IMove move: first_moves){
-			new_state = move.update_Board(game_state);
+			new_state = new State(game_state);
+			new_state = move.update_Board(new_state);
 			
 			// recursively get lists of following moves
 			ArrayList<ArrayList<IMove>> next_moves = get_move_lists(player, new_state, prev_state);

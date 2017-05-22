@@ -105,7 +105,7 @@ public class PlayerWrapper {
 		while(true){
 			if((request = this.input.readLine()) != null){
 				// wait a little while, to see what's going on
-				TimeUnit.SECONDS.sleep(1);
+				// TimeUnit.SECONDS.sleep(1);
 				try{
 					Document x = XMLUtils.StringtoXML(request);
 					Element request_root = x.getDocumentElement();
@@ -125,7 +125,7 @@ public class PlayerWrapper {
 					else{
 						throw new Exception();
 					}
-					
+					System.out.println(response);
 					output.println(response);
 				}
 				catch (Exception e){

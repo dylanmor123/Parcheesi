@@ -7,6 +7,10 @@ public class HomeRow extends Space {
 		super(color, safe, pawnsList);
 	}
 	
+	public HomeRow(HomeRow h){
+		super(h);
+	}
+	
 	@Override
 	public boolean equals(Object s){
 		if(s == null){

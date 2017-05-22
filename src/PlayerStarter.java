@@ -17,6 +17,11 @@ public class PlayerStarter {
 			HPlayer p = new HPlayer(name);
 			wrap = new PlayerWrapper(p);
 		}
+		else if(strat.equals("heuristic")){
+			Player p = new Player(strat, name);
+			p.set_Heuristic(new RandomHeuristic());
+			wrap = new PlayerWrapper(p);
+		}
 		else{
 			Player p = new Player(strat, name);
 			wrap = new PlayerWrapper(p);

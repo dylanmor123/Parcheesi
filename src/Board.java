@@ -50,7 +50,15 @@ class Board {
 			this.home_spaces[i] = new Home(b.home_spaces[i]);
 		}
 		
-		this.home_rows = new HashMap<String, ArrayList<HomeRow>>(b.home_rows);
+		this.home_rows = new HashMap<String, ArrayList<HomeRow>>();
+		for(String s: b.home_rows.keySet()){
+			ArrayList<HomeRow> row = b.home_rows.get(s);
+			ArrayList<HomeRow> copy = new ArrayList<HomeRow>();
+			for(HomeRow hr: row){
+				copy.add(new HomeRow(hr));
+			}
+			this.home_rows.put(s, copy);
+		}
 	}
 	
 	//constructor based on list of players. Called in game.start()

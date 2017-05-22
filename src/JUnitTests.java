@@ -42,6 +42,19 @@ public class JUnitTests{
 		
 		
 		// testing MoveHome rules
+		// Case: some weird issue with ruling a home row move a legal move after a move to home
+		Board weird_brd = new Board("<board><start></start><main><piece-loc><pawn><color>green</color>0</pawn><loc>8</loc></piece-loc><piece-loc><pawn><color>yellow</color>0</pawn><loc>18</loc></piece-loc></main><home-rows><piece-loc><pawn><color>green</color>1</pawn><loc>4</loc></piece-loc></home-rows><home><pawn><color>green</color>2</pawn><pawn><color>green</color>3</pawn></home></board>");
+		int[] weird_dice = new int[]{3, 1};
+		MoveHome weird_move1 = new MoveHome(new Pawn(1, "green"), 4, 3);
+		MoveMain weird_move2 = new MoveMain(new Pawn(0, "green"), 8, 10);
+		MoveMain weird_move3 = new MoveMain(new Pawn(0, "green"), 18, 20);
+		MoveHome weird_move4 = new MoveHome(new Pawn(1, "green"), 5, 1);
+		Player weird_player = new Player("green", false);
+		State weird_state_start = new State(weird_brd, weird_player, weird_dice);
+		State weird_state = weird_move1.update_Board(weird_state_start);
+		weird_state = weird_move2.update_Board(weird_state);
+		weird_state = weird_move3.update_Board(weird_state);
+		assertTrue(!weird_move4.is_Legal(weird_state, weird_state_start));
 	}
 	
 	// board updater tests
@@ -72,7 +85,6 @@ public class JUnitTests{
 		IPlayer player1 = new Player("blue", false);
 		assertTrue(RuleChecker.moves_remaining(player1, curr_state1, prev_state1));
 		
-		// 
 	}
 	
 	// moves list generation tests
@@ -86,6 +98,14 @@ public class JUnitTests{
 		
 		State test_state2 = new State("boards/8.txt", 2);
 		ArrayList<ArrayList<IMove>> lists_of_moves2 = RuleChecker.get_move_lists(player1, test_state2, test_state2);
+		assertTrue(true);
+		
+		// weird issue with moving in home row not being picked up
+		Board weird_brd = new Board("<board><start></start><main><piece-loc><pawn><color>green</color>0</pawn><loc>8</loc></piece-loc><piece-loc><pawn><color>yellow</color>0</pawn><loc>18</loc></piece-loc></main><home-rows><piece-loc><pawn><color>green</color>1</pawn><loc>4</loc></piece-loc></home-rows><home><pawn><color>green</color>2</pawn><pawn><color>green</color>3</pawn></home></board>");
+		int[] weird_dice = new int[]{3, 1};
+		Player weird_player = new Player("green", false);
+		State weird_state_start = new State(weird_brd, weird_player, weird_dice);
+		ArrayList<ArrayList<IMove>> lists_of_moves_weird = RuleChecker.get_move_lists(weird_player, weird_state_start, weird_state_start);
 		assertTrue(true);
 	}
 	
