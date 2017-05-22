@@ -255,6 +255,10 @@ class Player implements IPlayer {
 				}
 			}	
 		}
+		else if(this.strategy.equals("heuristic")){
+			this.curr_state = new State(brd, this, dice);
+			generated_moves = this.get_best_moves(this.curr_state);
+		}
 		
 		
 		IMove[] results = new IMove[generated_moves.size()];
@@ -263,6 +267,38 @@ class Player implements IPlayer {
 		return results;
 		
 		
+	}
+	
+	
+	// Assignment 9 - choosing best move
+	private IHeuristic heuristic;
+	
+	public void set_Heuristic(IHeuristic h){
+		this.heuristic = h;
+	}
+	
+	// use given heuristic to return ArrayList of best possible moves
+	private ArrayList<IMove> get_best_moves(State start_state) throws Exception{
+		ArrayList<IMove> best_moves = new ArrayList<IMove>();
+		int max_value = Integer.MIN_VALUE;
+		
+		ArrayList<ArrayList<IMove>> possible_moves_lists = RuleChecker.get_move_lists(this, start_state, start_state);
+		
+		for(ArrayList<IMove> path: possible_moves_lists){
+			State final_state = new State(start_state);
+			for(IMove move: path){
+				final_state = move.update_Board(final_state);
+			}
+			
+			int value = this.heuristic.eval(final_state.get_board());
+			
+			if(value > max_value){
+				max_value = value;
+				best_moves = path;
+			}
+		}
+		
+		return best_moves;
 	}
 	
 	

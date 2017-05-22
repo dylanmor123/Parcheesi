@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.Inet4Address;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class JUnitTests{
@@ -70,6 +71,22 @@ public class JUnitTests{
 		State curr_state1 = move1.update_Board(prev_state1);
 		IPlayer player1 = new Player("blue", false);
 		assertTrue(RuleChecker.moves_remaining(player1, curr_state1, prev_state1));
+		
+		// 
+	}
+	
+	// moves list generation tests
+	@Test
+	public void test_moves_list() throws Exception{
+		// tests incomplete
+		State test_state1 = new State("boards/main_adjacent_home_row_blockade_nearby.txt", 2);
+		IPlayer player1 = new Player("green", false);
+		ArrayList<ArrayList<IMove>> lists_of_moves1 = RuleChecker.get_move_lists(player1, test_state1, test_state1);
+		assertTrue(true);
+		
+		State test_state2 = new State("boards/8.txt", 2);
+		ArrayList<ArrayList<IMove>> lists_of_moves2 = RuleChecker.get_move_lists(player1, test_state2, test_state2);
+		assertTrue(true);
 	}
 	
 	// player move selection tests
