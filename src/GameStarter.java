@@ -10,6 +10,10 @@ public class GameStarter {
 			g.register(new NPlayer(port));
 		}
 		
-		g.start();
+		int num_to_play = Integer.parseInt(argv[0]);
+		for(int j = 0; j < num_to_play; j++){
+			g.start();
+		}
+		
 	}
 }

@@ -4,7 +4,7 @@ public class FirstHeuristic implements IHeuristic{
 	
 	
 	public int eval(Board brd, String color){
-		return 9999*pawns_in_home(brd, color) + 150*pawns_in_homerow(brd, color) + 100*count_safe_pawns(brd, color) 
+		return 9999*pawns_in_home(brd, color) + 150*pawns_in_homerow(brd, color) + 200*count_safe_pawns(brd, color) 
 		+ 50*count_main_pawns(brd, color) + 10*num_blockades(brd, color) + total_distance(brd, color) 
 		- total_opp_distances(brd, color) - 200*count_opp_pawns(brd, color);
 	}
@@ -15,7 +15,7 @@ public class FirstHeuristic implements IHeuristic{
 	public int count_main_pawns(Board brd, String color){
 		int num_main_pawns = 0;
 		
-		for (Space s: brd.spaces){
+		for (Space s: brd.get_Spaces()){
 			ArrayList<Pawn> pawns = s.get_pawns();
 			if(pawns.size() > 0){
 				for (Pawn p: pawns){
@@ -34,7 +34,7 @@ public class FirstHeuristic implements IHeuristic{
 	public int count_opp_pawns(Board brd, String color){
 		int num_opp_pawns = 0;
 		
-		for (Space s: brd.spaces){
+		for (Space s: brd.get_Spaces()){
 			ArrayList<Pawn> pawns = s.get_pawns();
 			if(pawns.size() > 0){
 				for (Pawn p: pawns){
@@ -71,7 +71,7 @@ public class FirstHeuristic implements IHeuristic{
 	//player corresponding to 'color'
 	public int num_blockades(Board brd, String color){
 		int num_blockades = 0;
-		for (Space s: brd.spaces){
+		for (Space s: brd.get_Spaces()){
 			ArrayList<Pawn> pawns = s.get_pawns();
 			if(pawns.size() > 1){
 				if(pawns.get(0).get_color().equals(color)){
@@ -89,9 +89,9 @@ public class FirstHeuristic implements IHeuristic{
 	public int count_safe_pawns(Board brd, String color){
 		int num_safe_pawns = 0;
 		
-		for (Space s: brd.spaces){
+		for (Space s: brd.get_Spaces()){
 			ArrayList<Pawn> pawns = s.get_pawns();
-			if(pawns.size() > 0 && s.get_safe()){
+			if(pawns.size() > 0 && s.get_safe() && !(s instanceof Entry && color.equals(s.get_color()))){
 				for (Pawn p: pawns){
 					if (p.get_color().equals(color)){
 						num_safe_pawns++;

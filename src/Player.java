@@ -290,7 +290,7 @@ class Player implements IPlayer {
 				final_state = move.update_Board(final_state);
 			}
 			
-			int value = this.heuristic.eval(final_state.get_board());
+			int value = this.heuristic.eval(final_state.get_board(), this.color);
 			
 			if(value > max_value){
 				max_value = value;

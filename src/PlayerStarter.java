@@ -19,7 +19,7 @@ public class PlayerStarter {
 		}
 		else if(strat.equals("heuristic")){
 			Player p = new Player(strat, name);
-			p.set_Heuristic(new RandomHeuristic());
+			p.set_Heuristic(new FirstHeuristic());
 			wrap = new PlayerWrapper(p);
 		}
 		else{
