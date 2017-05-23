@@ -281,8 +281,9 @@ class Player implements IPlayer {
 	private ArrayList<IMove> get_best_moves(State start_state) throws Exception{
 		ArrayList<IMove> best_moves = new ArrayList<IMove>();
 		int max_value = Integer.MIN_VALUE;
+		int cap = 500; //number of possible moves to check before stopping
 		
-		ArrayList<ArrayList<IMove>> possible_moves_lists = RuleChecker.get_move_lists(this, start_state, start_state);
+		ArrayList<ArrayList<IMove>> possible_moves_lists = RuleChecker.get_move_lists(this, start_state, start_state, cap);
 		
 		for(ArrayList<IMove> path: possible_moves_lists){
 			State final_state = new State(start_state);

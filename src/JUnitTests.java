@@ -93,11 +93,11 @@ public class JUnitTests{
 		// tests incomplete
 		State test_state1 = new State("boards/main_adjacent_home_row_blockade_nearby.txt", 2);
 		IPlayer player1 = new Player("green", false);
-		ArrayList<ArrayList<IMove>> lists_of_moves1 = RuleChecker.get_move_lists(player1, test_state1, test_state1);
+		ArrayList<ArrayList<IMove>> lists_of_moves1 = RuleChecker.get_move_lists(player1, test_state1, test_state1, 500);
 		assertTrue(true);
 		
 		State test_state2 = new State("boards/8.txt", 2);
-		ArrayList<ArrayList<IMove>> lists_of_moves2 = RuleChecker.get_move_lists(player1, test_state2, test_state2);
+		ArrayList<ArrayList<IMove>> lists_of_moves2 = RuleChecker.get_move_lists(player1, test_state2, test_state2, 500);
 		assertTrue(true);
 		
 		// weird issue with moving in home row not being picked up
@@ -105,7 +105,7 @@ public class JUnitTests{
 		int[] weird_dice = new int[]{3, 1};
 		Player weird_player = new Player("green", false);
 		State weird_state_start = new State(weird_brd, weird_player, weird_dice);
-		ArrayList<ArrayList<IMove>> lists_of_moves_weird = RuleChecker.get_move_lists(weird_player, weird_state_start, weird_state_start);
+		ArrayList<ArrayList<IMove>> lists_of_moves_weird = RuleChecker.get_move_lists(weird_player, weird_state_start, weird_state_start, 500);
 		assertTrue(true);
 	}
 	

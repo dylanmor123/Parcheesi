@@ -17,8 +17,6 @@
 (unless port
   (error 'tournament "expected a port number on the command line, found ~a" 
          (vector-ref (current-command-line-arguments) 0)))
-
-(define orig-eventspace (current-eventspace))
   
 ;; name : string
 ;; games : number  -- number of games played
@@ -41,6 +39,7 @@
                           (parent player-frame)
                           (callback
                            (lambda (x y)
+                             (send start-button enable #f)
                              (channel-put start-tournament-chan (void))))))
   
 (define (add-player player)
@@ -97,7 +96,9 @@
         start-tournament-chan
         (lambda (_)
           (printf "starting tournament\n")
-          (start-tournament connections))))))))
+          (start-tournament connections)
+          (queue-callback (λ () (send start-button enable #t)))
+          (loop connections))))))))
     
 (define names-table (make-hash))
 (define (get-name in out)
@@ -124,7 +125,6 @@
 (define (start-tournament players)
   (let loop ([winners '()]
              [good-players players])
-    (print-struct #t)
     (cond
       [(= (length winners) 4)
        (printf "winner ~s\n" (channel-get (play-game/thread winners)))]
